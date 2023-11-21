@@ -16,8 +16,8 @@ class ChatMessage {
 enum ContentType { TEXT, IMAGE, USER_INPUT }
 enum ResponseType { auto, choices, userInput, multiChoices, NONE }
 
-
 // Content 用于表示机器人预设的问题内容，可指定用户回复的类型
+
 class Content {
   final String? text;
   final String? imageUrl;
@@ -54,10 +54,3 @@ class UserResponse {
     return 'Content ID: $contentId, User Response: $userResponse';
   }
 }
-
-
-
-
-
-
-
