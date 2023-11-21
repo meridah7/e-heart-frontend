@@ -7,7 +7,7 @@ import 'task_models.dart';
 import 'survey_models.dart';
 
 
-List<Task>Day0 = [task1,task2, task3];
+List<Task>TaskDay0 = [task1,task2, task3];
 
 Task task1 = Task(
   id: 'task1',

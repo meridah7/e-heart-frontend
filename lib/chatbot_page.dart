@@ -77,7 +77,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
     print('Conversation has ended. User responses:');
     for (UserResponse response in userResponses) {
       print(
-          'Content ID: ${response.contentId}, User Response: ${response.userResponse}');
+          'Content ID: ${response.contentId}, Ue: ${response.userResponse}');
     }
   }
 
