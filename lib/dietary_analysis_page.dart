@@ -17,6 +17,8 @@ class _DietaryAnalysisPageState extends State<DietaryAnalysisPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('饮食分析页面'),
+         backgroundColor: Color(0xFF9D9BE9)
+         
       ),
       body: Center(
         child: Text('这是饮食分析页面的内容'),

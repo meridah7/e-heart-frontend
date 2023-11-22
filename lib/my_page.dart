@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:namer_app/global_setting.dart';
 import 'main.dart'; 
 
 class MyPage extends StatelessWidget {
@@ -6,7 +7,8 @@ class MyPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('我的页面'),
+        title: Text('我的页面', style: TextStyle(color: Colors.black)), // Text color changed to black
+        backgroundColor: themeColor,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

@@ -8,6 +8,7 @@ import 'chat_models.dart';
 import 'my_page.dart';
 import 'dietary_analysis_page.dart'; 
 
+
 void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
@@ -38,10 +39,6 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        // icon: Icon(Icons.edit_calendar_outlined),
-        title: Text('主界面标题1'),
-      ),
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
@@ -63,14 +60,14 @@ class _MainScreenState extends State<MainScreen> {
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // 点击按钮时调用 _navigateToDietaryAnalysisPage
-          _navigateToDietaryAnalysisPage();
-        },
-        tooltip: '饮食分析',
-        child: Icon(Icons.add),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     // 点击按钮时调用 _navigateToDietaryAnalysisPage
+      //     _navigateToDietaryAnalysisPage();
+      //   },
+      //   tooltip: '饮食分析',
+      //   child: Icon(Icons.add),
+      // ),
     );
   }
 
@@ -93,28 +90,3 @@ class _MainScreenState extends State<MainScreen> {
 
   
 }
-
-// class ReviewAnalysisPage extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Center(
-//       child: Text(
-//         '分析反思页面内容',
-//         style: TextStyle(fontSize: 20),
-//       ),
-//     );
-//   }
-// }
-
-// class MyPage extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Center(
-//       child: Text(
-//         '我的页面内容',
-//         style: TextStyle(fontSize: 20),
-//       ),
-//     );
-//   }
-// }
-

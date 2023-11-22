@@ -1,242 +1,258 @@
 import 'package:flutter/material.dart';
-import 'task_contents.dart'; 
+import 'task_contents.dart';
 import 'task_models.dart';
-import 'diet_contents.dart'; 
+import 'diet_contents.dart';
 import 'diet_models.dart';
 import 'chatbot_page.dart';
-import 'survey_page.dart'; 
-import 'main.dart'; 
-import 'dietary_analysis_page.dart'; 
-
+import 'survey_page.dart';
+import 'main.dart';
+import 'dietary_analysis_page.dart';
+import 'dietary_reflection_page.dart';
+import 'global_setting.dart';
 
 class ReviewAnalysisPage extends StatefulWidget {
   @override
   _ReviewAnalysisPageState createState() => _ReviewAnalysisPageState();
 }
 
-
 class _ReviewAnalysisPageState extends State<ReviewAnalysisPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('饮食分析'),
+        title: Text('分析反思',style:TextStyle(color: Colors.black)), // Text color changed to black
+        backgroundColor: themeColor, // AppBar color changed as specified
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 25.0),
+            _buildCustomButton(
+              title: '饮食监控',
+              subtitle: '查看饮食分析去了解自己的饮食模式哦！',
+              iconData: Icons.analytics,
+              onTap: _navigateToDietaryAnalysisPage,
+            ),
+            SizedBox(height: 25.0),
+            Padding(
+              padding: const EdgeInsets.only(left: 25.0), // 根据需要调整左边距
+              child: Text(
+                '饮食反思',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+            ),
+            _buildReflectionSection(),
+            SizedBox(height: 25.0),
+            Padding(
+              padding: const EdgeInsets.only(left: 25.0), // 根据需要调整左边距
+              child: Text(
+                '暴食应对',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+            ),
+            _buildBingeResponseSection(),
+            // ... Add other buttons if needed ...
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCustomButton({
+    required String title,
+    required String subtitle,
+    required IconData iconData,
+    required VoidCallback onTap,
+  }) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        // Increase the width slightly by reducing horizontal margin
+        margin: EdgeInsets.symmetric(
+            horizontal: screenWidth * 0.04, vertical: 10.0),
+        padding: EdgeInsets.symmetric(vertical: 15.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8.0),
+          color: Color(0xFF9D9BE9),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 2,
+              blurRadius: 4,
+              offset: Offset(0, 3),
+            ),
+          ],
+        ),
+        // Inside the _buildCustomButton method
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.0),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          title,
+                          style: TextStyle(color: Colors.white, fontSize: 18),
+                        ),
+                        SizedBox(width: 10.0),
+                        Icon(iconData, color: Colors.white, size: 24.0),
+                      ],
+                    ),
+                    SizedBox(
+                        height:
+                            5.0), // Add space between the title/icon row and the subtitle
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                          color: Colors.white.withOpacity(0.9), fontSize: 14),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _navigateToDietaryAnalysisPage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => DietaryAnalysisPage()),
+    );
+  }
+
+  Widget _buildReflectionSection() {
+    double screenWidth = MediaQuery.of(context).size.width;
+    return Container(
+      margin:
+          EdgeInsets.symmetric(horizontal: screenWidth * 0.04, vertical: 10.0),
+      padding: EdgeInsets.symmetric(vertical: 15.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.0),
+        boxShadow: [
+          BoxShadow(
+            color: const Color.fromARGB(255, 89, 87, 87).withOpacity(0.2),
+            spreadRadius: 2,
+            blurRadius: 4,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 25.0), // 在这里添加一个高度为25像素的间距
-          Center(
-            child: InkWell(
-              onTap: () {
-                // 处理按钮点击事件
-                // 可以在这里添加打开饮食分析页面的逻辑
-                _navigateToDietaryAnalysisPage();
-              },
-              child: Container(
-                width: 100.0,
-                height: 100.0,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Color.fromARGB(255, 255, 159, 146),
-                ),
-                child: Center(
-                  child: Text(
-                    '饮食分析',
-                    style: TextStyle(color: const Color.fromARGB(255, 0, 0, 0)),
-                  ),
-                ),
-              ),
-            ),
+          //SizedBox(height: 20.0),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              // Inside your _buildReflectionSection method
+              _buildIconSection(
+                  Icons.restaurant_menu, '饮食监控', _navigateToDietMonitoring),
+              _buildIconSection(
+                  Icons.access_time, '规律饮食', _navigateToRegularDiet),
+              _buildIconSection(
+                  Icons.update, '暴食替代', _navigateToBingeSubstitution),
+            ],
           ),
-          
-          SizedBox(height: 20.0), // 添加一个垂直方向的间距
-          Center(
-            child: InkWell(
-              onTap: () {
-                // 处理按钮点击事件
-                // 可以在这里添加打开饮食监控反思页面的逻辑
-
-                //下面的页面还没创建
-                //_navigateToDietaryReflectionPage();
-              },
-              child: Container(
-                width: 120.0,
-                height: 45.0,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15.0),
-                  color: const Color.fromARGB(217, 217, 217,217), // 可以根据需要修改颜色
-                ),
-                child: Center(
-                  child: Text(
-                    '饮食监控反思',
-                    style: TextStyle(color: Colors.black),
-                  ),
-                ),
-              ),
-            ),
-          ),
-
-          SizedBox(height: 20.0), // 添加一个垂直方向的间距
-          Center(
-            child: InkWell(
-              onTap: () {
-                // 处理按钮点击事件
-                // 可以在这里添加打开饮食监控反思页面的逻辑
-
-                //下面的页面还没创建
-                //_navigateToRegularReflectionPage();
-              },
-              child: Container(
-                width: 120.0,
-                height: 45.0,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15.0),
-                  color: const Color.fromARGB(217, 217, 217,217), // 可以根据需要修改颜色
-                ),
-                child: Center(
-                  child: Text(
-                    '规律饮食反思',
-                    style: TextStyle(color: Colors.black),
-                  ),
-                ),
-              ),
-            ),
-          ),
-
-          SizedBox(height: 20.0), // 添加一个垂直方向的间距
-          Center(
-            child: InkWell(
-              onTap: () {
-                // 处理按钮点击事件
-                // 可以在这里添加打开饮食监控反思页面的逻辑
-
-                //下面的页面还没创建
-                //_navigateToBingeReflectionPage();
-              },
-              child: Container(
-                width: 120.0,
-                height: 45.0,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15.0),
-                  color: const Color.fromARGB(217, 217, 217,217), // 可以根据需要修改颜色
-                ),
-                child: Center(
-                  child: Text(
-                    '暴食替代反思',
-                    style: TextStyle(color: Colors.black),
-                  ),
-                ),
-              ),
-            ),
-          ),
-
-          SizedBox(height: 40.0), // 添加一个垂直方向的间距
-          Center(
-            child: InkWell(
-              onTap: () {
-                // 处理按钮点击事件
-                // 可以在这里添加打开饮食监控反思页面的逻辑
-
-                //下面的页面还没创建
-                //_navigateToBingeEatingStrategyPage();
-              },
-              child: Container(
-                width: 200.0,
-                height: 45.0,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15.0),
-                  color: const Color.fromARGB(255, 188, 219, 255), // 可以根据需要修改颜色
-                ),
-                child: Center(
-                  child: Text(
-                    '我的暴食应对策略',
-                    style: TextStyle(color: Colors.black),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          SizedBox(height: 20.0), // 添加一个垂直方向的间距
-          Center(
-            child: InkWell(
-              onTap: () {
-                // 处理按钮点击事件
-                // 可以在这里添加打开饮食监控反思页面的逻辑
-
-                //下面的页面还没创建
-                //_navigateToPositiveDietTrainingPage();
-              },
-              child: Container(
-                width: 200.0,
-                height: 45.0,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15.0),
-                  color: const Color.fromARGB(255, 188, 219, 255), // 可以根据需要修改颜色
-                ),
-                child: Center(
-                  child: Text(
-                    '正念饮食训练',
-                    style: TextStyle(color: Colors.black),
-                  ),
-                ),
-              ),
-            ),
-          ),
-
         ],
       ),
     );
   }
-   void _navigateToDietaryAnalysisPage() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => DietaryAnalysisPage(),  
+
+  Widget _buildIconSection(IconData icon, String label, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Icon(icon, size: 40, color: Colors.purple),
+          SizedBox(height: 8),
+          Text(
+            label,
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 14,
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  //待创建页面
-  // void _navigateToDietaryReflectionPage() {
-  //   Navigator.push(
-  //     context,
-  //     MaterialPageRoute(
-  //       builder: (context) => DietaryReflectionPage(),  
-  //     ),
-  //   );
-  // }
-  // void _navigateToRegularReflectionPage() {
-  //   Navigator.push(
-  //     context,
-  //     MaterialPageRoute(
-  //       builder: (context) => RegularReflectionPage(),  
-  //     ),
-  //   );
-  // }
-  // void _navigateToBingeReflectionPage() {
-  //   Navigator.push(
-  //     context,
-  //     MaterialPageRoute(
-  //       builder: (context) => BingeReflectionPage(),  
-  //     ),
-  //   );
-  // }
-  // void _navigateToBingeEatingStrategyPage() {
-  //   Navigator.push(
-  //     context,
-  //     MaterialPageRoute(
-  //       builder: (context) => BingeEatingStrategyPage(),  
-  //     ),
-  //   );
-  // }
-  // void _navigateToPositiveDietTrainingPage() {
-  //   Navigator.push(
-  //     context,
-  //     MaterialPageRoute(
-  //       builder: (context) => PositiveDietTrainingPage(),  
-  //     ),
-  //   );
-  // }
-  
+  // Add this method to your _ReviewAnalysisPageState class
+
+  Widget _buildBingeResponseSection() {
+    return Container(
+      margin: EdgeInsets.symmetric(
+          horizontal: MediaQuery.of(context).size.width * 0.04, vertical: 10.0),
+      padding: EdgeInsets.symmetric(vertical: 15.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.0),
+        boxShadow: [
+          BoxShadow(
+            color: const Color.fromARGB(255, 89, 87, 87).withOpacity(0.2),
+            spreadRadius: 2,
+            blurRadius: 4,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: 20.0),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _buildIconSection(Icons.lightbulb_outline, '我的暴食应对策略',
+                  _navigateToMyBingeEatingStrategy),
+              _buildIconSection(Icons.self_improvement, '正念饮食训练',
+                  _navigateToMindfulEatingTraining),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _navigateToDietMonitoring() {
+    //Navigator.push(context, MaterialPageRoute(builder: (context) => DietMonitoringPage()));
+  }
+
+  void _navigateToRegularDiet() {
+    // Navigate to the Regular Diet page
+  }
+
+  void _navigateToBingeSubstitution() {
+    // Navigate to the Binge Substitution page
+  }
+
+  void _navigateToMyBingeEatingStrategy() {
+    //Navigator.push(context, MaterialPageRoute(builder: (context) => MyBingeEatingStrategyPage()));
+  }
+
+  void _navigateToMindfulEatingTraining() {
+    //Navigator.push(context, MaterialPageRoute(builder: (context) => MindfulEatingTrainingPage()));
+  }
+
+// Rest of your _ReviewAnalysisPageState class...
 }

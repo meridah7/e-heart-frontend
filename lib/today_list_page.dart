@@ -6,6 +6,8 @@ import 'diet_contents.dart';
 import 'diet_models.dart';
 import 'chatbot_page.dart';
 import 'survey_page.dart';
+import 'diet_monitoring/diet_monitoring_page.dart';
+import 'binge_eating_record_page.dart';
 
 class TodayListPage extends StatefulWidget {
   @override
@@ -18,102 +20,125 @@ class _TodayListPageState extends State<TodayListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Align(
-        alignment: Alignment.topCenter,
-        child: Stack(
-          children: [
-            Container(
-              width: 250.0,
-              height: 600.0,
-              decoration: BoxDecoration(
-                border: Border.all(color: Color.fromARGB(11, 0, 0, 0)),
-                color: showTasks
-                    ? const Color.fromARGB(185, 221, 209, 224)
-                    : const Color.fromARGB(185, 156, 208, 185),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(0.0),
-                    child: Row(
-                      children: [
-                        _buildButton('今日任务', onPressed: () => _toggleView(true), color: const Color.fromARGB(255, 221, 209, 224)),
-                        SizedBox(width: 0),
-                        _buildButton('今日饮食', onPressed: () => _toggleView(false), color: const Color.fromARGB(255, 156, 208, 185)),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: showTasks
-                        ? _buildTaskListView(TaskDay0)
-                        : _buildDietListView(DietDay0),
-                  ),
-                ],
-              ),
-            ),
-            // 左下方圆形按钮
-            Positioned(
-              left: 20.0,
-              bottom: 20.0,
-              child: _buildCircleButton('饮食监控', onPressed: () {
-                // 处理饮食监控按钮点击事件
-              }),
-            ),
-            
-            // 右下方圆形按钮
-            Positioned(
-              right: 20.0,
-              bottom: 20.0,
-              child: _buildCircleButton('记录暴食冲动', onPressed: () {
-                // 处理记录暴食冲动按钮点击事件
-              }),
-            ),
-
-          ],
+      appBar: AppBar(
+        title: Text('今日列表', style: TextStyle(color: Colors.black)),
+        backgroundColor: Color.fromARGB(255, 223, 221, 240),
+        elevation: 0,
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/background1.jpg'), // 替换为您的图片路径
+            fit: BoxFit.cover,
+          ),
         ),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              _buildSegmentedControl(),
+              Expanded(
+                child: showTasks ? _buildTaskListView(TaskDay0) : _buildDietListView(DietDay0),
+              ),
+            ],
+          ),
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: _buildFloatingActionButtons(),
+    );
+  }
+
+  Widget _buildSegmentedControl() {
+    ThemeData themeData = Theme.of(context);
+    Color taskColor = Color(0xFF9D9BE9);
+    Color dietColor = Color(0xFF6FCF97);
+
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 20.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _buildButton(
+            '今日任务',
+            onPressed: () => _toggleView(true),
+            color: showTasks ? taskColor : themeData.scaffoldBackgroundColor,
+            textColor: showTasks ? Colors.white : Colors.black,
+          ),
+          SizedBox(width: 10),
+          _buildButton(
+            '今日饮食',
+            onPressed: () => _toggleView(false),
+            color: showTasks ? themeData.scaffoldBackgroundColor : dietColor,
+            textColor: showTasks ? Colors.black : Colors.white,
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildButton(String text, {VoidCallback? onPressed, Color? color}) {
-    return Container(
-      width: 124.0,
+  Widget _buildButton(String text, {VoidCallback? onPressed, Color? color, Color? textColor}) {
+    return Expanded(
       child: ElevatedButton(
         onPressed: onPressed,
         child: Text(text),
         style: ElevatedButton.styleFrom(
           primary: color,
-          foregroundColor: Colors.black,
+          onPrimary: textColor,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(0.0)),
+            borderRadius: BorderRadius.circular(18.0),
           ),
+          padding: EdgeInsets.symmetric(vertical: 12),
+          textStyle: TextStyle(fontSize: 16),
         ),
       ),
     );
   }
-Widget _buildCircleButton(String text, {VoidCallback? onPressed}) {
-    return Container(
-      width: 90.0,
-      height: 80.0,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: Color.fromARGB(255, 146, 159, 255),
-      ),
-      child: Center(
-        child: Text(
-          text,
-          style: TextStyle(color: const Color.fromARGB(255, 0, 0, 0)),
+
+  Widget _buildFloatingActionButtons() {
+    Color taskColor = Color(0xFF9D9BE9);
+    Color dietColor = Color(0xFF6FCF97);
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        _buildCircleButton(
+          '饮食监控',
+          icon: Icons.health_and_safety,
+          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => DietMonitoringPage())),
+          color: taskColor,
         ),
-      ),
+        _buildCircleButton(
+          '记录暴食冲动',
+          icon: Icons.record_voice_over,
+          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => BingeEatingRecordPage())),
+          color: dietColor,
+        ),
+      ],
     );
   }
-  Widget _buildTaskListView(List<Task> tasks) {
-    return ListView.builder(
-      itemCount: tasks.length,
-      itemBuilder: (context, index) {
-        final task = tasks[index];
-        return ListTile(
+
+  Widget _buildCircleButton(String text, {VoidCallback? onPressed, IconData? icon, Color? color}) {
+    return FloatingActionButton.extended(
+      onPressed: onPressed,
+      label: Text(text),
+      icon: Icon(icon),
+      backgroundColor: color,
+    );
+  }
+
+ Widget _buildTaskListView(List<Task> tasks) {
+  return ListView.builder(
+    itemCount: tasks.length,
+    itemBuilder: (context, index) {
+      final task = tasks[index];
+      return Container(
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.7), // 半透明背景
+          borderRadius: BorderRadius.circular(10), // 可选的圆角
+        ),
+        margin: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0), // 添加一些边距
+        child: ListTile(
           title: Text('任务 ${index + 1}'),
           subtitle: Text(task.type == TaskType.CHATBOT ? '聊天机器人' : '问卷调查'),
           trailing: IconButton(
@@ -126,46 +151,40 @@ Widget _buildCircleButton(String text, {VoidCallback? onPressed}) {
           ),
           onTap: () {
             if (task.type == TaskType.CHATBOT) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ChatbotPage(contents: task.chatbotContent!),
-                ),
-              );
+              Navigator.push(context, MaterialPageRoute(builder: (context) => ChatbotPage(contents: task.chatbotContent!)));
             } else if (task.type == TaskType.SURVEY) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => SurveyPage(survey: task.survey!),
-                ),
-              );
+              Navigator.push(context, MaterialPageRoute(builder: (context) => SurveyPage(survey: task.survey!)));
             }
           },
-        );
-      },
-    );
-  }
+        ),
+      );
+    },
+  );
+}
+
 
   Widget _buildDietListView(List<Diet> diets) {
-    return ListView.builder(
-      itemCount: diets.length,
-      itemBuilder: (context, index) {
-        final diet = diets[index];
-        return ListTile(
+  return ListView.builder(
+    itemCount: diets.length,
+    itemBuilder: (context, index) {
+      final diet = diets[index];
+      return Container(
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.7), // 半透明背景
+          borderRadius: BorderRadius.circular(10), // 可选的圆角
+        ),
+        margin: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0), // 添加一些边距
+        child: ListTile(
           title: Text('饮食任务 ${index + 1}'),
           subtitle: Text(diet.type == DietType.FormalMeal ? '正餐' : '非正餐（小食）'),
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ChatbotPage(contents: diet.mealContent!),
-              ),
-            );
+            Navigator.push(context, MaterialPageRoute(builder: (context) => ChatbotPage(contents: diet.mealContent!)));
           },
-        );
-      },
-    );
-  }
+        ),
+      );
+    },
+  );
+}
 
   void _toggleView(bool showTaskView) {
     setState(() {
