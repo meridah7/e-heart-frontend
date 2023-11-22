@@ -1,0 +1,258 @@
+import 'package:flutter/material.dart';
+import 'task_contents.dart';
+import 'task_models.dart';
+import 'diet_contents.dart';
+import 'diet_models.dart';
+import 'chatbot_page.dart';
+import 'survey_page.dart';
+import 'main.dart';
+import 'dietary_analysis_page.dart';
+import 'dietary_reflection_page.dart';
+import 'global_setting.dart';
+
+class ReviewAnalysisPage extends StatefulWidget {
+  @override
+  _ReviewAnalysisPageState createState() => _ReviewAnalysisPageState();
+}
+
+class _ReviewAnalysisPageState extends State<ReviewAnalysisPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('分析反思',style:TextStyle(color: Colors.black)), // Text color changed to black
+        backgroundColor: themeColor, // AppBar color changed as specified
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 25.0),
+            _buildCustomButton(
+              title: '饮食监控',
+              subtitle: '查看饮食分析去了解自己的饮食模式哦！',
+              iconData: Icons.analytics,
+              onTap: _navigateToDietaryAnalysisPage,
+            ),
+            SizedBox(height: 25.0),
+            Padding(
+              padding: const EdgeInsets.only(left: 25.0), // 根据需要调整左边距
+              child: Text(
+                '饮食反思',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+            ),
+            _buildReflectionSection(),
+            SizedBox(height: 25.0),
+            Padding(
+              padding: const EdgeInsets.only(left: 25.0), // 根据需要调整左边距
+              child: Text(
+                '暴食应对',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+            ),
+            _buildBingeResponseSection(),
+            // ... Add other buttons if needed ...
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCustomButton({
+    required String title,
+    required String subtitle,
+    required IconData iconData,
+    required VoidCallback onTap,
+  }) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        // Increase the width slightly by reducing horizontal margin
+        margin: EdgeInsets.symmetric(
+            horizontal: screenWidth * 0.04, vertical: 10.0),
+        padding: EdgeInsets.symmetric(vertical: 15.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8.0),
+          color: Color(0xFF9D9BE9),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 2,
+              blurRadius: 4,
+              offset: Offset(0, 3),
+            ),
+          ],
+        ),
+        // Inside the _buildCustomButton method
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.0),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          title,
+                          style: TextStyle(color: Colors.white, fontSize: 18),
+                        ),
+                        SizedBox(width: 10.0),
+                        Icon(iconData, color: Colors.white, size: 24.0),
+                      ],
+                    ),
+                    SizedBox(
+                        height:
+                            5.0), // Add space between the title/icon row and the subtitle
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                          color: Colors.white.withOpacity(0.9), fontSize: 14),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _navigateToDietaryAnalysisPage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => DietaryAnalysisPage()),
+    );
+  }
+
+  Widget _buildReflectionSection() {
+    double screenWidth = MediaQuery.of(context).size.width;
+    return Container(
+      margin:
+          EdgeInsets.symmetric(horizontal: screenWidth * 0.04, vertical: 10.0),
+      padding: EdgeInsets.symmetric(vertical: 15.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.0),
+        boxShadow: [
+          BoxShadow(
+            color: const Color.fromARGB(255, 89, 87, 87).withOpacity(0.2),
+            spreadRadius: 2,
+            blurRadius: 4,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          //SizedBox(height: 20.0),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              // Inside your _buildReflectionSection method
+              _buildIconSection(
+                  Icons.restaurant_menu, '饮食监控', _navigateToDietMonitoring),
+              _buildIconSection(
+                  Icons.access_time, '规律饮食', _navigateToRegularDiet),
+              _buildIconSection(
+                  Icons.update, '暴食替代', _navigateToBingeSubstitution),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildIconSection(IconData icon, String label, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Icon(icon, size: 40, color: Colors.purple),
+          SizedBox(height: 8),
+          Text(
+            label,
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 14,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Add this method to your _ReviewAnalysisPageState class
+
+  Widget _buildBingeResponseSection() {
+    return Container(
+      margin: EdgeInsets.symmetric(
+          horizontal: MediaQuery.of(context).size.width * 0.04, vertical: 10.0),
+      padding: EdgeInsets.symmetric(vertical: 15.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.0),
+        boxShadow: [
+          BoxShadow(
+            color: const Color.fromARGB(255, 89, 87, 87).withOpacity(0.2),
+            spreadRadius: 2,
+            blurRadius: 4,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: 20.0),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _buildIconSection(Icons.lightbulb_outline, '我的暴食应对策略',
+                  _navigateToMyBingeEatingStrategy),
+              _buildIconSection(Icons.self_improvement, '正念饮食训练',
+                  _navigateToMindfulEatingTraining),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _navigateToDietMonitoring() {
+    //Navigator.push(context, MaterialPageRoute(builder: (context) => DietMonitoringPage()));
+  }
+
+  void _navigateToRegularDiet() {
+    // Navigate to the Regular Diet page
+  }
+
+  void _navigateToBingeSubstitution() {
+    // Navigate to the Binge Substitution page
+  }
+
+  void _navigateToMyBingeEatingStrategy() {
+    //Navigator.push(context, MaterialPageRoute(builder: (context) => MyBingeEatingStrategyPage()));
+  }
+
+  void _navigateToMindfulEatingTraining() {
+    //Navigator.push(context, MaterialPageRoute(builder: (context) => MindfulEatingTrainingPage()));
+  }
+
+// Rest of your _ReviewAnalysisPageState class...
+}

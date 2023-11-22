@@ -1,29 +1,27 @@
-//定义了任务的class
+//定义了饮食的class
 
 import 'package:namer_app/survey_models.dart';
 
 import 'chat_models.dart';
 
-enum TaskType {
-  CHATBOT,
-  SURVEY,
+enum DietType {
+  FormalMeal,
+  NonFormalMeal,
 }
 
 
-class Task {
+class Diet {
   final String id;
-  final TaskType type;
-   bool isCompleted;
+  final DietType type;
   final int day;
-  final List<Content>? chatbotContent;
+  final List<Content>? mealContent;
   final Survey? survey;
 
-  Task({
+  Diet({
     required this.id,
     required this.type,
-    required this.isCompleted,
     required this.day,
-    this.chatbotContent,
+    this.mealContent,
     this.survey,
   });
 }

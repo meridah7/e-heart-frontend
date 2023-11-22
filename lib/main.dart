@@ -1,8 +1,13 @@
 //这个文件是应用程序的入口文件，创建了一个具有底部导航栏的主界面。
-//应用程序包括三个页面：今日任务页面（TodayTaskPage）、回顾分析页面（ReviewAnalysisPage）和设置页面（SettingsPage）。
+//应用程序包括三个页面：今日列表页面（TodayListPage）、分析反思页面（ReviewAnalysisPage）和我的页面（MyPage）。
+import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
-import 'today_task_page.dart';
+import 'today_list_page.dart';
+import 'review_analysis_page.dart';
 import 'chat_models.dart';
+import 'my_page.dart';
+import 'dietary_analysis_page.dart'; 
+
 
 void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
@@ -26,38 +31,43 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
   static List<Widget> _widgetOptions = <Widget>[
-    TodayTaskPage(),
+    TodayListPage(),
     ReviewAnalysisPage(),
-    SettingsPage(),
+    MyPage(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('主界面'),
-      ),
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today),
-            label: ('今日任务'),
+            icon: Icon(Icons.list),
+            label: ('今日列表'),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.analytics),
-            label: ('回顾分析'),
+            icon: Icon(Icons.analytics_outlined),
+            label: ('分析反思'),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: ('设置'),
+            icon: Icon(Icons.home_outlined),
+            label: ('我的'),
           ),
         ],
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
       ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     // 点击按钮时调用 _navigateToDietaryAnalysisPage
+      //     _navigateToDietaryAnalysisPage();
+      //   },
+      //   tooltip: '饮食分析',
+      //   child: Icon(Icons.add),
+      // ),
     );
   }
 
@@ -66,29 +76,17 @@ class _MainScreenState extends State<MainScreen> {
       _selectedIndex = index;
     });
   }
-}
 
-class ReviewAnalysisPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        '回顾分析页面内容',
-        style: TextStyle(fontSize: 20),
+  // 新增的函数，处理按钮点击事件
+  void _navigateToDietaryAnalysisPage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => DietaryAnalysisPage(),
       ),
     );
   }
-}
+  
 
-class SettingsPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        '设置页面内容',
-        style: TextStyle(fontSize: 20),
-      ),
-    );
-  }
+  
 }
-
