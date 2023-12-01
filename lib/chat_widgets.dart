@@ -77,20 +77,21 @@ class _BubbleState extends State<Bubble> {
       margin: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
       padding: const EdgeInsets.all(10.0),
       decoration: BoxDecoration(
-        color: widget.isUser ? Colors.blue : Colors.green,
+        color: widget.isUser ? Color.fromARGB(255, 228, 206, 235) : Color(0xFF6FCF97),
         borderRadius: BorderRadius.circular(10),
       ),
       child: widget.imageUrl == null
           ? TypeWriterText(
               widget.text!,
-              style: TextStyle(color: Colors.white),
+              style: TextStyle(color: Colors.black),
               onComplete: widget.isUser ? null : widget.onComplete, // 根据isUser的值来决定是否传递onComplete
             )
-          : (_isImageLoaded
-              ? Image.asset(
-                  widget.imageUrl!,
-                )
-              : CircularProgressIndicator()),
+          : GestureDetector(
+              onTap: () => _showFullImage(context, widget.imageUrl!),
+              child: _isImageLoaded
+                  ? Image.asset(widget.imageUrl!)
+                  : CircularProgressIndicator(),
+            ),
     );
   }
 
@@ -108,4 +109,22 @@ class _BubbleState extends State<Bubble> {
       });
     }
   }
+
+   void _showFullImage(BuildContext context, String imageUrl) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return Dialog(
+        child: InteractiveViewer(
+          panEnabled: true, // 允许平移
+          boundaryMargin: EdgeInsets.zero, // 设置边界留白为零
+          minScale: 0.1, // 最小缩放比例
+          maxScale: 4.0, // 最大缩放比例，可以根据需要调整
+          child: Image.asset(imageUrl),
+        ),
+      );
+    },
+  );
+}
+
 }

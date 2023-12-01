@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:namer_app/global_setting.dart';
-import 'reccord_success_page.dart';
+import 'record_success_page.dart';
 
 class MonitoringContentCard extends StatefulWidget {
   @override
@@ -16,6 +16,7 @@ class _MonitoringContentCardState extends State<MonitoringContentCard> {
 
   bool _hasPurgingBehavior = false;
   Map<String, bool> _purgingMethods = {
+    '没有进行过食物消除': false,
     '服用利尿剂': false,
     '服用泻药': false,
     '催吐': false,
@@ -33,39 +34,92 @@ class _MonitoringContentCardState extends State<MonitoringContentCard> {
     '焦虑': false,
     '兴奋': false,
     '难过': false,
-    '疲劳': false,
+    '愉悦': false,
+    // 可以添加更多感受
   };
+
+  Map<String, bool> morefeelings = {
+    '焦虑': false,
+    '兴奋': false,
+    '难过': false,
+    '疲劳': false,
+    '满足感': false,
+    '愧疚': false,
+    '沮丧': false,
+    '平静': false,
+    '焦躁': false,
+    // 可以添加更多感受
+  };
+
   TextEditingController _otherFeelingsController = TextEditingController();
+  String? _primaryLocationChoice;
+  String? _secondaryLocationChoice;
+  
+  Map<String, List<String>> _locationOptions = {
+    '家': ['餐桌旁', '书桌旁'],
+    '学校': ['玉树园', "观畴园", "听涛园","紫荆园"],
+  
+  };
 
   Widget _buildSubmitButton() {
-    return Center(
-      child: ElevatedButton(
-        onPressed: () {
-          // 打印逻辑
-          print('选项结果：');
-          print('暴食程度: ${_bingeEatingLevel.toStringAsFixed(0)}');
-          // 打印其他所有选项...
+  return Center(
+    child: ElevatedButton(
+      onPressed: () {
+        // 打印逻辑
+        print('选项结果：');
+        print('1. 在这个时间里你吃了什么？');
+        _controllers.forEach((controller) {
+          print('   - ${controller.text}');
+        });
+        print('2. 你在哪里吃的呢？');
+        print('   - 主要地点: $_primaryLocationChoice');
+        if (_secondaryLocationChoice != null) {
+          print('   - 二级地点: $_secondaryLocationChoice');
+        }
+        print('3. 你这次进食的总体心情如何？');
+        print('   - ${_moodSliderLabel(_moodSliderValue)}');
+        print('4. 你在进食中感受到了什么？');
+        feelings.forEach((key, value) {
+          if (value) {
+            print('   - $key');
+          }
+        });
+        print('   - 其他感受: ${_otherFeelingsController.text}');
+        print('5. 你是否暴食了呢？');
+        print('   - ${_bingeEatingLevelText(_bingeEatingLevel)}');
+        print('6. 你认为诱因是什么？');
+        print('   - ${_bingeEatingCauseController.text}');
+        print('7. 你是否有清除食物的行为？');
+        _purgingMethods.forEach((key, value) {
+          if (value) {
+            print('   - $key');
+          }
+        });
+        print('   - 其他方式: ${_otherPurgingController.text}');
+        print('8. 还有什么其他想法？');
+        print('   - ${_otherThoughtsController.text}');
 
-          // 页面跳转逻辑
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => RecordSuccessPage()),
-          );
-        },
-        child: Text('提交'),
-        style: ElevatedButton.styleFrom(
-          primary: Colors.deepPurple,
-          shape: StadiumBorder(),
-          padding: EdgeInsets.symmetric(horizontal: 80, vertical: 16),
-        ),
+        // 页面跳转逻辑
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => RecordSuccessPage()),
+        );
+      },
+      child: Text('提交'),
+      style: ElevatedButton.styleFrom(
+        primary: Colors.deepPurple,
+        shape: StadiumBorder(),
+        padding: EdgeInsets.symmetric(horizontal: 80, vertical: 16),
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('饮食监控',style:TextStyle(color: Colors.black)),
+        title: Text('饮食监控', style: TextStyle(color: Colors.black)),
         backgroundColor: themeColor, // Change this to match your theme color
       ),
       body: SingleChildScrollView(
@@ -124,37 +178,55 @@ class _MonitoringContentCardState extends State<MonitoringContentCard> {
                 '2.你在哪里吃的呢？',
                 '选择你这次进食的所在之处。若没有对应选项，请于下方手动填写。若在进食过程中移动了位置，请填写进食时间最长的地点。',
                 child: Column(
-                  children: [
-                    RadioListTile<String>(
-                      title: Text('家'),
-                      value: '家',
-                      groupValue: _eatingLocationChoice,
-                      onChanged: (value) {
-                        setState(() {
-                          _eatingLocationChoice = value!;
-                          _customEatingLocationController.clear();
-                        });
-                      },
-                    ),
-                    RadioListTile<String>(
-                      title: Text('餐桌旁'),
-                      value: '餐桌旁',
-                      groupValue: _eatingLocationChoice,
-                      onChanged: (value) {
-                        setState(() {
-                          _eatingLocationChoice = value!;
-                          _customEatingLocationController.clear();
-                        });
-                      },
-                    ),
-                    TextField(
-                      controller: _customEatingLocationController,
-                      decoration: InputDecoration(
-                        hintText: '其他',
-                        border: OutlineInputBorder(),
+                  children: _locationOptions.keys
+                      .map<Widget>((String primaryLocation) {
+                    List<Widget> widgets = [];
+                    // 添加一级菜单
+                    widgets.add(
+                      RadioListTile<String>(
+                        title: Text(primaryLocation),
+                        value: primaryLocation,
+                        groupValue: _primaryLocationChoice,
+                        onChanged: (value) {
+                          setState(() {
+                            _primaryLocationChoice = value;
+                            _secondaryLocationChoice = null; // 重置二级选项
+                          });
+                        },
                       ),
-                    )
-                  ],
+                    );
+
+                    // 如果选中了一级菜单，添加对应的二级菜单
+                    if (_primaryLocationChoice == primaryLocation &&
+                        _locationOptions.containsKey(primaryLocation)) {
+                      // 在一级和二级菜单之间添加间隔
+                      widgets.add(SizedBox(height: 8));
+
+                      widgets.addAll(
+                        _locationOptions[primaryLocation]!
+                            .map<Widget>((String secondaryLocation) {
+                          return RadioListTile<String>(
+                            title: Text('     $secondaryLocation'), // 二级选项缩进显示
+                            value: secondaryLocation,
+                            groupValue: _secondaryLocationChoice,
+                            onChanged: (value) {
+                              setState(() {
+                                _secondaryLocationChoice = value;
+                              });
+                            },
+
+                          );
+                        }).toList(),
+                      );
+                      
+                    }
+
+                    
+
+
+
+                    return Column(children: widgets);
+                  }).toList(),
                 ),
               ),
 
@@ -164,14 +236,10 @@ class _MonitoringContentCardState extends State<MonitoringContentCard> {
                 '滑动滑块选择你的心情。',
                 child: Slider(
                   value: _moodSliderValue,
-                  min: 0,
-                  max: 2,
-                  divisions: 2,
-                  label: _moodSliderValue == 0
-                      ? '很不开心'
-                      : _moodSliderValue == 1
-                          ? '一般'
-                          : '很开心',
+                  min: 1,
+                  max: 7,
+                  divisions: 6,
+                  label: _moodSliderLabel(_moodSliderValue),
                   onChanged: (newValue) {
                     setState(() {
                       _moodSliderValue = newValue;
@@ -183,7 +251,7 @@ class _MonitoringContentCardState extends State<MonitoringContentCard> {
               // Question 4 - Feelings Checkbox
 
               _buildQuestionCard(
-                '4.你在进食中感受到了什么',
+                '4.你在进食中感受到了什么？',
                 '请选择所有适用的感受。',
                 child: Column(
                   children: [
@@ -198,11 +266,15 @@ class _MonitoringContentCardState extends State<MonitoringContentCard> {
                         },
                       );
                     }).toList(),
-                    TextField(
-                      controller: _otherFeelingsController,
-                      decoration: InputDecoration(
-                        hintText: '更多（自定义）',
-                        border: OutlineInputBorder(),
+                    SizedBox(height: 10),
+                    ElevatedButton(
+                      onPressed: _showFeelingSelectionDialog,
+                      child: Text('更多感受'),
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.lightBlue,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18),
+                        ),
                       ),
                     ),
                   ],
@@ -251,38 +323,10 @@ class _MonitoringContentCardState extends State<MonitoringContentCard> {
                   ],
                 ),
               ),
-              _buildQuestionCard(
-                '7. 你是否有清除食物的行为 ?',
-                '清除食物指的是催吐，服用泻药，服用利尿剂，服用减少消化吸收的其他药品以及其他相似的行为',
-                child: Column(
-                  children: [
-                    RadioListTile<bool>(
-                      title: Text('是'),
-                      value: true,
-                      groupValue: _hasPurgingBehavior,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          _hasPurgingBehavior = value!;
-                        });
-                      },
-                    ),
-                    RadioListTile<bool>(
-                      title: Text('否'),
-                      value: false,
-                      groupValue: _hasPurgingBehavior,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          _hasPurgingBehavior = value!;
-                        });
-                      },
-                    ),
-                  ],
-                ),
-              ),
 
               _buildQuestionCard(
-                '8. 你是如何清除的？',
-                '请选择你使用过的方法。',
+                '7. 你是否有清除食物的行为? 如果你使用过食物清除，你是如何清除的？',
+                '清除食物指的是催吐，服用泻药，服用利尿剂，服用减少消化吸收的其他药品以及其他相似的行为',
                 child: Column(
                   children: [
                     ..._purgingMethods.keys.map((String method) {
@@ -291,27 +335,41 @@ class _MonitoringContentCardState extends State<MonitoringContentCard> {
                         value: _purgingMethods[method],
                         onChanged: (bool? value) {
                           setState(() {
-                            _purgingMethods[method] = value!;
+                            if (method == '没有进行过食物消除') {
+                              if (value == true) {
+                                // 如果选择了没有进行过食物消除，禁用其他所有选项
+                                _purgingMethods.forEach((key, _) =>
+                                    _purgingMethods[key] = key == method);
+                              }
+                            } else {
+                              if (value == true) {
+                                // 如果选择了其他选项，设置没有进行过食物消除为 false
+                                _purgingMethods['没有进行过食物消除'] = false;
+                              }
+                              _purgingMethods[method] = value!;
+                            }
                           });
                         },
                       );
                     }).toList(),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: TextField(
-                        controller: _otherPurgingController,
-                        decoration: InputDecoration(
-                          hintText: '其他',
-                          border: OutlineInputBorder(),
+                    if (_purgingMethods['没有进行过食物消除'] ==
+                        false) // 仅当没有选择“没有进行过食物消除”时，显示其他输入框
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: TextField(
+                          controller: _otherPurgingController,
+                          decoration: InputDecoration(
+                            hintText: '其他',
+                            border: OutlineInputBorder(),
+                          ),
                         ),
                       ),
-                    ),
                   ],
                 ),
               ),
 
               _buildQuestionCard(
-                '还有什么其他想法?',
+                '8.还有什么其他想法?',
                 '记录任何可能会影响你这次饮食的东西，不管是你的纠结，想法还是情绪都可以。努力拿一些!这块的记录往往会在之后成为你改善暴食的奇招!',
                 child: TextField(
                   controller: _otherThoughtsController,
@@ -347,6 +405,67 @@ class _MonitoringContentCardState extends State<MonitoringContentCard> {
       default:
         return '';
     }
+  }
+  String _moodSliderLabel(double value) {
+  switch (value.round()) {
+    case 1:
+      return '很不开心';
+    case 2:
+      return '不太开心';
+    case 3:
+      return '不太开心';
+    case 4:
+      return '一般';
+    case 5:
+      return '较开心';
+    case 6:
+      return '较开心';
+    case 7:
+      return '很开心';
+    default:
+      return '心情${value.round()}';
+  }
+}
+
+  void _showFeelingSelectionDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('选择更多感受'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: morefeelings.keys.map((String key) {
+                return CheckboxListTile(
+                  title: Text(key),
+                  value: morefeelings[key],
+                  onChanged: (bool? value) {
+                    setState(() {
+                      morefeelings[key] = value!;
+                    });
+                  },
+                );
+              }).toList(),
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('关闭'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('提交'),
+              onPressed: () {
+                // 可以在这里添加保存逻辑
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Card _buildQuestionCard(String question, String description,

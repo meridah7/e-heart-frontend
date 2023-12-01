@@ -10,19 +10,21 @@ import 'survey_models.dart';
 List<Task>TaskDay0 = [task1,task2, task3];
 
 Task task1 = Task(
+  title: "认识暴食",
   id: 'task1',
   type: TaskType.CHATBOT,
   isCompleted: false,
   day: 0,
-  chatbotContent: chatbotContent1,
+  chatbotContent: chatbotContent2,
 );
 
 Task task2 = Task(
+  title: "饮食日志教学",
   id: 'task2',
   type: TaskType.CHATBOT,
   isCompleted: false,
   day: 0,
-  chatbotContent: chatbotContent2,
+  chatbotContent: chatbotContent1,
 );
 
 
@@ -62,6 +64,7 @@ var sampleSurvey = Survey('1111 Survey', [question1, question2, question3]);
 
 // Define the task
 Task task3 = Task(
+  title: "改变准备",
   id: 'task3',
   type: TaskType.SURVEY,
   isCompleted: false,

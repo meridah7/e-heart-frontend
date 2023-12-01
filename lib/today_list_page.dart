@@ -21,7 +21,7 @@ class _TodayListPageState extends State<TodayListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('今日列表', style: TextStyle(color: Colors.black)),
+        title: Text('Day0', style: TextStyle(color: Colors.black)),
         backgroundColor: Color.fromARGB(255, 223, 221, 240),
         elevation: 0,
       ),
@@ -139,7 +139,7 @@ class _TodayListPageState extends State<TodayListPage> {
         ),
         margin: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0), // 添加一些边距
         child: ListTile(
-          title: Text('任务 ${index + 1}'),
+          title: Text(task.title),
           subtitle: Text(task.type == TaskType.CHATBOT ? '聊天机器人' : '问卷调查'),
           trailing: IconButton(
             icon: Icon(task.isCompleted ? Icons.check_box : Icons.check_box_outline_blank),
@@ -175,8 +175,8 @@ class _TodayListPageState extends State<TodayListPage> {
         ),
         margin: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0), // 添加一些边距
         child: ListTile(
-          title: Text('饮食任务 ${index + 1}'),
-          subtitle: Text(diet.type == DietType.FormalMeal ? '正餐' : '非正餐（小食）'),
+          title: Text(diet.food),
+          subtitle: Text(diet.type),
           onTap: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) => ChatbotPage(contents: diet.mealContent!)));
           },

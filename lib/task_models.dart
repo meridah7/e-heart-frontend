@@ -11,6 +11,7 @@ enum TaskType {
 
 
 class Task {
+  final String title;
   final String id;
   final TaskType type;
    bool isCompleted;
@@ -19,6 +20,7 @@ class Task {
   final Survey? survey;
 
   Task({
+    required this.title,
     required this.id,
     required this.type,
     required this.isCompleted,

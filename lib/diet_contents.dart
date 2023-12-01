@@ -7,22 +7,40 @@ import 'diet_models.dart';
 import 'survey_models.dart';
 
 
-List<Diet>DietDay0 = [diet1,diet2, diet3];
+List<Diet>DietDay0 = [diet1,diet2, diet3, diet4];
 
 Diet diet1 = Diet(
+  food: "一份肠粉，一份豆浆",
   id: 'Breakfast',
-  type: DietType.FormalMeal,
+  type: "早餐",
   day: 0,
   mealContent: mealContent1,
 );
 
+
 Diet diet2 = Diet(
+  food: " 一盘回锅肉，一碗米饭",
   id: 'Lunch',
-  type: DietType.FormalMeal,
+  type: "午餐",
   day: 0,
   mealContent: mealContent2,
 );
 
+Diet diet3 = Diet(
+  food: "一杯酸奶",
+  id: 'afternoontea',
+  type: "下午茶",
+  day: 0,
+  mealContent: mealContent2,
+);
+
+Diet diet4 = Diet(
+  food: "一份凯撒沙拉，一杯果汁",
+  id: 'Dinner',
+  type: "晚餐",
+  day: 0,
+  mealContent: mealContent2,
+);
 
 
 // Day 0
@@ -39,10 +57,3 @@ final List<Content> mealContent5 = [
   Content(text: '欢迎回顾！你今天吃的下午茶是....', type: ContentType.TEXT, responseType: ResponseType.auto),
 ];
 
-// Define the diet
-Diet diet3 = Diet(
-  id: 'afternoon tea',
-  type: DietType.NonFormalMeal,
-  day: 0,
-  mealContent: mealContent5,
-);
