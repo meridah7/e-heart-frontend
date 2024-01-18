@@ -4,7 +4,7 @@
 
 import 'chat_models.dart';
 import 'diet_models.dart';
-import 'survey_models.dart';
+import 'Survey/survey_models.dart';
 
 
 List<Diet>DietDay0 = [diet1,diet2, diet3, diet4];

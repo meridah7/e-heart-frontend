@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'today_list_page.dart';
 import 'review_analysis_page.dart';
 import 'chat_models.dart';
-import 'my_page.dart';
-import 'dietary_analysis_page.dart'; 
-
+import 'MyPage/my_page.dart';
+import 'DietaryAnalysis/dietary_analysis_page.dart'; 
+import 'DAO/database_helper.dart';
 
 void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
@@ -15,9 +15,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: '主界面',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
       home: MainScreen(),
     );
   }
@@ -33,7 +30,7 @@ class _MainScreenState extends State<MainScreen> {
   static List<Widget> _widgetOptions = <Widget>[
     TodayListPage(),
     ReviewAnalysisPage(),
-    MyPage(),
+    MyPage(), 
   ];
 
   @override
@@ -60,14 +57,6 @@ class _MainScreenState extends State<MainScreen> {
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     // 点击按钮时调用 _navigateToDietaryAnalysisPage
-      //     _navigateToDietaryAnalysisPage();
-      //   },
-      //   tooltip: '饮食分析',
-      //   child: Icon(Icons.add),
-      // ),
     );
   }
 
@@ -85,6 +74,26 @@ class _MainScreenState extends State<MainScreen> {
         builder: (context) => DietaryAnalysisPage(),
       ),
     );
+  }
+
+
+  @override
+  void initState() {
+    super.initState();
+    // sqfliteFfiInit();
+    // _createRootUserIfNeeded();
+  }
+
+  void _createRootUserIfNeeded() async {
+    print("debug!!");
+    var dbHelper = await DatabaseHelper.createInstance();
+    dbHelper.createUserTable();
+    // final List<Map<String, Object?>> users = await getUsers(db); // 使用 await 等待 Future 完成
+    // if (users.isEmpty) {
+    //   print("创建root");
+    //   // 如果没有用户，创建 root user
+    //   insertUser(db, "root", 0); // 假设 root 用户的 age 是 0
+    // }
   }
   
 

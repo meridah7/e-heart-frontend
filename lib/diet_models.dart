@@ -1,6 +1,6 @@
 //定义了饮食的class
 
-import 'package:namer_app/survey_models.dart';
+import 'package:namer_app/Survey/survey_models.dart';
 
 import 'chat_models.dart';
 

@@ -1,6 +1,6 @@
 //定义了任务的class
 
-import 'package:namer_app/survey_models.dart';
+import 'package:namer_app/Survey/survey_models.dart';
 
 import 'chat_models.dart';
 
@@ -14,7 +14,7 @@ class Task {
   final String title;
   final String id;
   final TaskType type;
-   bool isCompleted;
+  bool isCompleted;
   final int day;
   final List<Content>? chatbotContent;
   final Survey? survey;
