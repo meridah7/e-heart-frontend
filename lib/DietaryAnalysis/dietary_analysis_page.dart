@@ -6,6 +6,8 @@ import 'daily.dart' as daily;
 import 'models.dart';
 
 
+
+
 class DietaryAnalysisPage extends StatefulWidget {
   @override
   _DietaryAnalysisPageState createState() => _DietaryAnalysisPageState();
@@ -30,7 +32,7 @@ class _DietaryAnalysisPageState extends State<DietaryAnalysisPage> with SingleTi
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('饮食分析', style:TextStyle(color: Colors.black)),
+        title: Text('Diet Analysis ', style:TextStyle(color: Colors.black)),
         backgroundColor: themeColor,
         bottom: TabBar(
           controller: _tabController,
@@ -41,8 +43,8 @@ class _DietaryAnalysisPageState extends State<DietaryAnalysisPage> with SingleTi
             borderRadius: BorderRadius.circular(10), // 标签圆角
           ),
           tabs: [
-            Tab(text: '每周'),
-            Tab(text: '每月'),
+            Tab(text: 'Weeks'),
+            Tab(text: 'Months'),
           ],
         ),
       ),
@@ -127,7 +129,7 @@ class _WeeklyViewState extends State<WeeklyView> {
   @override
   Widget build(BuildContext context) {
     List<BingeEatingWeeklyData> bingeData = [
-      BingeEatingWeeklyData("周一", 3),
+      BingeEatingWeeklyData("Monday", 3),
       BingeEatingWeeklyData("周二", 2),
       BingeEatingWeeklyData("周三", 5),
       BingeEatingWeeklyData("周四", 1),

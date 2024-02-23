@@ -7,41 +7,39 @@ import 'diet_models.dart';
 import 'Survey/survey_models.dart';
 
 
-List<Diet>DietDay0 = [diet1,diet2, diet3, diet4];
+List<Diet>DietDay0 = [diet1,];
 
 Diet diet1 = Diet(
-  food: "一份肠粉，一份豆浆",
-  id: 'Breakfast',
+  food: "一份肠粉",
+  id: '早餐',
   type: "早餐",
   day: 0,
   mealContent: mealContent1,
 );
 
+// Diet diet2 = Diet(
+//   food: "One plate of twice-cooked pork, one bowl of rice",
+//   id: 'Lunch',
+//   type: "Lunch",
+//   day: 0,
+//   mealContent: mealContent2,
+// );
 
-Diet diet2 = Diet(
-  food: " 一盘回锅肉，一碗米饭",
-  id: 'Lunch',
-  type: "午餐",
-  day: 0,
-  mealContent: mealContent2,
-);
+// Diet diet3 = Diet(
+//   food: "One cup of yogurt",
+//   id: 'afternoontea',
+//   type: "Afternoon Tea",
+//   day: 0,
+//   mealContent: mealContent2,
+// );
 
-Diet diet3 = Diet(
-  food: "一杯酸奶",
-  id: 'afternoontea',
-  type: "下午茶",
-  day: 0,
-  mealContent: mealContent2,
-);
-
-Diet diet4 = Diet(
-  food: "一份凯撒沙拉，一杯果汁",
-  id: 'Dinner',
-  type: "晚餐",
-  day: 0,
-  mealContent: mealContent2,
-);
-
+// Diet diet4 = Diet(
+//   food: "One Caesar salad, one glass of juice",
+//   id: 'Dinner',
+//   type: "Dinner",
+//   day: 0,
+//   mealContent: mealContent2,
+// );
 
 // Day 0
 List<Content> mealContent1 = [

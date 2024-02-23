@@ -7,7 +7,7 @@ class RecordSuccessPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('记录成功'),
+        title: Text('Record Successful'),
         backgroundColor: themeColor,
       ),
       body: Center(
@@ -15,16 +15,16 @@ class RecordSuccessPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              '记录成功！',
+              'Record Successful!',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                // 使用 Navigator 返回主页，这里假设主页是 "/" 路由
+                // Use Navigator to return to the home page, assuming the home page is "/" route
                 Navigator.of(context).popUntil((route) => route.isFirst);
               },
-              child: Text('返回主页'),
+              child: Text('Return to Home'),
               style: ElevatedButton.styleFrom(
                 primary: Colors.white,
                 onPrimary: Colors.black,
@@ -38,10 +38,10 @@ class RecordSuccessPage extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => RecordReportPage()),
                 );
               },
-              child: Text('查看本次饮食监控报告'),
+              child: Text('View Diet Monitoring Report'),
               style: ElevatedButton.styleFrom(
-                primary: Color(0xFF9D9BE9), // 使用应用的主题色
-                onPrimary: Colors.white, // 白色文字
+                primary: Color(0xFF9D9BE9), // Use the app's theme color
+                onPrimary: Colors.white, // White text
               ),
             ),
           ],

@@ -6,15 +6,15 @@
 
   Question(this.questionText, {this.description});
 
-  
 }
 
 class SingleChoiceQuestion extends Question {
   final List<String> options;
   String? selectedOption;
-  Map<String, Question> subQuestions; // 新增属性：存储二级问题的映射
+  Map<String, List<Question>> subQuestions; // Change to a map of lists
 
-  SingleChoiceQuestion(String questionText, this.options, this.subQuestions, {String? description}) :  super(questionText, description: description);
+  SingleChoiceQuestion(String questionText, this.options, this.subQuestions, {String? description})
+      : super(questionText, description: description);
 
   void answer(String option) {
     if (options.contains(option)) {
@@ -24,7 +24,7 @@ class SingleChoiceQuestion extends Question {
     }
   }
 
-  Question? getSubQuestion() {
+  List<Question>? getSubQuestions() {
     if (selectedOption != null) {
       return subQuestions[selectedOption!];
     }
@@ -37,32 +37,36 @@ class SingleChoiceQuestion extends Question {
 class MultipleChoiceQuestion extends Question {
   final List<String> options;
   List<String> selectedOptions = [];
-  Map<String, Question> subQuestions; // 存储二级问题的映射
-  Map<String, bool>? additionalOptions; // 将additionalOptions设置为可空类型
+  Map<String, List<Question>> subQuestions; // Map each option to a list of Questions
+  Map<String, bool>? additionalOptions; // Optional additional options
 
- MultipleChoiceQuestion(String questionText, this.options, this.subQuestions, {Map<String, bool>? additionalOptions, String? description})
-    : additionalOptions = additionalOptions ?? {}, // 设置默认值
-      super(questionText, description: description);
-
+  MultipleChoiceQuestion(String questionText, this.options, this.subQuestions, {this.additionalOptions, String? description})
+      : super(questionText, description: description);
 
   bool isSelected(String option) => selectedOptions.contains(option);
 
-  // 新增方法，用于处理额外选项的选择状态
   void selectAdditionalOption(String option, bool isSelected) {
-     additionalOptions?[option] = isSelected;
+    if (additionalOptions != null) {
+      additionalOptions![option] = isSelected;
+    }
   }
 
-  // 其他必要的方法...
+  List<Question>? getSubQuestionsForOption(String option) {
+    return subQuestions[option];
+  }
+
+  // Other necessary methods...
 }
 
 
+
 class TextQuestion extends Question {
-  List<String> answers; // 存储多个答案的列表
-  bool canAddMore; // 判断是否可以增加更多选项的布尔值
+  List<String> answers; // Assuming a list of answers
+  bool canAddMore;
 
   TextQuestion(String questionText, this.canAddMore, {String? description})
-      : answers = [''],
-         super(questionText, description: description);
+      : answers = [''], // Initialize with an empty string
+        super(questionText, description: description);
   
   void addAnswer(String answer) {
     if (canAddMore) {
@@ -175,3 +179,62 @@ class SliderQuestion extends Question {
     String? description,
   }) : super(questionText, description: description);
 }
+
+
+
+class ChartData {
+  final String category;
+  final int value;
+
+  ChartData(this.category, this.value);
+}
+
+enum QuestionType { SingleChoice, MultipleChoice, Text, None }
+
+class ChartQuestion extends Question {
+  final List<ChartData> chartData;
+  final QuestionType questionType;
+  final List<String> options;
+  String? selectedOption;
+  List<String> selectedOptions = [];
+  String? answerText;
+
+  ChartQuestion(String questionText, this.chartData, this.questionType, this.options, {String? description})
+      : super(questionText, description: description);
+
+  void answer(String option) {
+    if (questionType == QuestionType.SingleChoice && options.contains(option)) {
+      selectedOption = option;
+    } else if (questionType == QuestionType.MultipleChoice && options.contains(option)) {
+      if (selectedOptions.contains(option)) {
+        selectedOptions.remove(option);
+      } else {
+        selectedOptions.add(option);
+      }
+    } else if (questionType == QuestionType.Text) {
+      answerText = option;
+    }
+    // 对于 QuestionType.None，不需要执行任何操作
+  }
+}
+
+
+class PriorityQuestion extends Question {
+  final List<String> options;
+  List<String> selectedOptions = []; // 用户选中的选项，按点击顺序排序
+
+  PriorityQuestion(String questionText, this.options, {String? description})
+      : super(questionText, description: description);
+
+  void selectOption(String option) {
+    if (!selectedOptions.contains(option)) {
+      selectedOptions.add(option); // 添加新选中的选项
+    } else {
+      selectedOptions.remove(option); // 如果已选中，则取消选中
+    }
+  }
+
+  // 获取用户选中的选项，按点击顺序
+  List<String> getSelectedOptions() => selectedOptions;
+}
+

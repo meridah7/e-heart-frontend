@@ -7,16 +7,28 @@ class TitleText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
-        color: Colors.black,
+    List<String> parts = text.split('/'); // 以斜线分隔文本
+    List<TextSpan> textSpans = parts.asMap().entries.map((entry) {
+      int index = entry.key;
+      String part = entry.value;
+      String displayText = index < parts.length - 1 ? "$part\n" : part; // 仅为最后一个片段之前的片段添加换行符
+      return TextSpan(
+        text: displayText,
+        style: TextStyle(
+          fontSize: 20,
+          color: Colors.black,
+        ),
+      );
+    }).toList();
+
+    return RichText(
+      text: TextSpan(
+        children: textSpans,
       ),
     );
   }
 }
+
 
 class DescriptionText extends StatelessWidget {
   final String text;

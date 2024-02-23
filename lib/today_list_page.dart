@@ -109,7 +109,7 @@ class _TodayListPageState extends State<TodayListPage> {
           color: taskColor,
         ),
         _buildCircleButton(
-          '记录暴食冲动',
+          '冲动记录',
           icon: Icons.record_voice_over,
           onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => BingeEatingRecordPage())),
           color: dietColor,
@@ -140,7 +140,7 @@ class _TodayListPageState extends State<TodayListPage> {
         margin: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0), // 添加一些边距
         child: ListTile(
           title: Text(task.title),
-          subtitle: Text(task.type == TaskType.CHATBOT ? '聊天机器人' : '问卷调查'),
+          subtitle: Text(task.type == TaskType.CHATBOT ? 'Chatbot' : 'Survey'),
           trailing: IconButton(
             icon: Icon(task.isCompleted ? Icons.check_box : Icons.check_box_outline_blank),
             onPressed: () {
