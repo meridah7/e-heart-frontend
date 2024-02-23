@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:namer_app/diet_models.dart';
-import 'task_contents.dart';
+import 'Survey/task_contents.dart';
 import 'task_models.dart';
 import 'diet_contents.dart';
 import 'diet_models.dart';
 import 'chatbot_page.dart';
-import 'survey_page.dart';
+import 'Survey/survey_page.dart';
 import 'diet_monitoring/diet_monitoring_page.dart';
 import 'binge_eating_record_page.dart';
 
@@ -21,7 +21,7 @@ class _TodayListPageState extends State<TodayListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('今日列表', style: TextStyle(color: Colors.black)),
+        title: Text('Day0', style: TextStyle(color: Colors.black)),
         backgroundColor: Color.fromARGB(255, 223, 221, 240),
         elevation: 0,
       ),
@@ -109,7 +109,7 @@ class _TodayListPageState extends State<TodayListPage> {
           color: taskColor,
         ),
         _buildCircleButton(
-          '记录暴食冲动',
+          '冲动记录',
           icon: Icons.record_voice_over,
           onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => BingeEatingRecordPage())),
           color: dietColor,
@@ -139,8 +139,8 @@ class _TodayListPageState extends State<TodayListPage> {
         ),
         margin: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0), // 添加一些边距
         child: ListTile(
-          title: Text('任务 ${index + 1}'),
-          subtitle: Text(task.type == TaskType.CHATBOT ? '聊天机器人' : '问卷调查'),
+          title: Text(task.title),
+          subtitle: Text(task.type == TaskType.CHATBOT ? 'Chatbot' : 'Survey'),
           trailing: IconButton(
             icon: Icon(task.isCompleted ? Icons.check_box : Icons.check_box_outline_blank),
             onPressed: () {
@@ -175,8 +175,8 @@ class _TodayListPageState extends State<TodayListPage> {
         ),
         margin: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0), // 添加一些边距
         child: ListTile(
-          title: Text('饮食任务 ${index + 1}'),
-          subtitle: Text(diet.type == DietType.FormalMeal ? '正餐' : '非正餐（小食）'),
+          title: Text(diet.food),
+          subtitle: Text(diet.type),
           onTap: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) => ChatbotPage(contents: diet.mealContent!)));
           },

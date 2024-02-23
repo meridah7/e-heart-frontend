@@ -19,12 +19,12 @@ class _WelcomeRecordCardState extends State<WelcomeRecordCard> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text('欢迎记录', style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold)),
+          Text('Welcome to Record', style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold)),
           SizedBox(height: 10),
-          Text('你想要记录的时间是', style: TextStyle(fontSize: 14, color: Colors.grey)),
+          Text('The time you want to record is', style: TextStyle(fontSize: 14, color: Colors.grey)),
           SizedBox(height: 20),
-          Text( // Display the static date here
-            '${_selectedDateTime.year}年${_selectedDateTime.month}月${_selectedDateTime.day}日',
+          Text(
+            '${_selectedDateTime.year}-${_selectedDateTime.month}-${_selectedDateTime.day}',
             style: TextStyle(fontSize: 20),
           ),
           SizedBox(height: 50),
@@ -44,11 +44,10 @@ class _WelcomeRecordCardState extends State<WelcomeRecordCard> {
           SizedBox(height: 50),
           ElevatedButton(
             onPressed: () {
-              //widget.onStartPressed(); // Trigger the provided onStartPressed callback
               // Navigate to the next page if necessary
               Navigator.of(context).push(MaterialPageRoute(builder: (_) => MonitoringContentCard()));
             },
-            child: Text('开始'),
+            child: Text('Start'),
             style: ElevatedButton.styleFrom(
               primary: Color(0xFF9D9BE9),
               padding: EdgeInsets.symmetric(horizontal: 80, vertical: 16),
@@ -65,4 +64,3 @@ class _WelcomeRecordCardState extends State<WelcomeRecordCard> {
 }
 
 // ... Rest of your code, including the MyApp and DietMonitoringPage classes ...
-

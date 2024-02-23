@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:namer_app/Survey/survey_models.dart'; // Adjust import path as necessary
+import 'package:namer_app/Survey/survey_page.dart'; // Assuming SurveyPage can be reused or adapted
 
 class BingeEatingRecordPage extends StatefulWidget {
   @override
@@ -6,56 +8,49 @@ class BingeEatingRecordPage extends StatefulWidget {
 }
 
 class _BingeEatingRecordPageState extends State<BingeEatingRecordPage> {
-  DateTime selectedDate = DateTime.now();
-  TextEditingController _controller = TextEditingController();
+  // Assume we have a survey object for binge eating records
+  var impulseRecordingSurvey = Survey(
+  '冲动记录',
+  [
+     SingleChoiceQuestion(
+      '你这次冲动属于',
+      ['A. 暴食冲动', 'B. 清除食物的冲动'],
+      {
+        'A. 暴食冲动': [], // Optionally, add sub-questions for 'A. 暴食冲动' if needed
+        'B. 清除食物的冲动': [
+          MultipleChoiceQuestion(
+            '选择',
+            ['催吐', '服用泻药', '服用利尿剂', '服用减少消化吸收的其他药品'],
+            {}, // No sub-questions for these options
+          ),
+        ],
+      },
+    ),
+
+    TimeQuestion('刚刚识别到此冲动的具体时间', initialTime: DateTime.now()),
+    SliderQuestion('此冲动的强烈程度', min: 1, max: 10, divisions: 9, labelBuilder: (value) {
+      if (value == 1) return '轻度';
+      else if (value == 5) return '中度';
+      else if (value == 10) return '重度';
+      return value.toInt().toString();
+    }),
+    TextQuestion('此冲动的诱因是什么？', true),
+    TextQuestion('结合你的替代策略，制定你对这次冲动的应对方案', true),
+    // More questions can be added here
+  ]
+);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-      title: Text('Record Binge Eating'),
-      ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            TextField(
-              controller: _controller,
-              decoration: InputDecoration(
-                labelText: 'Describe your experience',
-                border: OutlineInputBorder(),
-              ),
-              maxLines: 6,
-            ),
-            SizedBox(height: 20),
-            ListTile(
-              title: Text("Date of Incident: ${selectedDate.toLocal()}".split(' ')[0]),
-              trailing: Icon(Icons.calendar_today),
-              onTap: () async {
-                final DateTime? picked = await showDatePicker(
-                  context: context,
-                  initialDate: selectedDate,
-                  firstDate: DateTime(2000),
-                  lastDate: DateTime(2025),
-                );
-                if (picked != null && picked != selectedDate)
-                  setState(() {
-                    selectedDate = picked;
-                  });
-              },
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                // TODO: Handle data submission
-              },
-              child: Text('Submit'),
-            ),
-          ],
-        ),
-      ),
+      // Use the SurveyPage widget if it's designed to be directly reusable
+      body: SurveyPage(survey: impulseRecordingSurvey),
+      // If you need to adapt the survey logic specifically for this page,
+      // you might integrate it directly here instead of using SurveyPage.
     );
   }
 }
+
+// You would need to implement SurveyWidget based on your Survey model and UI requirements.
+// This widget should iterate over the survey questions and generate appropriate UI elements for each.
+// If your SurveyPage class can be adapted for this purpose, you can use or extend it instead.

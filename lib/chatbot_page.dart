@@ -1,5 +1,6 @@
 // 这个文件定义了chatbot的核心功能部分，包括聊天页面和不同对话方式的相关逻辑。
 import 'package:flutter/material.dart';
+import 'package:namer_app/global_setting.dart';
 import 'chat_models.dart';
 import 'chat_widgets.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -41,7 +42,8 @@ class _ChatbotPageState extends State<ChatbotPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Chatbot App')),
+      appBar: AppBar(title: Text('认识暴食', style: TextStyle(color: Colors.black)), backgroundColor: themeColor, ),
+      backgroundColor: Color.fromRGBO(243,243,243,255),
       body: Column(children: _buildBodyWidgets()),
     );
   }
@@ -153,9 +155,9 @@ class _ChatbotPageState extends State<ChatbotPage> {
       mainAxisAlignment:
           message.isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
       children: <Widget>[
-        if (!message.isUser) Icon(Icons.android, color: Colors.green),
+        if (!message.isUser) Icon(Icons.android, color:  Color(0xFF6FCF97)),
         Flexible(child: _buildMessageContent(message)),
-        if (message.isUser) Icon(Icons.person, color: Colors.blue),
+        if (message.isUser) Icon(Icons.person, color: Color.fromARGB(255, 228, 206, 235)),
       ],
     );
   }
@@ -222,15 +224,17 @@ class _ChatbotPageState extends State<ChatbotPage> {
   }
 
   // _buildChoices用于构建用户多选的按钮
-  Widget _buildSubmitMultiChoiceButton() {
-    if (contents[_currentContentIndex].responseType ==
-        ResponseType.multiChoices) {
-      return ElevatedButton(
+Widget _buildSubmitMultiChoiceButton( ) {
+  double screenWidth = MediaQuery.of(context).size.width;
+  if (contents[_currentContentIndex].responseType == ResponseType.multiChoices) {
+    return Container(
+      width: screenWidth * 0.8, // 设置每个选项的宽度为屏幕宽度的80%
+      padding: EdgeInsets.symmetric(vertical: 4.0), // 垂直方向上的padding
+      child: ElevatedButton(
         onPressed: () {
           setState(() {
             messages.add(ChatMessage(
-                text:
-                    contents[_currentContentIndex].selectedChoices!.join(', '),
+                text: contents[_currentContentIndex].selectedChoices!.join(', '),
                 isUser: true));
             contents[_currentContentIndex].setShowChoices(false);
             _currentContentIndex++;
@@ -238,10 +242,20 @@ class _ChatbotPageState extends State<ChatbotPage> {
           });
         },
         child: Text('选好了'),
-      );
-    }
-    return SizedBox.shrink();
+        style: ElevatedButton.styleFrom(
+          primary: Color(0xFF9D9BE9), // 设置按钮的颜色
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20) // 设置圆角
+          ),
+        ),
+      ),
+    );
   }
+  return SizedBox.shrink(); // 当不满足条件时，返回一个占位的小部件
+}
+
+
+
 
   //_buildChoiceButtons用于构建需要用户单选回复的对话
   Widget _buildChoiceButtons() {
@@ -256,8 +270,10 @@ class _ChatbotPageState extends State<ChatbotPage> {
           padding: EdgeInsets.symmetric(vertical: 4.0), // 垂直方向上的padding
           child: ElevatedButton(
             onPressed: () => _handleChoiceButtonPressed(choice),
+    
             child: Text(choice),
             style: ElevatedButton.styleFrom(
+              primary: Color(0xFF9D9BE9),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20) // 如果你不希望有圆角，可以设置为0
                   ),

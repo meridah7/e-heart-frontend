@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'task_contents.dart';
+import 'Survey/task_contents.dart';
 import 'task_models.dart';
 import 'diet_contents.dart';
 import 'diet_models.dart';
 import 'chatbot_page.dart';
-import 'survey_page.dart';
+import 'Survey/survey_page.dart';
 import 'main.dart';
-import 'dietary_analysis_page.dart';
+import 'DietaryAnalysis/dietary_analysis_page.dart';
 import 'dietary_reflection_page.dart';
 import 'global_setting.dart';
 
