@@ -26,7 +26,11 @@ class _BingeEatingRecordPageState extends State<BingeEatingRecordPage> {
         ],
       },
     ),
-
+    MultipleChoiceQuestion(
+      '请选择你的暴食应对策略：',
+      ['散步', '玩游戏', '听音乐', '找朋友'],
+      {}, // No sub-questions for these options
+    ),
     TimeQuestion('刚刚识别到此冲动的具体时间', initialTime: DateTime.now()),
     SliderQuestion('此冲动的强烈程度', min: 1, max: 10, divisions: 9, labelBuilder: (value) {
       if (value == 1) return '轻度';
@@ -51,6 +55,3 @@ class _BingeEatingRecordPageState extends State<BingeEatingRecordPage> {
   }
 }
 
-// You would need to implement SurveyWidget based on your Survey model and UI requirements.
-// This widget should iterate over the survey questions and generate appropriate UI elements for each.
-// If your SurveyPage class can be adapted for this purpose, you can use or extend it instead.
