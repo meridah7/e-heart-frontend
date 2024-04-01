@@ -2,7 +2,7 @@
 
 import 'package:namer_app/Survey/survey_models.dart';
 
-import 'chat_models.dart';
+import '../Chatbot/chat_models.dart';
 
 enum DietType {
   FormalMeal,

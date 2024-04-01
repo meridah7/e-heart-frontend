@@ -1,9 +1,9 @@
 
 import 'package:flutter/material.dart';
-import 'package:namer_app/diet_monitoring/binge_eating_card.dart';
-import 'package:namer_app/diet_monitoring/binge_eating_record_page.dart';
-import 'package:namer_app/diet_monitoring/diet_monitoring_page.dart';
-import 'package:namer_app/diet_monitoring/food_purge.dart';
+import 'package:namer_app/DietMonitoring/binge_eating_card.dart';
+import 'package:namer_app/DietMonitoring/binge_eating_record_page.dart';
+import 'package:namer_app/DietMonitoring/diet_monitoring_page.dart';
+import 'package:namer_app/DietMonitoring/food_purge.dart';
 
 class BingeEatingOptions extends StatelessWidget {
   @override

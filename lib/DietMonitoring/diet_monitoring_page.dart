@@ -46,10 +46,7 @@ class DietMonitoringPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Use the SurveyPage widget if it's designed to be directly reusable
       body: SurveyPage(survey: dietaryIntakeSurvey),
-      // If you need to adapt the survey logic specifically for this page,
-      // you might integrate it directly here instead of using SurveyPage.
     );
   }
 }

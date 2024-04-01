@@ -3,8 +3,8 @@
 // diet有不同的种类，可以是聊天机器人，也可以是问卷调查
 
 import 'chat_models.dart';
-import 'diet_models.dart';
-import 'Survey/survey_models.dart';
+import '../DailyDiet/diet_models.dart';
+import '../Survey/survey_models.dart';
 
 
 List<Diet>DietDay0 = [diet1,];
@@ -17,29 +17,6 @@ Diet diet1 = Diet(
   mealContent: mealContent1,
 );
 
-// Diet diet2 = Diet(
-//   food: "One plate of twice-cooked pork, one bowl of rice",
-//   id: 'Lunch',
-//   type: "Lunch",
-//   day: 0,
-//   mealContent: mealContent2,
-// );
-
-// Diet diet3 = Diet(
-//   food: "One cup of yogurt",
-//   id: 'afternoontea',
-//   type: "Afternoon Tea",
-//   day: 0,
-//   mealContent: mealContent2,
-// );
-
-// Diet diet4 = Diet(
-//   food: "One Caesar salad, one glass of juice",
-//   id: 'Dinner',
-//   type: "Dinner",
-//   day: 0,
-//   mealContent: mealContent2,
-// );
 
 // Day 0
 List<Content> mealContent1 = [

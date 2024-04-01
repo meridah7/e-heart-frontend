@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:namer_app/diet_monitoring/diet_monitoring_page.dart';
-import 'package:namer_app/diet_monitoring/food_purge.dart';
+import 'package:namer_app/DietMonitoring/diet_monitoring_page.dart';
+import 'package:namer_app/DietMonitoring/food_purge.dart';
 
 class MonitoringOptionsPage extends StatelessWidget {
   @override

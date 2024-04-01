@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'Survey/task_contents.dart';
+import '../Survey/task_contents.dart';
 import 'task_models.dart';
-import 'chatbot_page.dart';
-import 'Survey/survey_page.dart'; 
+import '../Chatbot/chatbot_page.dart';
+import '../Survey/survey_page.dart'; 
 
 class TodayTaskPage extends StatefulWidget {
   @override

@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'Survey/task_contents.dart';
-import 'task_models.dart';
-import 'diet_contents.dart';
-import 'diet_models.dart';
-import 'chatbot_page.dart';
-import 'Survey/survey_page.dart';
-import 'main.dart';
-import 'DietaryAnalysis/dietary_analysis_page.dart';
-import 'dietary_reflection_page.dart';
-import 'global_setting.dart';
+import '../Survey/task_contents.dart';
+import '../TodayList/task_models.dart';
+import '../Chatbot/diet_contents.dart';
+import '../DailyDiet/diet_models.dart';
+import '../Chatbot/chatbot_page.dart';
+import '../Survey/survey_page.dart';
+import '../main.dart';
+import '../DietaryAnalysis/dietary_analysis_page.dart';
+import '../global_setting.dart';
 
 class ReviewAnalysisPage extends StatefulWidget {
   @override

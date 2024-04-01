@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:namer_app/diet_models.dart';
-import 'package:namer_app/diet_monitoring/binge_eating_options.dart';
-import 'Survey/task_contents.dart';
+import 'package:namer_app/DailyDiet/diet_models.dart';
+import 'package:namer_app/DietMonitoring/binge_eating_options.dart';
+import '../Survey/task_contents.dart';
 import 'task_models.dart';
-import 'diet_contents.dart';
-import 'diet_models.dart';
-import 'chatbot_page.dart';
-import 'Survey/survey_page.dart';
-import 'diet_monitoring/diet_monitoring_page.dart';
-import 'diet_monitoring/binge_eating_record_page.dart';
-import 'diet_monitoring/monitoring_options_page.dart';
+import '../Chatbot/diet_contents.dart';
+import '../DailyDiet/diet_models.dart';
+import '../Chatbot/chatbot_page.dart';
+import '../Survey/survey_page.dart';
+import '../DietMonitoring/diet_monitoring_page.dart';
+import '../DietMonitoring/binge_eating_record_page.dart';
+import '../DietMonitoring/monitoring_options_page.dart';
 
 class TodayListPage extends StatefulWidget {
   @override

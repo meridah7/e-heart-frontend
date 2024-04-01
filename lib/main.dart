@@ -2,12 +2,12 @@
 //应用程序包括三个页面：今日列表页面（TodayListPage）、分析反思页面（ReviewAnalysisPage）和我的页面（MyPage）。
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
-import 'today_list_page.dart';
-import 'review_analysis_page.dart';
-import 'chat_models.dart';
+import 'TodayList/today_list_page.dart';
+import 'AnalysisReview/review_analysis_page.dart';
+import 'Chatbot/chat_models.dart';
 import 'MyPage/my_page.dart';
 import 'DietaryAnalysis/dietary_analysis_page.dart'; 
-import 'DAO/database_helper.dart';
+//import 'DAO/database_helper.dart';
 import 'Login/login_page.dart';
 import 'package:flutter/material.dart';
 import 'Login/register_page.dart';
@@ -137,17 +137,17 @@ class _MainScreenState extends State<MainScreen> {
   }
 }
 
-  void _createRootUserIfNeeded() async {
-    print("debug!!");
-    var dbHelper = await DatabaseHelper.createInstance();
-    dbHelper.createUserTable();
-    // final List<Map<String, Object?>> users = await getUsers(db); // 使用 await 等待 Future 完成
-    // if (users.isEmpty) {
-    //   print("创建root");
-    //   // 如果没有用户，创建 root user
-    //   insertUser(db, "root", 0); // 假设 root 用户的 age 是 0
-    // }
-  }
+  // void _createRootUserIfNeeded() async {
+  //   print("debug!!");
+  //   var dbHelper = await DatabaseHelper.createInstance();
+  //   dbHelper.createUserTable();
+  //   // final List<Map<String, Object?>> users = await getUsers(db); // 使用 await 等待 Future 完成
+  //   // if (users.isEmpty) {
+  //   //   print("创建root");
+  //   //   // 如果没有用户，创建 root user
+  //   //   insertUser(db, "root", 0); // 假设 root 用户的 age 是 0
+  //   // }
+  // }
   
 
   
