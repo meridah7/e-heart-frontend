@@ -85,8 +85,8 @@ class _TodayListPageState extends State<TodayListPage> {
         onPressed: onPressed,
         child: Text(text),
         style: ElevatedButton.styleFrom(
-          primary: color,
-          onPrimary: textColor,
+          backgroundColor: color,  // 替换了 primary
+          foregroundColor: textColor,  // 替换了 onPrimary
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(18.0),
           ),

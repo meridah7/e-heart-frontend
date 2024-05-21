@@ -50,7 +50,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'CBT-E App',
-        home: isLoggedIn ? MainScreen() : LoginPage(),  // 初始路由为登录页面
+        home: isLoggedIn ? MainScreen() : MainScreen(),  // 初始路由为登录页面
         routes: {
           '/login': (context) => LoginPage(), // 登录页面
           '/home': (context) => MainScreen(), // 主屏幕，登录成功后跳转的页面
