@@ -60,8 +60,7 @@ class CustomElevatedButton extends StatelessWidget {
       onPressed: onPressed,
       child: Text(text),
       style: ElevatedButton.styleFrom(
-        primary: Color(0xFF9D9BE9), // 设置按钮的背景颜色
-        onPrimary: Colors.white, // 设置按钮文本的颜色
+        foregroundColor: Colors.white, backgroundColor: Color(0xFF9D9BE9), // 设置按钮文本的颜色
         padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15), // 设置内边距
         textStyle: TextStyle(fontSize: 16), // 设置文本样式
         shape: RoundedRectangleBorder(

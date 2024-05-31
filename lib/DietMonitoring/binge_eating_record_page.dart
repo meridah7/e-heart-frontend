@@ -10,20 +10,14 @@ class BingeEatingRecordPage extends StatefulWidget {
 class _BingeEatingRecordPageState extends State<BingeEatingRecordPage> {
   // Assume we have a survey object for binge eating records
   var impulseRecordingSurvey = Survey(
-  '冲动记录',
-  [
+  title: '冲动记录',
+  questions: [
      SingleChoiceQuestion(
       '你这次冲动属于',
       ['A. 暴食冲动', 'B. 清除食物的冲动'],
       {
         'A. 暴食冲动': [], // Optionally, add sub-questions for 'A. 暴食冲动' if needed
-        'B. 清除食物的冲动': [
-          MultipleChoiceQuestion(
-            '选择',
-            ['催吐', '服用泻药', '服用利尿剂', '服用减少消化吸收的其他药品'],
-            {}, // No sub-questions for these options
-          ),
-        ],
+        'B. 清除食物的冲动': [],
       },
     ),
     MultipleChoiceQuestion(
@@ -32,14 +26,14 @@ class _BingeEatingRecordPageState extends State<BingeEatingRecordPage> {
       {}, // No sub-questions for these options
     ),
     TimeQuestion('刚刚识别到此冲动的具体时间', initialTime: DateTime.now()),
-    SliderQuestion('此冲动的强烈程度', min: 1, max: 10, divisions: 9, labelBuilder: (value) {
+    SliderQuestion('此冲动的强烈程度',{}, min: 1, max: 10, divisions: 9, labelBuilder: (value) {
       if (value == 1) return '轻度';
       else if (value == 5) return '中度';
       else if (value == 10) return '重度';
       return value.toInt().toString();
     }),
-    TextQuestion('此冲动的诱因是什么？', true),
-    TextQuestion('结合你的替代策略，制定你对这次冲动的应对方案', true),
+    TextQuestion('此冲动的诱因是什么？', false),
+    TextQuestion('结合你的替代策略，制定你对这次冲动的应对方案', false),
     // More questions can be added here
   ]
 );

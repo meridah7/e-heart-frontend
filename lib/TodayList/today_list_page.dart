@@ -85,8 +85,7 @@ class _TodayListPageState extends State<TodayListPage> {
         onPressed: onPressed,
         child: Text(text),
         style: ElevatedButton.styleFrom(
-          backgroundColor: color,  // 替换了 primary
-          foregroundColor: textColor,  // 替换了 onPrimary
+          foregroundColor: textColor, backgroundColor: color,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(18.0),
           ),
@@ -105,7 +104,7 @@ class _TodayListPageState extends State<TodayListPage> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         _buildCircleButton(
-          '饮食监控',
+          '饮食日志',
           icon: Icons.health_and_safety,
           onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => MonitoringOptionsPage())),//DietMonitoringPage()
           color: taskColor,

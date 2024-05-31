@@ -243,7 +243,7 @@ Widget _buildSubmitMultiChoiceButton( ) {
         },
         child: Text('选好了'),
         style: ElevatedButton.styleFrom(
-          primary: Color(0xFF9D9BE9), // 设置按钮的颜色
+          backgroundColor: Color(0xFF9D9BE9), // 设置按钮的颜色
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20) // 设置圆角
           ),
@@ -273,7 +273,7 @@ Widget _buildSubmitMultiChoiceButton( ) {
     
             child: Text(choice),
             style: ElevatedButton.styleFrom(
-              primary: Color(0xFF9D9BE9),
+              backgroundColor: Color(0xFF9D9BE9),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20) // 如果你不希望有圆角，可以设置为0
                   ),

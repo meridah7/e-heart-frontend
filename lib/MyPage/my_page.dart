@@ -27,8 +27,8 @@ class MyPage extends StatelessWidget {
             // 分隔线
             Divider(height: 15, thickness: 1),
 
-            // 饮食监控补录选项
-            _buildOption('饮食监控补录', Icons.local_dining, context),
+            // 饮食日志补录选项
+            _buildOption('饮食日志补录', Icons.local_dining, context),
 
             // 分隔线
             Divider(height: 15, thickness: 1),
