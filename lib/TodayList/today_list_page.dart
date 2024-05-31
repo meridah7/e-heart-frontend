@@ -7,9 +7,9 @@ import '../Chatbot/diet_contents.dart';
 import '../DailyDiet/diet_models.dart';
 import '../Chatbot/chatbot_page.dart';
 import '../Survey/survey_page.dart';
-import '../DietMonitoring/diet_monitoring_page.dart';
+import '../Survey/flippable_survey_page.dart';
 import '../DietMonitoring/binge_eating_record_page.dart';
-import '../DietMonitoring/monitoring_options_page.dart';
+import '../DietMonitoring/diet_monitoring_page.dart';
 
 class TodayListPage extends StatefulWidget {
   @override
@@ -40,7 +40,9 @@ class _TodayListPageState extends State<TodayListPage> {
             children: [
               _buildSegmentedControl(),
               Expanded(
-                child: showTasks ? _buildTaskListView(TaskDay0) : _buildDietListView(DietDay0),
+                child: showTasks
+                    ? _buildTaskListView(TaskDay0)
+                    : _buildDietListView(DietDay0),
               ),
             ],
           ),
@@ -79,19 +81,21 @@ class _TodayListPageState extends State<TodayListPage> {
     );
   }
 
-  Widget _buildButton(String text, {VoidCallback? onPressed, Color? color, Color? textColor}) {
+  Widget _buildButton(String text,
+      {VoidCallback? onPressed, Color? color, Color? textColor}) {
     return Expanded(
       child: ElevatedButton(
         onPressed: onPressed,
-        child: Text(text),
         style: ElevatedButton.styleFrom(
-          foregroundColor: textColor, backgroundColor: color,
+          foregroundColor: textColor,
+          backgroundColor: color,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(18.0),
           ),
           padding: EdgeInsets.symmetric(vertical: 12),
           textStyle: TextStyle(fontSize: 16),
         ),
+        child: Text(text),
       ),
     );
   }
@@ -106,20 +110,23 @@ class _TodayListPageState extends State<TodayListPage> {
         _buildCircleButton(
           '饮食日志',
           icon: Icons.health_and_safety,
-          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => MonitoringOptionsPage())),//DietMonitoringPage()
+          onPressed: () => Navigator.push(context,
+              MaterialPageRoute(builder: (context) => DietMonitoringPage())),
           color: taskColor,
         ),
         _buildCircleButton(
           '冲动记录',
           icon: Icons.record_voice_over,
-          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => BingeEatingOptions())),
+          onPressed: () => Navigator.push(context,
+              MaterialPageRoute(builder: (context) => BingeEatingRecordPage())),
           color: dietColor,
         ),
       ],
     );
   }
 
-  Widget _buildCircleButton(String text, {VoidCallback? onPressed, IconData? icon, Color? color}) {
+  Widget _buildCircleButton(String text,
+      {VoidCallback? onPressed, IconData? icon, Color? color}) {
     return FloatingActionButton.extended(
       onPressed: onPressed,
       label: Text(text),
@@ -128,64 +135,86 @@ class _TodayListPageState extends State<TodayListPage> {
     );
   }
 
- Widget _buildTaskListView(List<Task> tasks) {
-  return ListView.builder(
-    itemCount: tasks.length,
-    itemBuilder: (context, index) {
-      final task = tasks[index];
-      return Container(
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.7), // 半透明背景
-          borderRadius: BorderRadius.circular(10), // 可选的圆角
-        ),
-        margin: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0), // 添加一些边距
-        child: ListTile(
-          title: Text(task.title),
-          subtitle: Text(task.type == TaskType.CHATBOT ? 'Chatbot' : 'Survey'),
-          trailing: IconButton(
-            icon: Icon(task.isCompleted ? Icons.check_box : Icons.check_box_outline_blank),
-            onPressed: () {
-              setState(() {
-                task.isCompleted = !task.isCompleted;
-              });
+  Widget _buildTaskListView(List<Task> tasks) {
+    return ListView.builder(
+      itemCount: tasks.length,
+      itemBuilder: (context, index) {
+        final task = tasks[index];
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.7), // 半透明背景
+            borderRadius: BorderRadius.circular(10), // 可选的圆角
+          ),
+          margin:
+              EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0), // 添加一些边距
+          child: ListTile(
+            title: Text(task.title),
+            subtitle:
+                Text(task.type == TaskType.CHATBOT ? 'Chatbot' : 'Survey'),
+            trailing: IconButton(
+              icon: Icon(task.isCompleted
+                  ? Icons.check_box
+                  : Icons.check_box_outline_blank),
+              onPressed: () {
+                setState(() {
+                  task.isCompleted = !task.isCompleted;
+                });
+              },
+            ),
+            onTap: () {
+              if (task.type == TaskType.CHATBOT) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            ChatbotPage(contents: task.chatbotContent!)));
+              } else if (task.type == TaskType.SURVEY) {
+                // TODO: determine which surver will be flipabble
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            SurveyPage(survey: task.survey!)));
+                // Navigator.push(
+                //     context,
+                //     MaterialPageRoute(
+                //         builder: (context) =>
+                //             FlippableSurveyPage(survey: task.survey!)));
+              }
             },
           ),
-          onTap: () {
-            if (task.type == TaskType.CHATBOT) {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => ChatbotPage(contents: task.chatbotContent!)));
-            } else if (task.type == TaskType.SURVEY) {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => SurveyPage(survey: task.survey!)));
-            }
-          },
-        ),
-      );
-    },
-  );
-}
-
+        );
+      },
+    );
+  }
 
   Widget _buildDietListView(List<Diet> diets) {
-  return ListView.builder(
-    itemCount: diets.length,
-    itemBuilder: (context, index) {
-      final diet = diets[index];
-      return Container(
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.7), // 半透明背景
-          borderRadius: BorderRadius.circular(10), // 可选的圆角
-        ),
-        margin: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0), // 添加一些边距
-        child: ListTile(
-          title: Text(diet.food),
-          subtitle: Text(diet.type),
-          onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => ChatbotPage(contents: diet.mealContent!)));
-          },
-        ),
-      );
-    },
-  );
-}
+    return ListView.builder(
+      itemCount: diets.length,
+      itemBuilder: (context, index) {
+        final diet = diets[index];
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.7), // 半透明背景
+            borderRadius: BorderRadius.circular(10), // 可选的圆角
+          ),
+          margin:
+              EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0), // 添加一些边距
+          child: ListTile(
+            title: Text(diet.food),
+            subtitle: Text(diet.type),
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          ChatbotPage(contents: diet.mealContent!)));
+            },
+          ),
+        );
+      },
+    );
+  }
 
   void _toggleView(bool showTaskView) {
     setState(() {
