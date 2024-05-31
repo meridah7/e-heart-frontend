@@ -25,7 +25,6 @@ class DietMonitoringPage extends StatelessWidget {
       {
         '食物清除记录':[
           TimeQuestion('食物清除的时间', initialTime: DateTime.now()),
-          
           SliderQuestion('食物清除的时候感受到的情绪强度',{}, min: 1, max: 7, divisions: 6, labelBuilder: (value) {
             if (value == 1) return '很不开心';
             else if (value == 4) return '一般';
@@ -37,13 +36,7 @@ class DietMonitoringPage extends StatelessWidget {
               TextQuestion('请输入其他情绪种类', false),
             ]
           }),
-          SingleChoiceQuestion('你觉得之前吃/喝的食物影响了这次的清除食物行为吗', ['有', '没有'], 
-          {
-            '有':[
-              TextQuestion('你之前吃/喝的什么食物影响了这次的清除食物行为', false)
-            ]
-          },
-          description: '例如，之前吃了一块大蛋糕让我现在想催吐'),
+          TextQuestion('请努力识别这次食物清除的诱发因素并填写它！' ,false),
           ],
         '饮食记录':[
           TimeQuestion('进食具体时间', initialTime: DateTime.now()),

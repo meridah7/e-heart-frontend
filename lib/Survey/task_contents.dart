@@ -322,9 +322,7 @@ var mealPlanningSurvey = Survey(
     MealQuestion(
       '制定饮食计划的核心原则：每餐的间隔应该在3-4小时之间！',
       description: '开始制定你的计划吧',
-      {
-        
-      },
+      {},
     ),
     SingleChoiceQuestion('参考营养学原则及具体食谱推荐', 
     ['点击详细展开'], 
@@ -395,37 +393,51 @@ var bingeEatingReflectionSurvey = Survey(
   title: '冲动记录反思',
   questions: [
     SingleChoiceQuestion(
-      '现在，小E将教你如何基于暴食替代记录情况进行反思，这是帮助你抵抗暴食的重要环节，接下来，小E会通过问题来引导您进行反思和分析，请认真回答哟',
+      '小E对你记录的所有暴食、清除食物冲动进行了总结，帮助你以专业的视角进行反思，看看还有哪些可以改善的地方。\n\n'
+      '没有想法的空可以不填，你只要分析对自己有启发的部分。您的回答绝对保密，放心填写就好啦。',
       ['好的！'],
       {},
     ),
     SingleChoiceQuestion(
-      '在回答问题之前，小E想对你说：不要有压力，这里没有所谓的正确选项，选择最符合您真实情况的选项即可，每个选项小E都设置了相应的解决方案。所谓“双向奔赴”，您无论从哪个方向向前迈一步，我们都会稳稳接住您并给予回应~',
+      '小E统计发现，您至今为止记录了**次暴食、清除冲动，并制定了相应的应对策略，您真的很棒！要继续坚持记录和应对哦。',
       ['了解了！'],
       {},
+      description: ''
     ),
     SingleChoiceQuestion(
-      '您是否在每次识别到自己暴食/清除食物冲动的时候，都立即记录下来？',
-      ['是的', '有未记录的情况'],
+      '您是否在每次识别到自己暴食、清除食物冲动的时候，都努力立即记录下来？',
+      ['是的', '比较难做到'],
       {
-        '是的': [TextQuestion('真棒，希望你继续坚持', false)],
-        '有未记录的情况': [
-          TextQuestion('其实只是坚持记录冲动都对克服暴食有很大的帮助，这次是什么阻止你延迟或未记录它们呢？你觉得有什么好方法克服这些阻碍呢？', true),
+        '是的': [SingleChoiceQuestion('真棒，希望你继续坚持哦～', [],{})],
+        '比较难做到': [
+          TextQuestion('即使不制定应对策略而就简单记录一下冲动，都会让你感觉好不少！因此，如果你觉得太难，也可以先不填写策略的部分。\n\n'
+          '你觉得是什么阻碍了你对冲动的记录呢？', false),
+          TextQuestion('你觉得有什么好方法克服它们？', false),
         ],
       },
     ),
     SingleChoiceQuestion(
-      '您是否在每次识别到自己暴食/清除食物冲动的时候，都使用了先前制定好的替代方法？',
+      '您是否在每次识别到自己暴食、清除食物冲动的时候，都使用了先前制定好的替代方法？可以回到自己的每一次记录去看一看～',
       ['有', '没有'],
       {
-        '有': [TextQuestion('真棒，想暴食/清除时转移一下注意力，可是有大作用呢', false)],
+        '有': [SingleChoiceQuestion('真棒，感受到暴食、清除冲动时用一些更友好的策略来应对冲动，可是有大作用呢。慢慢来，相信自己～', [],{})],
         '没有': [
-          TextQuestion('您需要在此写下是什么阻止你使用它们，毕竟认识到问题是解决问题的第一步~（文本框）如果下次再遇到这种情况，您打算如何克服他们？', true),
+          SingleChoiceQuestion('刚开始冲动太过强烈，可能想的应对策略没什么效果。\n'
+            '这很正常，每次只需要尽力坚持得比以前久一些就好～在这里，制定下一个想要坚持的时间吧。', [], {}),
+          TextQuestion('当我记录下我的冲动并制定相应策略后，我想在这个冲动下坚持  ____ 分钟。', false),
+          TextQuestion('为了完成这个目标，你觉得有哪些可能的困难和阻碍？', false),
+          TextQuestion('你觉得有什么好方法来克服这些困难呢？', false),
         ],
       },
     ),
-    TextQuestion('我的替代活动本身及我对它们的使用是否有改进的空间？（辅助思考：我干预得够早吗？我实践过后，是否需要根据实际效果删改或调整替代活动的优先级呢）', true),
+    TextQuestion('我使用应对策略应对冲动的效果怎样？具体的应对冲动过程是否有可以改进的空间？\n\n'
+    'a.效果', false),
+    TextQuestion('b.改进空间', false),
     // More questions or reflection points can be added here
+
+    //此处需要呈现呈现总反思表
+    //未完成
+    SingleChoiceQuestion('如果你需要对冲动应对卡进行修改，请点击这里。', ['点击跳转暴食替代策略修改(暂无页面)'], {})
   ]
 );
 
@@ -519,25 +531,23 @@ var reflectiveActivitySurvey = Survey(
             TextQuestion('', false)
           ],
           '骑自行车':[
-            TextQuestion(' ', false)
+            TextQuestion('', false)
           ],
-          
           '和朋友/家人打电话聊天':[
-            TextQuestion(' ', false)
+            TextQuestion('', false)
           ],
           '去找朋友/家人玩':[
-            TextQuestion(' ', false)
+            TextQuestion('', false)
           ],
           '玩游戏':[
-            TextQuestion(' ', false)
+            TextQuestion('', false)
           ],
           '洗澡':[
-            TextQuestion(' ', false)
+            TextQuestion('', false)
           ],
           '看电影':[
-            TextQuestion(' ', false)
+            TextQuestion('', false)
           ],
-
         },description: '')
       ]
     }),
@@ -738,7 +748,7 @@ var monitoringTeachingReflectionSurvey = Survey(
       {} // 可能需要添加子问题或描述
     ),
     bingeEatingCauseChartQuestion,
-    triggerFrequencyChartQuestion,
+    bingeEatingtriggerFrequencyChartQuestion,
     TextQuestion('我的暴食诱因通常是什么呢？', false),
     TextQuestion('怎样对我的暴食诱因进行更好的控制和管理呢？', false),
     bingeEatingWeekChartQuestion,
@@ -790,10 +800,10 @@ var monitoringTeachingReflectionSurvey = Survey(
     foodRemovalEmotionChartQuestion,
     foodRemovalEmotionalIntensityChartQuestion,
     TextQuestion('情绪如何影响我的食物清除行为？', false),
-    
-    foodRemovalFoodListChartQuestion,
-    TextQuestion('吃、喝的食物如何影响我的清除食物行为？', false),
-    TextQuestion('我能如何改善我的清除食物行为？', false),
+
+    foodRemovaltriggerFrequencyChartQuestion,
+    TextQuestion('我的食物清除诱因通常是什么呢?', false),
+    TextQuestion('怎样对我的食物清除诱因进行更好的控制和管理呢?', false),
     SingleChoiceQuestion(
       '今天你成功完成了一次对自己的饮食日志的反思分析！您可以带着这些宝贵的想法进行之后的饮食日志记录，尤其是关于暴食诱因的模块，相信你一定对它有了更多觉察～',
       ['ok！'],
@@ -872,8 +882,8 @@ ChartQuestion foodRemovalMethodsChartQuestion = ChartQuestion(
   ChartType.Pie,
 );
 
-// 示例数据3 - 诱因频率表
-List<ChartData> triggerFrequencyData = [
+// 示例数据3 - 暴食诱因频率表
+List<ChartData> bingeEatingtriggerFrequencyData = [
   ChartData("工作压力", 30),
   ChartData("情绪波动", 25),
   ChartData("睡眠不足", 15),
@@ -881,9 +891,26 @@ List<ChartData> triggerFrequencyData = [
   ChartData("无特定原因", 10),
 ];
 
-ChartQuestion triggerFrequencyChartQuestion = ChartQuestion(
-  "诱因频率表",
-  triggerFrequencyData,
+ChartQuestion bingeEatingtriggerFrequencyChartQuestion = ChartQuestion(
+  "暴食诱因频率表",
+  bingeEatingtriggerFrequencyData,
+  QuestionType.None,
+  [],
+  ChartType.Bar,
+  orientation: ChartOrientation.horizontal,
+);
+
+// 示例数据3 - 诱因频率表
+List<ChartData> foodRemovaltriggerFrequencyData = [
+  ChartData("情绪波动", 25),
+  ChartData("睡眠不足", 15),
+  ChartData("社交活动", 20),
+  ChartData("无特定原因", 10),
+];
+
+ChartQuestion foodRemovaltriggerFrequencyChartQuestion = ChartQuestion(
+  "食物清除诱因频率表",
+  foodRemovaltriggerFrequencyData,
   QuestionType.None,
   [],
   ChartType.Bar,
@@ -1124,15 +1151,7 @@ ChartQuestion restrictFoodFrequencyChartQuestion = ChartQuestion(
   description: '分析节食时选择的食物种类。',
 );
 
-ChartQuestion foodRemovalFoodListChartQuestion = ChartQuestion(
-  '食物清除前进食的东西',
-  foodRemovalFoodFrequencyChartData, // 假数据
-  QuestionType.None,
-  [],
-  ChartType.Bulleted,
-  orientation: ChartOrientation.horizontal,
-  description: '分析食物清除时选择的食物种类。',
-);
+
 
 List<ChartData> restrictTimeOfDayChartData = [
   ChartData('0', 0),

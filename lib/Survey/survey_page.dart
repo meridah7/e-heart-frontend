@@ -318,45 +318,64 @@ class _SurveyPageState extends State<SurveyPage> {
 // 构建二级问题的Widget
 // Adjust the buildSubTimeQuestion function to match the style
   Widget buildSubTimeQuestion(TimeQuestion question) {
-    return ListTile(
-      title: Text(
-        question.questionText,
-        style: TextStyle(
-          fontSize: 18, // 设置字体大小
-// 你可以继续添加其他样式属性，如字体颜色等
-        ),
-      ),
-      subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (question.description != null)
-            Padding(
-              padding:
-                  const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
-              child: DescriptionText(question.description!),
-            ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                '${question.selectedTime.hour}:${question.selectedTime.minute.toString().padLeft(2, '0')}',
-                style: TextStyle(fontSize: 14),
-              ),
-              ElevatedButton(
-                onPressed: () => _selectTime(context, question),
-                child: Text('改变时间'),
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: Theme.of(context).primaryColor, // 按钮文字颜色
-                ),
-              ),
-            ],
+  // Method to show the date and time picker
+  void _selectDateTime(BuildContext context, TimeQuestion question) async {
+    await showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: MediaQuery.of(context).size.height / 3,
+          child: CupertinoDatePicker(
+            mode: CupertinoDatePickerMode.dateAndTime, // Display date and time
+            use24hFormat: true, // Use 24-hour format
+            initialDateTime: question.selectedTime,
+            onDateTimeChanged: (DateTime newDateTime) {
+              setState(() {
+                question.setTime(newDateTime);
+              });
+            },
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
+  return ListTile(
+    title: Text(
+      question.questionText,
+      style: TextStyle(
+        fontSize: 18, // 设置字体大小
+      ),
+    ),
+    subtitle: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (question.description != null)
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
+            child: DescriptionText(question.description!),
+          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              '${question.selectedTime.year}年${question.selectedTime.month}月${question.selectedTime.day}日 ${question.selectedTime.hour}:${question.selectedTime.minute.toString().padLeft(2, '0')}',
+              style: TextStyle(fontSize: 14),
+            ),
+            ElevatedButton(
+              onPressed: () => _selectDateTime(context, question),
+              child: Text('改变时间'),
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Theme.of(context).primaryColor, // 按钮背景颜色
+              ),
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
+}
 // Update buildSubQuestion to use the renamed buildSubTimeQuestion function
   Widget buildSubQuestion(Question subQuestion) {
     return Padding(
@@ -459,68 +478,69 @@ class _SurveyPageState extends State<SurveyPage> {
   }
 
   Widget buildSubTextQuestion(TextQuestion question) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      if (question.imageUrl != null) Image.network(question.imageUrl!),
-      Padding(
-        padding: const EdgeInsets.only(left: 16.0, top: 8.0),
-        child: Text(
-          question.questionText,
-          style: TextStyle(
-            fontSize: 18,
-          ),
-        ),
-      ),
-      if (question.description != null)
-        Padding(
-          padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
-          child: DescriptionText(question.description!),
-        ),
-      SizedBox(height: 16.0),
-      ...List.generate(question.answers.length, (index) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-          child: Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: question.controllers[index],
-                  decoration: InputDecoration(
-                    hintText: '输入你的答案',
-                    border: OutlineInputBorder(),
-                  ),
-                  onSubmitted: (value) {
-                    setState(() {
-                      question.answers[index] = value;
-                    });
-                  },
-                ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (question.imageUrl != null) Image.network(question.imageUrl!),
+        if (question.questionText.isNotEmpty) // 只有当问题文本不为空时才显示问题文本
+          Padding(
+            padding: const EdgeInsets.only(left: 16.0, top: 8.0),
+            child: Text(
+              question.questionText,
+              style: TextStyle(
+                fontSize: 18,
               ),
-              if (index > 0)
-                IconButton(
-                  icon: Icon(Icons.remove_circle_outline),
-                  onPressed: () {
-                    setState(() {
-                      question.removeAnswer(index);
-                    });
-                  },
-                ),
-            ],
+            ),
           ),
-        );
-      }),
-      if (question.canAddMore)
-        TextButton(
-          child: Text('Add another answer'),
-          onPressed: () {
-            setState(() {
-              question.addAnswer('');
-            });
-          },
-        ),
-    ],
-  );
+        if (question.description != null)
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
+            child: DescriptionText(question.description!),
+          ),
+        SizedBox(height: 16.0),
+        ...List.generate(question.answers.length, (index) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: question.controllers[index],
+                    decoration: InputDecoration(
+                      hintText: '输入你的答案',
+                      border: OutlineInputBorder(),
+                    ),
+                    onSubmitted: (value) {
+                      setState(() {
+                        question.answers[index] = value;
+                      });
+                    },
+                  ),
+                ),
+                if (index > 0)
+                  IconButton(
+                    icon: Icon(Icons.remove_circle_outline),
+                    onPressed: () {
+                      setState(() {
+                        question.removeAnswer(index);
+                      });
+                    },
+                  ),
+              ],
+            ),
+          );
+        }),
+        if (question.canAddMore)
+          TextButton(
+            child: Text('Add another answer'),
+            onPressed: () {
+              setState(() {
+                question.addAnswer('');
+              });
+            },
+          ),
+      ],
+    );
   }
 
 //文本
@@ -529,41 +549,44 @@ class _SurveyPageState extends State<SurveyPage> {
     child: Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start, // 确保列内的子组件靠左对齐
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 显示所有的图片
           for (final imageUrl in question.imageUrls)
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Image.network(imageUrl),
             ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TitleText(question.questionText),
-          ),
+          if (question.questionText.isNotEmpty) 
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TitleText(question.questionText),
+            ),
           if (question.description != null)
             Padding(
               padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
               child: DescriptionText(question.description!),
             ),
-            ...List.generate(question.answers.length, (index) {
-              return Row(
+          SizedBox(height: 16.0), // 增加上下边距
+          ...List.generate(question.answers.length, (index) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),  // 与SubTextQuestion相同的边距设置
+              child: Row(
                 children: [
                   Expanded(
                     child: TextField(
-                      controller: question.controllers[index], // 使用对应的控制器
-// TextEditingController(text: question.answers[index]),
-                      onChanged: (value) {
+                      controller: question.controllers[index],
+                      decoration: InputDecoration(
+                        hintText: '输入你的答案',
+                        border: OutlineInputBorder(), // 显示边框
+                      ),
+                      onSubmitted: (value) { // 使用onSubmitted来匹配SubTextQuestion逻辑
                         setState(() {
                           question.answers[index] = value;
                         });
                       },
-                      decoration: InputDecoration(
-                        hintText: '填写答案',
-                      ),
                     ),
                   ),
-                  if (index > 0) // 如果不是第一个TextField，显示一个删除按钮
+                  if (index > 0)
                     IconButton(
                       icon: Icon(Icons.remove_circle_outline),
                       onPressed: () {
@@ -573,34 +596,34 @@ class _SurveyPageState extends State<SurveyPage> {
                       },
                     ),
                 ],
-              );
-            }),
-            if (question.canAddMore) // 如果允许添加更多答案
-              TextButton(
-                child: Text('Add another answer'),
-                onPressed: () {
-                  setState(() {
-                    question.addAnswer('');
-                  });
-                },
               ),
-          ],
-        ),
+            );
+          }),
+          if (question.canAddMore)
+            TextButton(
+              child: Text('Add another answer'),
+              onPressed: () {
+                setState(() {
+                  question.addAnswer('');
+                });
+              },
+            ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget buildTimeQuestion(TimeQuestion question) {
-// Method to show the time picker
-    void _showTimePicker() async {
+    // Method to show the date and time picker
+    void _showDateTimePicker() async {
       await showModalBottomSheet(
         context: context,
         builder: (BuildContext builder) {
           return Container(
             height: MediaQuery.of(context).copyWith().size.height / 3,
             child: CupertinoDatePicker(
-              mode: CupertinoDatePickerMode
-                  .time, // Display only hours and minutes
+              mode: CupertinoDatePickerMode.dateAndTime, // Display date and time
               use24hFormat: true, // Use 24-hour format
               initialDateTime: question.selectedTime,
               onDateTimeChanged: (DateTime newDateTime) {
@@ -618,26 +641,23 @@ class _SurveyPageState extends State<SurveyPage> {
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
-          crossAxisAlignment:
-              CrossAxisAlignment.start, // Align content to the left
+          crossAxisAlignment: CrossAxisAlignment.start, // Align content to the left
           children: [
             TitleText(question.questionText),
             SizedBox(height: 10),
             if (question.description != null)
               Padding(
-                padding:
-                    const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
+                padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
                 child: DescriptionText(question.description!),
               ),
-            Text(
-// Display the selected date and time
-              '${question.selectedTime.year}年${question.selectedTime.month}月${question.selectedTime.day}日 时间: ${question.selectedTime.hour}:${question.selectedTime.minute.toString().padLeft(2, '0')}',
-              style: TextStyle(fontSize: 16),
-            ),
+              Text(
+                '${question.selectedTime.year}年${question.selectedTime.month}月${question.selectedTime.day}日 时间: ${question.selectedTime.hour}:${question.selectedTime.minute.toString().padLeft(2, '0')}',
+                style: TextStyle(fontSize: 16),
+              ),
             SizedBox(height: 10),
             CustomElevatedButton(
-              text: 'Change Time',
-              onPressed: _showTimePicker,
+              text: '更改时间',
+              onPressed: _showDateTimePicker,
             ),
           ],
         ),
@@ -1005,7 +1025,6 @@ Widget buildChartQuestion(ChartQuestion question) {
                   context: context,
                   builder: (context) {
                     String newMeal = '';
-                    String mealItems = '';
                     return AlertDialog(
                       title: Text('添加新餐食'),
                       content: Column(
@@ -1034,17 +1053,14 @@ Widget buildChartQuestion(ChartQuestion question) {
                               question.addMeal(newMeal);
                               question.addSubQuestion(
                                 newMeal,
-                                TextQuestion('请列出" $newMeal "要进食的食物和份量', true),
+                                TextQuestion('请列出"$newMeal"要进食的食物和份量', true),
                               );
                               question.addSubQuestion(
                                 newMeal,
-                                TimeQuestion('" $newMeal "的时间',
-                                    initialTime: DateTime(
-                                        DateTime.now().year,
-                                        DateTime.now().month,
-                                        DateTime.now().day,
-                                        7,
-                                        0)),
+                                TimeQuestion(
+                                  '"$newMeal"的日期和时间',
+                                  initialTime: DateTime.now(), // Set initial time to now
+                                ),
                               );
                             });
                             Navigator.of(context).pop();
