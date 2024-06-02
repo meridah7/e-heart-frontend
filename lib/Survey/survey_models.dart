@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:namer_app/Survey/task_contents.dart';
- 
- // 定义了用于创建survey的class和相关功能。
+
+// 定义了用于创建survey的class和相关功能。
 
 abstract class Question {
-final String questionText;
-final String? description;
-final String? imageUrl;
-final List<String>? imageUrls;
+  final String questionText;
+  final String? description;
+  final String? imageUrl;
+  final List<String>? imageUrls;
 
-Question(this.questionText, {this.description, this.imageUrl, this.imageUrls});
+  Question(this.questionText,
+      {this.description, this.imageUrl, this.imageUrls});
 }
 
 class SingleChoiceQuestion extends Question {
@@ -17,7 +18,8 @@ class SingleChoiceQuestion extends Question {
   String? selectedOption;
   Map<String, List<Question>> subQuestions; // Change to a map of lists
 
-  SingleChoiceQuestion(String questionText, this.options, this.subQuestions, {String? description})
+  SingleChoiceQuestion(String questionText, this.options, this.subQuestions,
+      {String? description})
       : super(questionText, description: description);
 
   void answer(String option) {
@@ -36,15 +38,15 @@ class SingleChoiceQuestion extends Question {
   }
 }
 
-
-
 class MultipleChoiceQuestion extends Question {
   final List<String> options;
   List<String> selectedOptions = [];
-  Map<String, List<Question>> subQuestions; // Map each option to a list of Questions
+  Map<String, List<Question>>
+      subQuestions; // Map each option to a list of Questions
   Map<String, bool>? additionalOptions; // Optional additional options
 
-  MultipleChoiceQuestion(String questionText, this.options, this.subQuestions, {this.additionalOptions, String? description})
+  MultipleChoiceQuestion(String questionText, this.options, this.subQuestions,
+      {this.additionalOptions, String? description})
       : super(questionText, description: description);
 
   bool isSelected(String option) => selectedOptions.contains(option);
@@ -62,21 +64,21 @@ class MultipleChoiceQuestion extends Question {
   // Other necessary methods...
 }
 
-
-
 class TextQuestion extends Question {
   List<String> answers; // Assuming a list of answers
   List<TextEditingController> controllers; // 这里新增一个控制器列表
   bool canAddMore;
+  @override
   List<String> imageUrls; // 新增的图片 URL 列表
 
-  TextQuestion(String questionText, this.canAddMore, {String? description, List<String>? imageUrls})
+  TextQuestion(String questionText, this.canAddMore,
+      {String? description, List<String>? imageUrls})
       : answers = [''], // Initialize with an empty string
         controllers = [TextEditingController()], // 初始化控制器列表
         imageUrls = imageUrls ?? [], // 初始化图片 URL 列表
         super(questionText, description: description, imageUrls: imageUrls);
 
-  void addAnswer(String answer) { 
+  void addAnswer(String answer) {
     if (!canAddMore) return; // 如果 canAddMore 为 false,直接返回
     answers.add(answer);
     controllers.add(TextEditingController()); // 为新答案添加一个新控制器
@@ -91,22 +93,18 @@ class TextQuestion extends Question {
   }
 }
 
-
-
 class Survey {
   final String title;
   final List<Question> questions;
   final bool navigateToSummary; // 添加这个属性
 
-  Survey({required this.title, required this.questions, this.navigateToSummary = false});
-
+  Survey(
+      {required this.title,
+      required this.questions,
+      this.navigateToSummary = false});
 }
 
-
-
-
 extension SingleChoiceQuestionExtension on SingleChoiceQuestion {
-  
   void answer(String option) {
     if (options.contains(option)) {
       selectedOption = option;
@@ -115,7 +113,6 @@ extension SingleChoiceQuestionExtension on SingleChoiceQuestion {
     }
   }
 }
-
 
 extension MultipleChoiceQuestionExtension on MultipleChoiceQuestion {
   void answer(List<String> choices) {
@@ -133,15 +130,15 @@ extension TextQuestionExtension on TextQuestion {
   }
 }
 
-
 extension SurveyExtension on Survey {
   bool isSurveyComplete() {
     for (var question in questions) {
       if (question is SingleChoiceQuestion && question.selectedOption == null) {
         return false;
-      } else if (question is MultipleChoiceQuestion && question.selectedOptions.isEmpty) {
+      } else if (question is MultipleChoiceQuestion &&
+          question.selectedOptions.isEmpty) {
         return false;
-      } else if (question is TextQuestion && question.answers.length == 0) {
+      } else if (question is TextQuestion && question.answers.isEmpty) {
         return false;
       }
     }
@@ -167,15 +164,13 @@ extension SurveyExtension on Survey {
     }
     return summary;
   }
-
-
 }
-
 
 class TimeQuestion extends Question {
   DateTime selectedTime;
 
-  TimeQuestion(String questionText, {DateTime? initialTime, String? description})
+  TimeQuestion(String questionText,
+      {DateTime? initialTime, String? description})
       : selectedTime = initialTime ?? DateTime.now(),
         super(questionText, description: description);
 
@@ -184,28 +179,40 @@ class TimeQuestion extends Question {
   }
 }
 
-
 class SliderQuestion extends Question {
   double sliderValue;
   final double min;
   final double max;
   final int divisions;
   final String Function(double) labelBuilder;
-  Map<String, List<Question>>? subQuestions; 
+  Map<String, List<Question>>? subQuestions;
 
-  SliderQuestion(String questionText,
-    this.subQuestions , {
+  SliderQuestion(
+    String questionText,
+    this.subQuestions, {
     this.sliderValue = 1.0,
     this.min = 1.0,
     this.max = 7.0,
     this.divisions = 6,
     required this.labelBuilder,
     String? description,
-  }) : super(questionText, description: description){
-    this.subQuestions ??= {};
+  }) : super(questionText, description: description) {
+    subQuestions ??= {};
+  }
+
+  List<Question>? getSubQuestions(bool Function(double value)? condition) {
+    bool isNeedSubQuestion = true;
+    if (condition != null) {
+      isNeedSubQuestion = condition(sliderValue);
+    }
+    // note: For some reasons, flutter can only assert types for local variable within if condition exp
+    Map<String, List<Question>>? subQuestions = this.subQuestions;
+    if (subQuestions != null && isNeedSubQuestion) {
+      return subQuestions[sliderValue.toString()] ?? subQuestions['default'];
+    }
+    return null;
   }
 }
-
 
 class ChartData {
   final String category;
@@ -215,8 +222,8 @@ class ChartData {
 }
 
 enum QuestionType { SingleChoice, MultipleChoice, Text, None }
-enum ChartOrientation { horizontal, vertical, pie }
 
+enum ChartOrientation { horizontal, vertical, pie }
 
 class ChartQuestion extends Question {
   final List<ChartData> chartData;
@@ -229,15 +236,15 @@ class ChartQuestion extends Question {
   final ChartType chartType; // 添加一个用于存储图表类型的属性
 
   ChartQuestion(
-      String questionText,
-      this.chartData,
-      this.questionType,
-      this.options,
-      this.chartType, // 在构造函数中添加一个参数来接收图表类型
-      {
-        String? description,
-        this.orientation = ChartOrientation.vertical, // 默认为竖直方向
-      }) : super(questionText, description: description);
+    String questionText,
+    this.chartData,
+    this.questionType,
+    this.options,
+    this.chartType, // 在构造函数中添加一个参数来接收图表类型
+    {
+    String? description,
+    this.orientation = ChartOrientation.vertical, // 默认为竖直方向
+  }) : super(questionText, description: description);
 
   void answer(String option) {
     if (questionType == QuestionType.SingleChoice && options.contains(option)) {
@@ -255,8 +262,6 @@ class ChartQuestion extends Question {
     // 对于 QuestionType.None，不需要执行任何操作
   }
 }
-
-
 
 enum ChartType { Bar, Pie, None, Bulleted }
 
@@ -284,7 +289,7 @@ class MealQuestion extends Question {
   Map<String, List<Question>> subQuestions;
 
   MealQuestion(
-    String questionText, 
+    String questionText,
     this.subQuestions, {
     String? description,
   })  : meals = [],
