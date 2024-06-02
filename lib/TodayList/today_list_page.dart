@@ -162,24 +162,31 @@ class _TodayListPageState extends State<TodayListPage> {
               },
             ),
             onTap: () {
-              if (task.type == TaskType.CHATBOT) {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            ChatbotPage(contents: task.chatbotContent!)));
-              } else if (task.type == TaskType.SURVEY) {
-                // TODO: determine which surver will be flipabble
-                // Navigator.push(
-                //     context,
-                //     MaterialPageRoute(
-                //         builder: (context) =>
-                //             SurveyPage(survey: task.survey!)));
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            FlippableSurveyPage(survey: task.survey!)));
+              switch (task.type) {
+                case TaskType.CHATBOT:
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              ChatbotPage(contents: task.chatbotContent!)));
+                  break;
+                case TaskType.SURVEY:
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              SurveyPage(survey: task.survey!)));
+                  break;
+                case TaskType.SURVEY_FLIPPABLE:
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              FlippableSurveyPage(survey: task.survey!)));
+                  break;
+                default:
+                  // do nothing
+                  print('task type ERROR!');
               }
             },
           ),
