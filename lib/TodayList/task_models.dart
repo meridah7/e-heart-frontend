@@ -5,10 +5,13 @@ import 'package:namer_app/Survey/survey_models.dart';
 import '../Chatbot/chat_models.dart';
 
 enum TaskType {
+  // 对话机器人
   CHATBOT,
+  // 普通问卷
   SURVEY,
+  // 可翻页的问卷
+  SURVEY_FLIPPABLE,
 }
-
 
 class Task {
   final String title;
