@@ -22,8 +22,7 @@ class MonitoringOptionsPage extends StatelessWidget {
               },
               child: Text('监控记录', style: TextStyle(fontSize: 20)), // 增加字体大小
               style: ElevatedButton.styleFrom(
-                primary: Color.fromARGB(255, 174, 86, 165), // 按钮背景颜色
-                onPrimary: Colors.white, // 按钮文字颜色
+                foregroundColor: Colors.white, backgroundColor: Color.fromARGB(255, 174, 86, 165), // 按钮文字颜色
                 padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), // 增加按钮的padding来增大按钮
               ),
             ),
@@ -35,8 +34,7 @@ class MonitoringOptionsPage extends StatelessWidget {
               },
               child: Text('食物清除', style: TextStyle(fontSize: 20)), // 增加字体大小
               style: ElevatedButton.styleFrom(
-                primary: Color.fromARGB(255, 217, 156, 211), // 按钮背景颜色
-                onPrimary: Colors.white, // 按钮文字颜色
+                foregroundColor: Colors.white, backgroundColor: Color.fromARGB(255, 217, 156, 211), // 按钮文字颜色
                 padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), // 增加按钮的padding来增大按钮
               ),
             ),

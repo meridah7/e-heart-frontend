@@ -28,7 +28,7 @@ class _ReviewAnalysisPageState extends State<ReviewAnalysisPage> {
           children: [
             SizedBox(height: 25.0),
             _buildCustomButton(
-              title: '饮食监控',
+              title: '饮食日志',
               subtitle: '查看饮食分析去了解自己的饮食模式哦！',
               iconData: Icons.analytics,
               onTap: _navigateToDietaryAnalysisPage,
@@ -165,9 +165,9 @@ class _ReviewAnalysisPageState extends State<ReviewAnalysisPage> {
             children: [
               // Inside your _buildReflectionSection method
               _buildIconSection(
-                  Icons.restaurant_menu, '饮食监控', _navigateToDietMonitoring),
+                  Icons.restaurant_menu, '饮食日志', _navigateToDietMonitoring),
               _buildIconSection(
-                  Icons.access_time, '规律饮食', _navigateToRegularDiet),
+                  Icons.access_time, '饮食计划', _navigateToRegularDiet),
               _buildIconSection(
                   Icons.update, '暴食替代', _navigateToBingeSubstitution),
             ],

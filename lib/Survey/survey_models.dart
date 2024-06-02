@@ -1,11 +1,15 @@
+import 'package:flutter/material.dart';
+import 'package:namer_app/Survey/task_contents.dart';
+ 
  // 定义了用于创建survey的class和相关功能。
 
- abstract class Question {
-  final String questionText;
-  final String? description; 
+abstract class Question {
+final String questionText;
+final String? description;
+final String? imageUrl;
+final List<String>? imageUrls;
 
-  Question(this.questionText, {this.description});
-
+Question(this.questionText, {this.description, this.imageUrl, this.imageUrls});
 }
 
 class SingleChoiceQuestion extends Question {
@@ -62,21 +66,27 @@ class MultipleChoiceQuestion extends Question {
 
 class TextQuestion extends Question {
   List<String> answers; // Assuming a list of answers
+  List<TextEditingController> controllers; // 这里新增一个控制器列表
   bool canAddMore;
+  List<String> imageUrls; // 新增的图片 URL 列表
 
-  TextQuestion(String questionText, this.canAddMore, {String? description})
+  TextQuestion(String questionText, this.canAddMore, {String? description, List<String>? imageUrls})
       : answers = [''], // Initialize with an empty string
-        super(questionText, description: description);
-  
-  void addAnswer(String answer) {
-    if (canAddMore) {
-      answers.add(answer);
-    }
+        controllers = [TextEditingController()], // 初始化控制器列表
+        imageUrls = imageUrls ?? [], // 初始化图片 URL 列表
+        super(questionText, description: description, imageUrls: imageUrls);
+
+  void addAnswer(String answer) { 
+    if (!canAddMore) return; // 如果 canAddMore 为 false,直接返回
+    answers.add(answer);
+    controllers.add(TextEditingController()); // 为新答案添加一个新控制器
   }
 
   void removeAnswer(int index) {
     if (index >= 0 && index < answers.length) {
       answers.removeAt(index);
+      controllers[index].dispose(); // 释放被移除答案的控制器资源
+      controllers.removeAt(index); // 从列表中移除控制器
     }
   }
 }
@@ -86,9 +96,12 @@ class TextQuestion extends Question {
 class Survey {
   final String title;
   final List<Question> questions;
+  final bool navigateToSummary; // 添加这个属性
 
-  Survey(this.title, this.questions);
+  Survey({required this.title, required this.questions, this.navigateToSummary = false});
+
 }
+
 
 
 
@@ -116,7 +129,7 @@ extension MultipleChoiceQuestionExtension on MultipleChoiceQuestion {
 
 extension TextQuestionExtension on TextQuestion {
   void setAnswer(List<String> textAnswers) {
-    this.answers = textAnswers;
+    answers = textAnswers;
   }
 }
 
@@ -135,33 +148,42 @@ extension SurveyExtension on Survey {
     return true;
   }
 
-  void getSurveySummary() {
+  List<String> getSurveySummary() {
+    List<String> summary = [];
     for (var question in questions) {
       print(question.questionText);
+      summary.add(question.questionText);
+
       if (question is SingleChoiceQuestion) {
         print('Answer: ${question.selectedOption}');
+        summary.add('Answer: ${question.selectedOption}');
       } else if (question is MultipleChoiceQuestion) {
         print('Answers: ${question.selectedOptions.join(", ")}');
+        summary.add('Answers: ${question.selectedOptions.join(", ")}');
       } else if (question is TextQuestion) {
         print('Answer: ${question.answers}');
+        summary.add('Answer: ${question.answers}');
       }
     }
+    return summary;
   }
+
+
 }
 
 
 class TimeQuestion extends Question {
   DateTime selectedTime;
 
-
-  TimeQuestion(String questionText, {DateTime? initialTime})
+  TimeQuestion(String questionText, {DateTime? initialTime, String? description})
       : selectedTime = initialTime ?? DateTime.now(),
-        super(questionText);
+        super(questionText, description: description);
 
   void setTime(DateTime newTime) {
     selectedTime = newTime;
   }
 }
+
 
 class SliderQuestion extends Question {
   double sliderValue;
@@ -169,17 +191,20 @@ class SliderQuestion extends Question {
   final double max;
   final int divisions;
   final String Function(double) labelBuilder;
+  Map<String, List<Question>>? subQuestions; 
 
-  SliderQuestion(String questionText, {
+  SliderQuestion(String questionText,
+    this.subQuestions , {
     this.sliderValue = 1.0,
     this.min = 1.0,
     this.max = 7.0,
     this.divisions = 6,
     required this.labelBuilder,
     String? description,
-  }) : super(questionText, description: description);
+  }) : super(questionText, description: description){
+    this.subQuestions ??= {};
+  }
 }
-
 
 
 class ChartData {
@@ -190,22 +215,35 @@ class ChartData {
 }
 
 enum QuestionType { SingleChoice, MultipleChoice, Text, None }
+enum ChartOrientation { horizontal, vertical, pie }
+
 
 class ChartQuestion extends Question {
   final List<ChartData> chartData;
   final QuestionType questionType;
   final List<String> options;
+  final ChartOrientation orientation; // 添加这个属性
   String? selectedOption;
   List<String> selectedOptions = [];
   String? answerText;
+  final ChartType chartType; // 添加一个用于存储图表类型的属性
 
-  ChartQuestion(String questionText, this.chartData, this.questionType, this.options, {String? description})
-      : super(questionText, description: description);
+  ChartQuestion(
+      String questionText,
+      this.chartData,
+      this.questionType,
+      this.options,
+      this.chartType, // 在构造函数中添加一个参数来接收图表类型
+      {
+        String? description,
+        this.orientation = ChartOrientation.vertical, // 默认为竖直方向
+      }) : super(questionText, description: description);
 
   void answer(String option) {
     if (questionType == QuestionType.SingleChoice && options.contains(option)) {
       selectedOption = option;
-    } else if (questionType == QuestionType.MultipleChoice && options.contains(option)) {
+    } else if (questionType == QuestionType.MultipleChoice &&
+        options.contains(option)) {
       if (selectedOptions.contains(option)) {
         selectedOptions.remove(option);
       } else {
@@ -218,6 +256,9 @@ class ChartQuestion extends Question {
   }
 }
 
+
+
+enum ChartType { Bar, Pie, None, Bulleted }
 
 class PriorityQuestion extends Question {
   final List<String> options;
@@ -238,3 +279,28 @@ class PriorityQuestion extends Question {
   List<String> getSelectedOptions() => selectedOptions;
 }
 
+class MealQuestion extends Question {
+  List<String> meals;
+  Map<String, List<Question>> subQuestions;
+
+  MealQuestion(
+    String questionText, 
+    this.subQuestions, {
+    String? description,
+  })  : meals = [],
+        super(questionText, description: description);
+
+  void addMeal(String meal) {
+    meals.add(meal);
+    subQuestions[meal] = []; // 为新餐食初始化子问题列表
+  }
+
+  void removeMeal(String meal) {
+    meals.remove(meal);
+    subQuestions.remove(meal); // 移除对应餐食的子问题
+  }
+
+  void addSubQuestion(String meal, Question question) {
+    subQuestions[meal]?.add(question);
+  }
+}
