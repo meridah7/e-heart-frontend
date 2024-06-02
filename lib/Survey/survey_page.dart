@@ -623,7 +623,7 @@ class _SurveyPageState extends State<SurveyPage> {
 
   Widget buildTimeQuestion(TimeQuestion question) {
     // Method to show the date and time picker
-    void _showDateTimePicker() async {
+    void showDateTimePicker() async {
       await showModalBottomSheet(
         context: context,
         builder: (BuildContext builder) {
@@ -667,7 +667,7 @@ class _SurveyPageState extends State<SurveyPage> {
             SizedBox(height: 10),
             CustomElevatedButton(
               text: '更改时间',
-              onPressed: _showDateTimePicker,
+              onPressed: showDateTimePicker,
             ),
           ],
         ),
