@@ -170,16 +170,16 @@ class _TodayListPageState extends State<TodayListPage> {
                             ChatbotPage(contents: task.chatbotContent!)));
               } else if (task.type == TaskType.SURVEY) {
                 // TODO: determine which surver will be flipabble
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            SurveyPage(survey: task.survey!)));
                 // Navigator.push(
                 //     context,
                 //     MaterialPageRoute(
                 //         builder: (context) =>
-                //             FlippableSurveyPage(survey: task.survey!)));
+                //             SurveyPage(survey: task.survey!)));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            FlippableSurveyPage(survey: task.survey!)));
               }
             },
           ),

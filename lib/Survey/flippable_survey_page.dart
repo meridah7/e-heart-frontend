@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'survey_models.dart';
 import 'package:namer_app/global_setting.dart';
+import 'survey_question_factory.dart';
 
 /// @desc 可翻页的问券
 ///
@@ -19,7 +20,9 @@ class _FlippableSurveyPageState extends State<FlippableSurveyPage> {
 
   void nextStep() {
     setState(() {
+      print('bbb i am here');
       if (_curStep < widget.survey.questions.length - 1) {
+        print('aaa i am here');
         _curStep = _curStep + 1;
       }
     });
@@ -36,17 +39,46 @@ class _FlippableSurveyPageState extends State<FlippableSurveyPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.survey.title),
-        backgroundColor: themeColor,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(
-          vertical: 5.0,
-          horizontal: 16.0,
+        appBar: AppBar(
+          title: Text(widget.survey.title),
+          backgroundColor: themeColor,
         ),
-        child: Icon(Icons.check),
-      ),
-    );
+        body: ListView.builder(
+            itemCount: 1,
+            itemBuilder: (context, index) {
+              final question = widget.survey.questions[_curStep];
+              Widget questionWidget =
+                  questionWidgetFactory(context, question, setState);
+
+              return Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 5.0,
+                  horizontal: 16.0,
+                ),
+                child: questionWidget,
+              );
+            }),
+        floatingActionButton: Container(
+            margin: EdgeInsets.only(left: 35.0),
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _curStep == 0
+                      ? SizedBox()
+                      : FloatingActionButton(
+                          child: Icon(Icons.arrow_back),
+                          onPressed: () {
+                            // TODO: handle the prev function
+                            prevStep();
+                          }),
+                  FloatingActionButton(
+                      child: _curStep == widget.survey.questions.length - 1
+                          ? Icon(Icons.check)
+                          : Icon(Icons.arrow_forward),
+                      onPressed: () {
+                        // TODO: handle the next function
+                        nextStep();
+                      }),
+                ])));
   }
 }
