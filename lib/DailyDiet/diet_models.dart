@@ -9,12 +9,12 @@ enum DietType {
   NonFormalMeal,
 }
 
-
 class Diet {
   final String food;
   final String id;
   final String type;
   final int day;
+  final int createTime;
   final List<Content>? mealContent;
   final Survey? survey;
 
@@ -23,6 +23,7 @@ class Diet {
     required this.id,
     required this.type,
     required this.day,
+    required this.createTime,
     this.mealContent,
     this.survey,
   });

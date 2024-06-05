@@ -10,6 +10,7 @@ import '../Survey/survey_page.dart';
 import '../Survey/flippable_survey_page.dart';
 import '../DietMonitoring/binge_eating_record_page.dart';
 import '../DietMonitoring/diet_monitoring_page.dart';
+import 'package:intl/intl.dart';
 
 class TodayListPage extends StatefulWidget {
   @override
@@ -201,24 +202,39 @@ class _TodayListPageState extends State<TodayListPage> {
       itemBuilder: (context, index) {
         final diet = diets[index];
         return Container(
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.7), // 半透明背景
-            borderRadius: BorderRadius.circular(10), // 可选的圆角
-          ),
-          margin:
-              EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0), // 添加一些边距
-          child: ListTile(
-            title: Text(diet.food),
-            subtitle: Text(diet.type),
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          ChatbotPage(contents: diet.mealContent!)));
-            },
-          ),
-        );
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.7), // 半透明背景
+              borderRadius: BorderRadius.circular(10), // 可选的圆角
+            ),
+            margin:
+                EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0), // 添加一些边距
+            child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(diet.food, style: TextStyle(fontSize: 16.0)),
+                          Text(diet.type),
+                        ],
+                      ),
+                      Text(DateFormat('kk:mm').format(
+                          DateTime.fromMillisecondsSinceEpoch(
+                              diet.createTime))),
+                    ])));
+        // ListTile(
+        //   title: Text(diet.food),
+        //   subtitle: Text(diet.type),
+        //   onTap: () {
+        //     Navigator.push(
+        //         context,
+        //         MaterialPageRoute(
+        //             builder: (context) =>
+        //                 ChatbotPage(contents: diet.mealContent!)));
+        //   },
       },
     );
   }
