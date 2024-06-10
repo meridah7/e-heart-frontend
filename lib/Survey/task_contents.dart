@@ -425,61 +425,66 @@ var mealPlanningSurvey = Survey(title: '每日饮食计划', questions: [
   // Other questions for the survey
 ]);
 
-var bingeEatingReflectionSurvey = Survey(title: '冲动记录反思', questions: [
-  SingleChoiceQuestion(
-    '小E对你记录的所有暴食、清除食物冲动进行了总结，帮助你以专业的视角进行反思，看看还有哪些可以改善的地方。\n\n'
-    '没有想法的空可以不填，你只要分析对自己有启发的部分。您的回答绝对保密，放心填写就好啦。',
-    ['好的！'],
-    {},
-  ),
-  SingleChoiceQuestion(
-      '小E统计发现，您至今为止记录了**次暴食、清除冲动，并制定了相应的应对策略，您真的很棒！要继续坚持记录和应对哦。', ['了解了！'], {},
-      description: ''),
-  SingleChoiceQuestion(
-    '您是否在每次识别到自己暴食、清除食物冲动的时候，都努力立即记录下来？',
-    ['是的', '比较难做到'],
-    {
-      '是的': [SingleChoiceQuestion('真棒，希望你继续坚持哦～', [], {})],
-      '比较难做到': [
-        TextQuestion(
-            '即使不制定应对策略而就简单记录一下冲动，都会让你感觉好不少！因此，如果你觉得太难，也可以先不填写策略的部分。\n\n'
-            '你觉得是什么阻碍了你对冲动的记录呢？',
-            false),
-        TextQuestion('你觉得有什么好方法克服它们？', false),
-      ],
-    },
-  ),
-  SingleChoiceQuestion(
-    '您是否在每次识别到自己暴食、清除食物冲动的时候，都使用了先前制定好的替代方法？可以回到自己的每一次记录去看一看～',
-    ['有', '没有'],
-    {
-      '有': [
-        SingleChoiceQuestion(
-            '真棒，感受到暴食、清除冲动时用一些更友好的策略来应对冲动，可是有大作用呢。慢慢来，相信自己～', [], {})
-      ],
-      '没有': [
-        SingleChoiceQuestion(
-            '刚开始冲动太过强烈，可能想的应对策略没什么效果。\n'
-            '这很正常，每次只需要尽力坚持得比以前久一些就好～在这里，制定下一个想要坚持的时间吧。',
-            [],
-            {}),
-        TextQuestion('当我记录下我的冲动并制定相应策略后，我想在这个冲动下坚持  ____ 分钟。', false),
-        TextQuestion('为了完成这个目标，你觉得有哪些可能的困难和阻碍？', false),
-        TextQuestion('你觉得有什么好方法来克服这些困难呢？', false),
-      ],
-    },
-  ),
-  TextQuestion(
-      '我使用应对策略应对冲动的效果怎样？具体的应对冲动过程是否有可以改进的空间？\n\n'
-      'a.效果',
-      false),
-  TextQuestion('b.改进空间', false),
-  // More questions or reflection points can be added here
+var bingeEatingReflectionSurvey = Survey(
+    title: '冲动记录反思',
+    questions: [
+      SingleChoiceQuestion(
+        '小E对你记录的所有暴食、清除食物冲动进行了总结，帮助你以专业的视角进行反思，看看还有哪些可以改善的地方。\n\n'
+        '没有想法的空可以不填，你只要分析对自己有启发的部分。您的回答绝对保密，放心填写就好啦。',
+        ['好的！'],
+        {},
+      ),
+      SingleChoiceQuestion(
+          '小E统计发现，您至今为止记录了**次暴食、清除冲动，并制定了相应的应对策略，您真的很棒！要继续坚持记录和应对哦。',
+          ['了解了！'],
+          {},
+          description: ''),
+      SingleChoiceQuestion(
+        '您是否在每次识别到自己暴食、清除食物冲动的时候，都努力立即记录下来？',
+        ['是的', '比较难做到'],
+        {
+          '是的': [SingleChoiceQuestion('真棒，希望你继续坚持哦～', [], {})],
+          '比较难做到': [
+            TextQuestion(
+                '即使不制定应对策略而就简单记录一下冲动，都会让你感觉好不少！因此，如果你觉得太难，也可以先不填写策略的部分。\n\n'
+                '你觉得是什么阻碍了你对冲动的记录呢？',
+                false),
+            TextQuestion('你觉得有什么好方法克服它们？', false),
+          ],
+        },
+      ),
+      SingleChoiceQuestion(
+        '您是否在每次识别到自己暴食、清除食物冲动的时候，都使用了先前制定好的替代方法？可以回到自己的每一次记录去看一看～',
+        ['有', '没有'],
+        {
+          '有': [
+            SingleChoiceQuestion(
+                '真棒，感受到暴食、清除冲动时用一些更友好的策略来应对冲动，可是有大作用呢。慢慢来，相信自己～', [], {})
+          ],
+          '没有': [
+            SingleChoiceQuestion(
+                '刚开始冲动太过强烈，可能想的应对策略没什么效果。\n'
+                '这很正常，每次只需要尽力坚持得比以前久一些就好～在这里，制定下一个想要坚持的时间吧。',
+                [],
+                {}),
+            TextQuestion('当我记录下我的冲动并制定相应策略后，我想在这个冲动下坚持  ____ 分钟。', false),
+            TextQuestion('为了完成这个目标，你觉得有哪些可能的困难和阻碍？', false),
+            TextQuestion('你觉得有什么好方法来克服这些困难呢？', false),
+          ],
+        },
+      ),
+      TextQuestion(
+          '我使用应对策略应对冲动的效果怎样？具体的应对冲动过程是否有可以改进的空间？\n\n'
+          'a.效果',
+          false),
+      TextQuestion('b.改进空间', false),
+      // More questions or reflection points can be added here
 
-  //此处需要呈现呈现总反思表
-  //未完成
-  SingleChoiceQuestion('如果你需要对冲动应对卡进行修改，请点击这里。', ['点击跳转暴食替代策略修改(暂无页面)'], {})
-]);
+      //此处需要呈现呈现总反思表
+      //未完成
+      SingleChoiceQuestion('如果你需要对冲动应对卡进行修改，请点击这里。', ['点击跳转暴食替代策略修改(暂无页面)'], {})
+    ],
+    navigateToSummary: true);
 
 var impulseRecordingSurvey = Survey(title: '冲动记录', questions: [
   SingleChoiceQuestion(
@@ -678,151 +683,154 @@ var chartQuestion2 = ChartQuestion(
 );
 
 // 定义饮食日志教学反思Survey
-var monitoringTeachingReflectionSurvey = Survey(title: '饮食日志反思', questions: [
-  SingleChoiceQuestion(
-    '刚刚，小E对您之前记录的饮食日志内容进行了初步整理。接下来，小E将会问你一些问题，帮助你以更高维度的视角分析、反思自己的饮食模式。',
-    ['下一步'],
-    {},
-  ),
-  SingleChoiceQuestion(
-    '对自己饮食模式的觉察和反思是非常非常重要的！经过研究表明，它能够帮助你增强对自己进食的掌控感，进而显著减少暴食和清除食物行为的发生频率。请千万不要忽视它！',
-    ['好的！'],
-    {},
-  ),
-  SingleChoiceQuestion(
-    '如果真的没有发现什么，完全可以放空不填～我们希望你分析对自己有意义的部分。并且，您的回答也是绝对保密的，只有自己才能看到。所以，放心真诚地回答就好啦～',
-    ['知道了！'],
-    {},
-  ),
-  SingleChoiceQuestion(
-      '我完成的饮食日志有多少天？',
-      ['5-7天', '0-4天'],
-      {
-        '5-7天': [
-          SingleChoiceQuestion(
-              '你太棒啦！有这种坚持的能力，小E相信，不管是暴食还是生命中其他的挑战你都一定能战胜他们。我们希望你之后的每周都至少能完成五天的饮食日志，当然越多越有效啦！',
-              ['好的！'],
-              {})
-        ],
-        '0-4天': [
-          SingleChoiceQuestion(
-              '没关系的，万事开头难，很多人都很难在前几周就完成5天及以上的的饮食日志。您只需要想想干扰自己进行饮食日志记录的原因，并提出一些可能的改善策略就好啦。',
-              ['好的！'],
-              {}),
+var monitoringTeachingReflectionSurvey = Survey(
+    title: '饮食日志反思',
+    questions: [
+      SingleChoiceQuestion(
+        '刚刚，小E对您之前记录的饮食日志内容进行了初步整理。接下来，小E将会问你一些问题，帮助你以更高维度的视角分析、反思自己的饮食模式。',
+        ['下一步'],
+        {},
+      ),
+      SingleChoiceQuestion(
+        '对自己饮食模式的觉察和反思是非常非常重要的！经过研究表明，它能够帮助你增强对自己进食的掌控感，进而显著减少暴食和清除食物行为的发生频率。请千万不要忽视它！',
+        ['好的！'],
+        {},
+      ),
+      SingleChoiceQuestion(
+        '如果真的没有发现什么，完全可以放空不填～我们希望你分析对自己有意义的部分。并且，您的回答也是绝对保密的，只有自己才能看到。所以，放心真诚地回答就好啦～',
+        ['知道了！'],
+        {},
+      ),
+      SingleChoiceQuestion(
+          '我完成的饮食日志有多少天？',
+          ['5-7天', '0-4天'],
+          {
+            '5-7天': [
+              SingleChoiceQuestion(
+                  '你太棒啦！有这种坚持的能力，小E相信，不管是暴食还是生命中其他的挑战你都一定能战胜他们。我们希望你之后的每周都至少能完成五天的饮食日志，当然越多越有效啦！',
+                  ['好的！'],
+                  {})
+            ],
+            '0-4天': [
+              SingleChoiceQuestion(
+                  '没关系的，万事开头难，很多人都很难在前几周就完成5天及以上的的饮食日志。您只需要想想干扰自己进行饮食日志记录的原因，并提出一些可能的改善策略就好啦。',
+                  ['好的！'],
+                  {}),
+              TextQuestion('请先思考一下没有完整记录的原因', false),
+              TextQuestion('然后在这里写下你的应对策略', false),
+            ]
+          },
+          description: '*完成指的是————您完整记录下了一天内所有的进食情况'),
+      SingleChoiceQuestion('您是否记录了所有吃&喝的食物', [
+        '是',
+        '否'
+      ], {
+        '否': [
           TextQuestion('请先思考一下没有完整记录的原因', false),
           TextQuestion('然后在这里写下你的应对策略', false),
         ]
-      },
-      description: '*完成指的是————您完整记录下了一天内所有的进食情况'),
-  SingleChoiceQuestion('您是否记录了所有吃&喝的食物', [
-    '是',
-    '否'
-  ], {
-    '否': [
-      TextQuestion('请先思考一下没有完整记录的原因', false),
-      TextQuestion('然后在这里写下你的应对策略', false),
-    ]
-  }),
-  // ... 其他问题
+      }),
+      // ... 其他问题
 
-  // 问题4
-  SingleChoiceQuestion('您是否在吃完之后尽快地把它们记录下来', [
-    '是',
-    '否'
-  ], {
-    '否': [
-      TextQuestion('请先思考一下没有尽快记录的原因', false),
-      TextQuestion('然后在这里写下你的应对策略', false),
-    ]
-  }),
+      // 问题4
+      SingleChoiceQuestion('您是否在吃完之后尽快地把它们记录下来', [
+        '是',
+        '否'
+      ], {
+        '否': [
+          TextQuestion('请先思考一下没有尽快记录的原因', false),
+          TextQuestion('然后在这里写下你的应对策略', false),
+        ]
+      }),
 
-  // 问题5
-  SingleChoiceQuestion(
-    '您是否诚实地记录了自己的暴食情况',
-    ['是', '否'],
-    {
-      '否': [
-        TextQuestion('请先思考一下没有诚实记录的原因', false),
-        TextQuestion('然后在这里写下你的应对策略', false),
-      ]
-    }, // 暂无子问题
-  ),
-
-  // 问题6
-  SingleChoiceQuestion('您是否在最后一栏里记录了进食前后影响您饮食的想法和情绪', [
-    '是',
-    '否'
-  ], {
-    '否': [
-      TextQuestion('请先思考一下没有完整记录的原因', false),
-      TextQuestion('然后在这里写下你的应对策略', false),
-    ]
-  }),
-  SingleChoiceQuestion(
-      '你的本周总暴食次数为**，让我们开始对暴食部分的分析吧', ['好的！'], {} // 可能需要添加子问题或描述
+      // 问题5
+      SingleChoiceQuestion(
+        '您是否诚实地记录了自己的暴食情况',
+        ['是', '否'],
+        {
+          '否': [
+            TextQuestion('请先思考一下没有诚实记录的原因', false),
+            TextQuestion('然后在这里写下你的应对策略', false),
+          ]
+        }, // 暂无子问题
       ),
-  bingeEatingCauseChartQuestion,
-  bingeEatingtriggerFrequencyChartQuestion,
-  TextQuestion('我的暴食诱因通常是什么呢？', false),
-  TextQuestion('怎样对我的暴食诱因进行更好的控制和管理呢？', false),
-  bingeEatingWeekChartQuestion,
-  bingeEatingTimeChartQuestion,
-  TextQuestion('我的暴食和时间有什么关联？', false),
-  TextQuestion('我能依此做什么调整来减少暴食？', false),
-  bingeEatingLocationChartQuestion,
-  TextQuestion('在哪吃会影响我的暴食吗？', false),
-  TextQuestion('我能依此做什么调整来减少暴食？', false),
-  bingeEatingEmotionalIntensityChartQuestion,
-  bingeEatingEmotionalTypeChartQuestion,
-  TextQuestion('情绪如何影响我的暴食？', false),
-  TextQuestion('我能依此做什么调整来减少暴食？', false),
-  bingeEatingFoodFrequencyChartQuestion,
-  TextQuestion('我暴食的时候都吃什么种类的食物？为什么吃这些食物？', false),
-  TextQuestion('我能依此做什么调整来减少暴食？', false),
 
-  bingeEatingWeekChartQuestion,
-  restrictWeekChartQuestion,
-  TextQuestion('我这几天的节食情况怎么样？它和我的暴食之间有什么关系？', false),
+      // 问题6
+      SingleChoiceQuestion('您是否在最后一栏里记录了进食前后影响您饮食的想法和情绪', [
+        '是',
+        '否'
+      ], {
+        '否': [
+          TextQuestion('请先思考一下没有完整记录的原因', false),
+          TextQuestion('然后在这里写下你的应对策略', false),
+        ]
+      }),
+      SingleChoiceQuestion(
+          '你的本周总暴食次数为**，让我们开始对暴食部分的分析吧', ['好的！'], {} // 可能需要添加子问题或描述
+          ),
+      bingeEatingCauseChartQuestion,
+      bingeEatingtriggerFrequencyChartQuestion,
+      TextQuestion('我的暴食诱因通常是什么呢？', false),
+      TextQuestion('怎样对我的暴食诱因进行更好的控制和管理呢？', false),
+      bingeEatingWeekChartQuestion,
+      bingeEatingTimeChartQuestion,
+      TextQuestion('我的暴食和时间有什么关联？', false),
+      TextQuestion('我能依此做什么调整来减少暴食？', false),
+      bingeEatingLocationChartQuestion,
+      TextQuestion('在哪吃会影响我的暴食吗？', false),
+      TextQuestion('我能依此做什么调整来减少暴食？', false),
+      bingeEatingEmotionalIntensityChartQuestion,
+      bingeEatingEmotionalTypeChartQuestion,
+      TextQuestion('情绪如何影响我的暴食？', false),
+      TextQuestion('我能依此做什么调整来减少暴食？', false),
+      bingeEatingFoodFrequencyChartQuestion,
+      TextQuestion('我暴食的时候都吃什么种类的食物？为什么吃这些食物？', false),
+      TextQuestion('我能依此做什么调整来减少暴食？', false),
 
-  restrictWeekChartQuestion,
-  TextQuestion('我的节食和时间有什么关联？', false),
-  TextQuestion('我能对我的节食行为做出什么调整，以减少暴食的发生？', false),
+      bingeEatingWeekChartQuestion,
+      restrictWeekChartQuestion,
+      TextQuestion('我这几天的节食情况怎么样？它和我的暴食之间有什么关系？', false),
 
-  restrictLocationChartQuestion,
-  TextQuestion('在哪吃会影响我的节食吗？', false),
-  TextQuestion('我能对我的节食行为做出什么调整，以减少暴食的发生？', false),
+      restrictWeekChartQuestion,
+      TextQuestion('我的节食和时间有什么关联？', false),
+      TextQuestion('我能对我的节食行为做出什么调整，以减少暴食的发生？', false),
 
-  restrictEmotionChartQuestion,
-  restrictEmotionalIntensityChartQuestion,
-  TextQuestion('情绪如何影响我的节食？', false),
-  TextQuestion('我能对我的节食行为做出什么调整，以减少暴食的发生？', false),
+      restrictLocationChartQuestion,
+      TextQuestion('在哪吃会影响我的节食吗？', false),
+      TextQuestion('我能对我的节食行为做出什么调整，以减少暴食的发生？', false),
 
-  restrictFoodFrequencyChartQuestion,
-  TextQuestion('我节食的时候都吃什么种类的食物？为什么吃这些食物？', false),
-  TextQuestion('我能对我的节食行为做出什么调整，以减少暴食的发生？', false),
+      restrictEmotionChartQuestion,
+      restrictEmotionalIntensityChartQuestion,
+      TextQuestion('情绪如何影响我的节食？', false),
+      TextQuestion('我能对我的节食行为做出什么调整，以减少暴食的发生？', false),
 
-  foodRemovalWeekChartQuestion,
-  foodRemovalTimeOfDayChartQuestion,
-  TextQuestion('我的食物清除和时间有什么关联？', false),
+      restrictFoodFrequencyChartQuestion,
+      TextQuestion('我节食的时候都吃什么种类的食物？为什么吃这些食物？', false),
+      TextQuestion('我能对我的节食行为做出什么调整，以减少暴食的发生？', false),
 
-  foodRemovalEmotionChartQuestion,
-  foodRemovalEmotionalIntensityChartQuestion,
-  TextQuestion('情绪如何影响我的食物清除行为？', false),
+      foodRemovalWeekChartQuestion,
+      foodRemovalTimeOfDayChartQuestion,
+      TextQuestion('我的食物清除和时间有什么关联？', false),
 
-  foodRemovaltriggerFrequencyChartQuestion,
-  TextQuestion('我的食物清除诱因通常是什么呢?', false),
-  TextQuestion('怎样对我的食物清除诱因进行更好的控制和管理呢?', false),
-  SingleChoiceQuestion(
-    '今天你成功完成了一次对自己的饮食日志的反思分析！您可以带着这些宝贵的想法进行之后的饮食日志记录，尤其是关于暴食诱因的模块，相信你一定对它有了更多觉察～',
-    ['ok！'],
-    {},
-  ),
-  SingleChoiceQuestion(
-    '这样的饮食日志反思在前两周会以每周两次的频率进行，之后则是一周一次。您在这里写下的每一句话在之后可能都具有无与伦比的治疗效果~',
-    ['好的！'],
-    {},
-  ),
-]);
+      foodRemovalEmotionChartQuestion,
+      foodRemovalEmotionalIntensityChartQuestion,
+      TextQuestion('情绪如何影响我的食物清除行为？', false),
+
+      foodRemovaltriggerFrequencyChartQuestion,
+      TextQuestion('我的食物清除诱因通常是什么呢?', false),
+      TextQuestion('怎样对我的食物清除诱因进行更好的控制和管理呢?', false),
+      SingleChoiceQuestion(
+        '今天你成功完成了一次对自己的饮食日志的反思分析！您可以带着这些宝贵的想法进行之后的饮食日志记录，尤其是关于暴食诱因的模块，相信你一定对它有了更多觉察～',
+        ['ok！'],
+        {},
+      ),
+      SingleChoiceQuestion(
+        '这样的饮食日志反思在前两周会以每周两次的频率进行，之后则是一周一次。您在这里写下的每一句话在之后可能都具有无与伦比的治疗效果~',
+        ['好的！'],
+        {},
+      ),
+    ],
+    navigateToSummary: true);
 
 // 示例数据1 - 每天暴食次数在一周内变化的折线图
 List<ChartData> bingeEatingData = [
@@ -1177,125 +1185,131 @@ List<ChartData> restrictFoodFrequencyChartData = [
 ];
 
 // 创建新的问卷
-var regularDietReflectionSurvey = Survey(title: "饮食计划反思", questions: [
-  SingleChoiceQuestion(
-      "刚刚，小E对您的饮食计划进行了整理，并将帮助你以专业的视角反思自己的饮食计划。\n\n"
-      "饮食计划和对应的反思是方案中被证明最有效的内容，因此要认真填写～\n\n"
-      "没有想法的空可以不填，你只要分析对自己有启发的部分。您的回答绝对保密，放心填写就好啦。",
-      ["好的！"],
-      {}),
-  dietaryPlanChartQuestion,
-  SingleChoiceQuestion(
-      "我每天有提前做好饮食计划吗？",
-      [
-        "0-5天",
-        "6-7天",
-      ],
-      {
-        "0-5天": [
-          TextQuestion(
-              '小E知道坚持完成这个任务是个不容易的事情，因此没有每天进行饮食计划也完全没关系～您只需要想想干扰自己进行饮食日志记录的原因，并提出一些可能的改善策略就好啦。\n\n'
-              '干扰原因',
-              false),
-          TextQuestion('对策', false)
-        ],
-        "6-7天": [
-          SingleChoiceQuestion('能坚持这么久，真的好厉害！努力保持哟～', ['好的'], {})
-        ]
-      },
-      description: '小E看到您已经做了x天的计划'),
-  mealIntervalChartQuestion,
-  SingleChoiceQuestion(
-      "2. 我是否按照要求，将饮食计划的每餐间隔时间控制在3- 4 小时之间？",
-      ["是", "否"],
-      {
-        "是": [
-          SingleChoiceQuestion(
-              "很棒！看来你已经完全理解我们饮食计划的核心原则啦！相信我们，这一定对缓解暴食有所帮助～", [], {})
-        ],
-        "否": [
-          SingleChoiceQuestion("为什么在计划的时候要把每一次进食的间隔控制在3-4小时呢？", [
-            '点击查看原因'
-          ], {
-            '点击查看原因': [
+var regularDietReflectionSurvey = Survey(
+    title: "饮食计划反思",
+    questions: [
+      SingleChoiceQuestion(
+          "刚刚，小E对您的饮食计划进行了整理，并将帮助你以专业的视角反思自己的饮食计划。\n\n"
+          "饮食计划和对应的反思是方案中被证明最有效的内容，因此要认真填写～\n\n"
+          "没有想法的空可以不填，你只要分析对自己有启发的部分。您的回答绝对保密，放心填写就好啦。",
+          ["好的！"],
+          {}),
+      dietaryPlanChartQuestion,
+      SingleChoiceQuestion(
+          "我每天有提前做好饮食计划吗？",
+          [
+            "0-5天",
+            "6-7天",
+          ],
+          {
+            "0-5天": [
+              TextQuestion(
+                  '小E知道坚持完成这个任务是个不容易的事情，因此没有每天进行饮食计划也完全没关系～您只需要想想干扰自己进行饮食日志记录的原因，并提出一些可能的改善策略就好啦。\n\n'
+                  '干扰原因',
+                  false),
+              TextQuestion('对策', false)
+            ],
+            "6-7天": [
+              SingleChoiceQuestion('能坚持这么久，真的好厉害！努力保持哟～', ['好的'], {})
+            ]
+          },
+          description: '小E看到您已经做了x天的计划'),
+      mealIntervalChartQuestion,
+      SingleChoiceQuestion(
+          "2. 我是否按照要求，将饮食计划的每餐间隔时间控制在3- 4 小时之间？",
+          ["是", "否"],
+          {
+            "是": [
               SingleChoiceQuestion(
-                  '四小时就能让你之前吃的东西消化的差不多，因此超过四小时还不吃东西就会让你的身体感到饥饿。\n\n'
-                  '此外，太久不吃东西会让你一直挂念着食物；这种生理饥饿和心理压力会同时发挥作用，就会有极大的可能引发暴食！\n\n'
-                  '饮食计划的核心原则是让您一天计划的每一次进食都间隔在3-4小时之间，其实就能够让你同时避免身体和心理的这两方面的影响，从而达到减少暴食的目的。',
+                  "很棒！看来你已经完全理解我们饮食计划的核心原则啦！相信我们，这一定对缓解暴食有所帮助～", [], {})
+            ],
+            "否": [
+              SingleChoiceQuestion("为什么在计划的时候要把每一次进食的间隔控制在3-4小时呢？", [
+                '点击查看原因'
+              ], {
+                '点击查看原因': [
+                  SingleChoiceQuestion(
+                      '四小时就能让你之前吃的东西消化的差不多，因此超过四小时还不吃东西就会让你的身体感到饥饿。\n\n'
+                      '此外，太久不吃东西会让你一直挂念着食物；这种生理饥饿和心理压力会同时发挥作用，就会有极大的可能引发暴食！\n\n'
+                      '饮食计划的核心原则是让您一天计划的每一次进食都间隔在3-4小时之间，其实就能够让你同时避免身体和心理的这两方面的影响，从而达到减少暴食的目的。',
+                      ['好的！'],
+                      {})
+                ]
+              })
+            ],
+          },
+          description: "您计划进食的时间共有x次不在3- 4 小时之间"),
+      SingleChoiceQuestion(
+          "我有努力按照自己的计划内容进食吗（在第二天进食时，和前一天的计划内容有一些差别很正常，不用和计划内容完全一致，只要尽量按照计划执行就好～）",
+          ["我努力了～", "还没有那么努力～"],
+          {
+            "我努力了～": [SingleChoiceQuestion("你真的非常棒！努力继续坚持吧～", [], {})],
+            "还没有那么努力～": [
+              TextQuestion(
+                  '按照计划进食真的是一件不容易的事情，需要我们一起慢慢努力。那么，你可以想想干扰自己按照饮食计划进食的原因，并提出一些可能的改善策略就好啦。\n\n'
+                  '干扰原因',
+                  false),
+              TextQuestion('对策', false)
+            ]
+          },
+          description: ""),
+      SingleChoiceQuestion(
+          "如果我没有遵循饮食计划，我会努力重新专注于下一次计划吗？",
+          [
+            "即使我出于某些原因没有遵循某一餐的计划，我也能努力去完成接下来的饮食计划",
+            "如果某一次进食我没按照计划完成，我可能就会彻底放弃今天的所有计划"
+          ],
+          {
+            "即使我出于某些原因没有遵循某一餐的计划，我也能努力去完成接下来的饮食计划": [
+              SingleChoiceQuestion("非常好，你的想法很棒！", ['好的！'], {})
+            ],
+            "如果某一次进食我没按照计划完成，我可能就会彻底放弃今天的所有计划": [
+              SingleChoiceQuestion(
+                  "如果你的一次进食没按计划做好，你可能非常沮丧，认为一整天的饮食都毁了。但其实不是的！你不需要将饮食计划做到完美，追求完美只会成为暴食最好的帮凶。\n\n"
+                  "因此，不管之前发生了什么，只需要重新专注于完成下一次的进食计划就好啦！",
                   ['好的！'],
                   {})
             ]
-          })
-        ],
-      },
-      description: "您计划进食的时间共有x次不在3- 4 小时之间"),
-  SingleChoiceQuestion(
-      "我有努力按照自己的计划内容进食吗（在第二天进食时，和前一天的计划内容有一些差别很正常，不用和计划内容完全一致，只要尽量按照计划执行就好～）",
-      ["我努力了～", "还没有那么努力～"],
-      {
-        "我努力了～": [SingleChoiceQuestion("你真的非常棒！努力继续坚持吧～", [], {})],
-        "还没有那么努力～": [
-          TextQuestion(
-              '按照计划进食真的是一件不容易的事情，需要我们一起慢慢努力。那么，你可以想想干扰自己按照饮食计划进食的原因，并提出一些可能的改善策略就好啦。\n\n'
-              '干扰原因',
-              false),
-          TextQuestion('对策', false)
-        ]
-      },
-      description: ""),
-  SingleChoiceQuestion(
-      "如果我没有遵循饮食计划，我会努力重新专注于下一次计划吗？",
-      [
-        "即使我出于某些原因没有遵循某一餐的计划，我也能努力去完成接下来的饮食计划",
-        "如果某一次进食我没按照计划完成，我可能就会彻底放弃今天的所有计划"
-      ],
-      {
-        "即使我出于某些原因没有遵循某一餐的计划，我也能努力去完成接下来的饮食计划": [
-          SingleChoiceQuestion("非常好，你的想法很棒！", ['好的！'], {})
-        ],
-        "如果某一次进食我没按照计划完成，我可能就会彻底放弃今天的所有计划": [
-          SingleChoiceQuestion(
-              "如果你的一次进食没按计划做好，你可能非常沮丧，认为一整天的饮食都毁了。但其实不是的！你不需要将饮食计划做到完美，追求完美只会成为暴食最好的帮凶。\n\n"
-              "因此，不管之前发生了什么，只需要重新专注于完成下一次的进食计划就好啦！",
-              ['好的！'],
-              {})
-        ]
-      },
-      description: ""),
-  SingleChoiceQuestion(
-      "我每天的饮食计划是否可以完全不一样？",
-      ["可以", "不可以"],
-      {
-        "可以": [
-          SingleChoiceQuestion("非常好，你的想法很棒！", ['好的！'], {})
-        ],
-        "不可以": [
-          SingleChoiceQuestion(
-              "请记住，每一天的计划都可以是不一样的！我们不需要您保持非常规律的饮食模式，您完全可以根据下一天的安排来个性化地计划自己的饮食！当然，要遵循我们每餐间隔3-4小时的核心原则哦。",
-              ['好的！'],
-              {})
-        ]
-      },
-      description: ""),
-  SingleChoiceQuestion(
-      "我做的饮食计划还有什么可以调整改善的地方吗？",
-      ["暂时没有，我已经很棒啦", "有一些可以调整的地方"],
-      {
-        "暂时没有，我已经很棒啦": [
-          SingleChoiceQuestion("真棒！继续努力哦～", ['好的！'], {})
-        ],
-        "有一些可以调整的地方": [
-          TextQuestion(
-            "请写下您认为可以调整的地方，您可以在明天的计划中努力做到~",
-            false,
-          )
-        ]
-      },
-      description: ""),
-  SingleChoiceQuestion('真棒，你已经完成今天全部的反思内容啦，您可以再整体回顾一下您的成果，是不是有不一样的收获呢', [], {}),
-  SingleChoiceQuestion(
-      '今天你成功完成了一次对自己的饮食计划的反思分析！饮食计划反思要常常做，您可以以反思报告为依据，将之后的饮食计划做得更好！', [], {})
-]);
+          },
+          description: ""),
+      SingleChoiceQuestion(
+          "我每天的饮食计划是否可以完全不一样？",
+          ["可以", "不可以"],
+          {
+            "可以": [
+              SingleChoiceQuestion("非常好，你的想法很棒！", ['好的！'], {})
+            ],
+            "不可以": [
+              SingleChoiceQuestion(
+                  "请记住，每一天的计划都可以是不一样的！我们不需要您保持非常规律的饮食模式，您完全可以根据下一天的安排来个性化地计划自己的饮食！当然，要遵循我们每餐间隔3-4小时的核心原则哦。",
+                  ['好的！'],
+                  {})
+            ]
+          },
+          description: ""),
+      SingleChoiceQuestion(
+          "我做的饮食计划还有什么可以调整改善的地方吗？",
+          ["暂时没有，我已经很棒啦", "有一些可以调整的地方"],
+          {
+            "暂时没有，我已经很棒啦": [
+              SingleChoiceQuestion("真棒！继续努力哦～", ['好的！'], {})
+            ],
+            "有一些可以调整的地方": [
+              TextQuestion(
+                "请写下您认为可以调整的地方，您可以在明天的计划中努力做到~",
+                false,
+              )
+            ]
+          },
+          description: ""),
+      SingleChoiceQuestion(
+          '真棒，你已经完成今天全部的反思内容啦，您可以再整体回顾一下您的成果，是不是有不一样的收获呢', [], {}),
+      SingleChoiceQuestion(
+          '今天你成功完成了一次对自己的饮食计划的反思分析！饮食计划反思要常常做，您可以以反思报告为依据，将之后的饮食计划做得更好！',
+          [],
+          {})
+    ],
+    navigateToSummary: true);
 
 List<ChartData> dietaryPlanChartData = [
   ChartData("做了计划的天数", 3), // 假设这里的数字0会根据用户实际情况动态改变

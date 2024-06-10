@@ -24,9 +24,9 @@ class DietMonitoringPage extends StatelessWidget {
           TimeQuestion('食物清除的时间', initialTime: DateTime.now()),
           SliderQuestion('食物清除的时候感受到的情绪强度', {}, min: 1, max: 7, divisions: 6,
               labelBuilder: (value) {
-            if (value == 1)
+            if (value == 1) {
               return '很不开心';
-            else if (value == 4)
+            } else if (value == 4)
               return '一般';
             else if (value == 7) return '超开心';
             return value.toInt().toString();
