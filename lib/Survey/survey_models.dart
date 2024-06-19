@@ -96,12 +96,14 @@ class TextQuestion extends Question {
 class Survey {
   final String title;
   final List<Question> questions;
-  final bool navigateToSummary; // 添加这个属性
+  final bool navigateToSummary;
+  final bool isNeedTopArea;
 
   Survey(
       {required this.title,
       required this.questions,
-      this.navigateToSummary = false});
+      this.navigateToSummary = false,
+      this.isNeedTopArea = false});
 }
 
 extension SingleChoiceQuestionExtension on SingleChoiceQuestion {

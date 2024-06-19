@@ -427,6 +427,7 @@ var mealPlanningSurvey = Survey(title: '每日饮食计划', questions: [
 
 var bingeEatingReflectionSurvey = Survey(
     title: '冲动记录反思',
+    isNeedTopArea: true,
     questions: [
       SingleChoiceQuestion(
         '小E对你记录的所有暴食、清除食物冲动进行了总结，帮助你以专业的视角进行反思，看看还有哪些可以改善的地方。\n\n'
