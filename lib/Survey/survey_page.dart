@@ -4,76 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:namer_app/global_setting.dart';
 import 'survey_models.dart';
 import 'SurveySummaryPage.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'survey_question_factory.dart';
-
-import 'package:carousel_indicator/carousel_indicator.dart';
-
+import 'impulsive_record_and_reflection_summary.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
-
-class CarouselWithIndicator extends StatefulWidget {
-  @override
-  _CarouselWithIndicatorState createState() => _CarouselWithIndicatorState();
-}
-
-class _CarouselWithIndicatorState extends State<CarouselWithIndicator> {
-  final List<String> images = [
-    'https://via.placeholder.com/200',
-    'https://via.placeholder.com/200',
-    'https://via.placeholder.com/200',
-  ];
-
-  int _currentIndex = 0;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        CarouselSlider(
-          items: images.map((image) {
-            return Builder(
-              builder: (BuildContext context) {
-                return Container(
-                  width: MediaQuery.of(context).size.width,
-                  margin: EdgeInsets.symmetric(horizontal: 5.0),
-                  decoration: BoxDecoration(
-                    color: Colors.grey,
-                  ),
-                  child: Image.network(
-                    image,
-                    fit: BoxFit.cover,
-                  ),
-                );
-              },
-            );
-          }).toList(),
-          options: CarouselOptions(
-            aspectRatio: 16 / 9,
-            autoPlay: true,
-            enlargeCenterPage: true,
-            onPageChanged: (index, reason) {
-// No need to check for null as `index` in onPageChanged should never be null.
-// We validate index is within the range of our images list size.
-              if (index >= 0 && index < images.length) {
-                setState(() {
-                  _currentIndex = index;
-                });
-              } else {
-// Log this situation as it should never happen if images are set correctly
-                debugPrint(
-                    'Invalid pageIndex: $index detected in onPageChanged.');
-              }
-            },
-          ),
-        ),
-        CarouselIndicator(
-          count: images.length,
-          index: _currentIndex, // 这里不再需要条件逻辑，因为 _currentIndex 现在应该始终有效。
-        ),
-      ],
-    );
-  }
-}
 
 class SurveyPage extends StatefulWidget {
   final Survey survey;
@@ -87,27 +20,39 @@ class SurveyPage extends StatefulWidget {
 class _SurveyPageState extends State<SurveyPage> {
   @override
   Widget build(BuildContext context) {
+    // NOTE: this is currently only available for 冲动记录反思, please refactor it if other questionnaires are needed
+    bool isNeedTopArea = widget.survey.isNeedTopArea;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.survey.title),
         backgroundColor: themeColor,
       ),
-      body: ListView.builder(
-        itemCount: widget.survey.questions.length,
-        itemBuilder: (context, index) {
-          final question = widget.survey.questions[index];
-          Widget questionWidget =
-              questionWidgetFactory(context, question, setState);
+      body: Column(children: [
+        isNeedTopArea
+            ? SizedBox(
+                height: MediaQuery.of(context).size.height * 0.45,
+                child: ImpulsiveRecordAndReflectionSummary(),
+              )
+            : Container(),
+        Expanded(
+            child: ListView.builder(
+          itemCount: widget.survey.questions.length,
+          itemBuilder: (context, index) {
+            final question = widget.survey.questions[index];
+            Widget questionWidget =
+                questionWidgetFactory(context, question, setState);
 
-          return Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: 5.0,
-              horizontal: 16.0,
-            ),
-            child: questionWidget,
-          );
-        },
-      ),
+            return Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: 5.0,
+                horizontal: 16.0,
+              ),
+              child: questionWidget,
+            );
+          },
+        ))
+      ]),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.check),
         onPressed: () {
