@@ -361,6 +361,13 @@ Task impulseRecording = Task(
 );
 
 var mealPlanningSurvey = Survey(title: '每日饮食计划', questions: [
+  SingleChoiceQuestion(
+    '饮食计划入口将在前一天中午12点后开放，并持续到当天中午12点。超过12点的计划我们会自动算作下一天的哦。',
+    [],
+    {},
+    description: '举个例子：你在8.27号中午12点后，就可以进行8.28的饮食计划。\n'
+        '当然，你也可以选择在8.28的早上进行当天的饮食计划，只要在中午12点前完成就好啦。',
+  ),
   MealQuestion(
     '制定饮食计划的核心原则：每餐的间隔应该在3-4小时之间！',
     description: '开始制定你的计划吧',
