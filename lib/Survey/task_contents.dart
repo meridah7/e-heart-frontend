@@ -7,6 +7,7 @@ import '../TodayList/task_models.dart';
 import 'survey_models.dart';
 
 List<Task> TaskDay0 = [
+  impulseRetrospect,
   task2,
   task5,
   task6,
@@ -15,6 +16,15 @@ List<Task> TaskDay0 = [
   monitoringTeachingReflection,
   regularDietReflection
 ];
+
+Task impulseRetrospect = Task(
+  title: "x 月 x 日冲动记录回顾",
+  id: 'impulseRetrospect',
+  type: TaskType.SURVEY,
+  isCompleted: false,
+  day: 0,
+  survey: impulseRetrospectSurvey,
+);
 
 Task task1 = Task(
   title: "Understanding Binge Eating",
@@ -35,6 +45,18 @@ Task task2 = Task(
 );
 
 // Day 0
+// TODO: fetch the data from server
+var impulseRetrospectSurvey = Survey(title: 'x 月 x 日冲动记录回顾', questions: [
+  TextQuestion('你这次冲动大约持续了多少分钟？', false),
+  TextQuestion('你感觉这次的应对策略怎么样？整个应对过程有什么可以改进的地方呢？', false,
+      description: '你的冲动记录时间是：年，月，日，时，分\n'
+          '你记录的冲动种类是：暴食冲动  / 清除食物冲动\n'
+          '你记录的冲动强度是：0-10\n'
+          '你记录的冲动诱因是：YYYY\n'
+          '针对这次冲动，你制定的应对策略是:XXXXXX\n'
+          '针对这次冲动，你希望自己坚持冲动冲浪的时间：Z分钟\n'),
+]);
+
 List<Content> chatbotContent1 = [
   Content(
       text: 'Hi，你好呀，我是小E',
