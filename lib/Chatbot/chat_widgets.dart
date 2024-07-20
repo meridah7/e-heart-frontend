@@ -1,4 +1,4 @@
-// 定义了两个自定义的StatefulWidget类：TypeWriterText和Bubble。 
+// 定义了两个自定义的StatefulWidget类：TypeWriterText和Bubble。
 // Bubble是一个自定义的聊天气泡小部件，用于在聊天应用中显示聊天消息。
 // 在Bubble部件的build方法中，它可以选择包含一个TypeWriterText小部件，用于逐字显示文本消息。
 
@@ -11,13 +11,19 @@ class TypeWriterText extends StatefulWidget {
   final TextStyle? style;
   final VoidCallback? onComplete;
 
-  TypeWriterText(this.text, {this.style, this.duration = const Duration(milliseconds: 50), this.onComplete});
+  TypeWriterText(this.text,
+      {this.style,
+      this.duration = const Duration(milliseconds: 50),
+      this.onComplete});
 
   @override
   _TypeWriterTextState createState() => _TypeWriterTextState();
 }
 
-class _TypeWriterTextState extends State<TypeWriterText> {
+class _TypeWriterTextState extends State<TypeWriterText>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
   String _displayedString = '';
   int _currentCharIndex = 0;
 
@@ -43,9 +49,11 @@ class _TypeWriterTextState extends State<TypeWriterText> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Text(
       _displayedString,
-      style: widget.style ?? TextStyle(fontSize: 24.0, fontWeight: FontWeight.w600),
+      style: widget.style ??
+          TextStyle(fontSize: 24.0, fontWeight: FontWeight.w600),
     );
   }
 }
@@ -77,14 +85,18 @@ class _BubbleState extends State<Bubble> {
       margin: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
       padding: const EdgeInsets.all(10.0),
       decoration: BoxDecoration(
-        color: widget.isUser ? Color.fromARGB(255, 228, 206, 235) : Color(0xFF6FCF97),
+        color: widget.isUser
+            ? Color.fromARGB(255, 228, 206, 235)
+            : Color(0xFF6FCF97),
         borderRadius: BorderRadius.circular(10),
       ),
       child: widget.imageUrl == null
           ? TypeWriterText(
               widget.text!,
               style: TextStyle(color: Colors.black),
-              onComplete: widget.isUser ? null : widget.onComplete, // 根据isUser的值来决定是否传递onComplete
+              onComplete: widget.isUser
+                  ? null
+                  : widget.onComplete, // 根据isUser的值来决定是否传递onComplete
             )
           : GestureDetector(
               onTap: () => _showFullImage(context, widget.imageUrl!),
@@ -99,7 +111,8 @@ class _BubbleState extends State<Bubble> {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    if (widget.imageUrl != null && !widget.isUser) { // 只有当isUser为false时才调用onComplete
+    if (widget.imageUrl != null && !widget.isUser) {
+      // 只有当isUser为false时才调用onComplete
       // 加载图片，并在加载完毕后设置 _isImageLoaded 为 true 并调用 onComplete
       precacheImage(AssetImage(widget.imageUrl!), context).then((_) {
         setState(() {
@@ -110,21 +123,20 @@ class _BubbleState extends State<Bubble> {
     }
   }
 
-   void _showFullImage(BuildContext context, String imageUrl) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return Dialog(
-        child: InteractiveViewer(
-          panEnabled: true, // 允许平移
-          boundaryMargin: EdgeInsets.zero, // 设置边界留白为零
-          minScale: 0.1, // 最小缩放比例
-          maxScale: 4.0, // 最大缩放比例，可以根据需要调整
-          child: Image.asset(imageUrl),
-        ),
-      );
-    },
-  );
-}
-
+  void _showFullImage(BuildContext context, String imageUrl) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: InteractiveViewer(
+            panEnabled: true, // 允许平移
+            boundaryMargin: EdgeInsets.zero, // 设置边界留白为零
+            minScale: 0.1, // 最小缩放比例
+            maxScale: 4.0, // 最大缩放比例，可以根据需要调整
+            child: Image.asset(imageUrl),
+          ),
+        );
+      },
+    );
+  }
 }
