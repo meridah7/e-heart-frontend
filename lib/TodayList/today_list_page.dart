@@ -11,6 +11,8 @@ import '../Survey/flippable_survey_page.dart';
 import '../DietMonitoring/binge_eating_record_page.dart';
 import '../DietMonitoring/diet_monitoring_page.dart';
 import 'package:intl/intl.dart';
+// FIXME: 调试用
+import '../ResponseCard/response_card_page.dart';
 
 class TodayListPage extends StatefulWidget {
   @override
@@ -121,6 +123,17 @@ class _TodayListPageState extends State<TodayListPage> {
           icon: Icons.record_voice_over,
           onPressed: () => Navigator.push(context,
               MaterialPageRoute(builder: (context) => BingeEatingRecordPage())),
+          color: dietColor,
+        ),
+        // FIXME: 调试用
+        _buildCircleButton(
+          '冲动应对卡',
+          icon: Icons.card_travel,
+          onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  // builder: (context) => BingeEatingResponsePage())),
+                  builder: (context) => BingeEatingResponseCard())),
           color: dietColor,
         ),
       ],
