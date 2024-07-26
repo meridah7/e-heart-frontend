@@ -17,10 +17,11 @@ class ChatbotPage extends StatefulWidget {
 
 // _ChatbotPageState类是ChatbotPage的状态类，负责管理聊天页面的状态和逻辑。
 class _ChatbotPageState extends State<ChatbotPage> {
+  final ScrollController _scrollController = ScrollController();
   int _currentContentIndex = 0;
   bool _shouldShowUserInterface = false;
   List<ChatMessage> messages = [];
-  final _controller = TextEditingController();
+  final _textFieldController = TextEditingController();
   List<UserResponse> userResponses = [];
 
   List<Content> contents = [];
@@ -35,7 +36,8 @@ class _ChatbotPageState extends State<ChatbotPage> {
 
   @override
   void dispose() {
-    _controller.dispose();
+    _scrollController.dispose();
+    _textFieldController.dispose();
     super.dispose();
   }
 
@@ -50,7 +52,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
       backgroundColor: Color.fromRGBO(243, 243, 243, 255),
       body: Column(children: [
         ..._buildBodyWidgets(),
-        if (_shouldShowUserInterface) ..._buildInteractWidgets()
+        if (_shouldShowUserInterface) ..._buildInteractWidgets(),
       ]),
     );
   }
@@ -75,6 +77,8 @@ class _ChatbotPageState extends State<ChatbotPage> {
               break;
           }
         });
+        // Scroll to the bottom after the new message is added
+        _scrollToBottom();
       });
     } else {
       _onConversationEnd();
@@ -97,7 +101,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
         return AlertDialog(
           title: Text('Please input your response'),
           content: TextField(
-            controller: _controller,
+            controller: _textFieldController,
             onSubmitted: (value) {
               setState(() {
                 messages.add(ChatMessage(text: value, isUser: true));
@@ -161,6 +165,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
   // _buildMessageList函数用于构建聊天消息列表。
   ListView _buildMessageList() {
     return ListView.builder(
+      controller: _scrollController,
       itemCount: messages.length,
       itemBuilder: (context, index) => _buildMessageRow(messages[index]),
     );
@@ -186,6 +191,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
         text: message.text,
         imageUrl: message.imageUrl,
         isUser: message.isUser,
+        onChanged: _scrollToBottom,
         onComplete: _handleBubbleComplete);
   }
 
@@ -193,6 +199,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
   // 如果ResponseType是auto，则继续播放下一个content
   // 反之，等待用户的回复
   void _handleBubbleComplete() {
+    _scrollToBottom();
     if (contents[_currentContentIndex].responseType == ResponseType.auto) {
       _currentContentIndex++;
       _displayNextContent();
@@ -342,7 +349,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
         children: [
           Expanded(
             child: TextField(
-              controller: _controller,
+              controller: _textFieldController,
               decoration: InputDecoration(
                 contentPadding:
                     EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
@@ -365,7 +372,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
               child: IconButton(
                 icon: Icon(MdiIcons.send),
                 onPressed: () {
-                  _handleUserInput(_controller.text);
+                  _handleUserInput(_textFieldController.text);
                 },
               ),
             ),
@@ -393,7 +400,20 @@ class _ChatbotPageState extends State<ChatbotPage> {
     _displayNextContent();
 
     // 清除输入框内容
-    _controller.clear();
+    _textFieldController.clear();
     _shouldShowUserInterface = false;
+  }
+
+  void _scrollToBottom() {
+    // Ensure the ListView has been built before attempting to scroll
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
   }
 }

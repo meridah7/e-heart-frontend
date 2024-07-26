@@ -10,20 +10,19 @@ class TypeWriterText extends StatefulWidget {
   final Duration duration;
   final TextStyle? style;
   final VoidCallback? onComplete;
+  final VoidCallback? onChanged;
 
   TypeWriterText(this.text,
       {this.style,
       this.duration = const Duration(milliseconds: 50),
+      this.onChanged,
       this.onComplete});
 
   @override
   _TypeWriterTextState createState() => _TypeWriterTextState();
 }
 
-class _TypeWriterTextState extends State<TypeWriterText>
-    with AutomaticKeepAliveClientMixin {
-  @override
-  bool get wantKeepAlive => true;
+class _TypeWriterTextState extends State<TypeWriterText> {
   String _displayedString = '';
   int _currentCharIndex = 0;
 
@@ -39,6 +38,9 @@ class _TypeWriterTextState extends State<TypeWriterText>
         _displayedString += widget.text[_currentCharIndex];
         _currentCharIndex++;
       });
+      if (widget.onChanged != null) {
+        widget.onChanged!();
+      }
       Future.delayed(widget.duration, _displayNextCharacter);
     } else {
       if (widget.onComplete != null) {
@@ -49,7 +51,6 @@ class _TypeWriterTextState extends State<TypeWriterText>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     return Text(
       _displayedString,
       style: widget.style ??
@@ -64,23 +65,28 @@ class Bubble extends StatefulWidget {
   final String? imageUrl;
   final bool isUser;
   final VoidCallback onComplete;
+  final VoidCallback onChanged;
 
   Bubble({
     this.text,
     this.imageUrl,
     required this.isUser,
     required this.onComplete,
+    required this.onChanged,
   });
 
   @override
   _BubbleState createState() => _BubbleState();
 }
 
-class _BubbleState extends State<Bubble> {
-  bool _isImageLoaded = false;
+class _BubbleState extends State<Bubble> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+  bool _imageLoaded = false;
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
       padding: const EdgeInsets.all(10.0),
@@ -94,33 +100,47 @@ class _BubbleState extends State<Bubble> {
           ? TypeWriterText(
               widget.text!,
               style: TextStyle(color: Colors.black),
+              onChanged: widget.onChanged,
               onComplete: widget.isUser
                   ? null
                   : widget.onComplete, // 根据isUser的值来决定是否传递onComplete
             )
-          : GestureDetector(
-              onTap: () => _showFullImage(context, widget.imageUrl!),
-              child: _isImageLoaded
-                  ? Image.asset(widget.imageUrl!)
-                  : CircularProgressIndicator(),
-            ),
+          : _buildImageBubble(),
     );
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    if (widget.imageUrl != null && !widget.isUser) {
-      // 只有当isUser为false时才调用onComplete
-      // 加载图片，并在加载完毕后设置 _isImageLoaded 为 true 并调用 onComplete
-      precacheImage(AssetImage(widget.imageUrl!), context).then((_) {
-        setState(() {
-          _isImageLoaded = true;
-        });
-        widget.onComplete();
-      });
-    }
+  Widget _buildImageBubble() {
+    return GestureDetector(
+      onTap: () => _showFullImage(context, widget.imageUrl!),
+      child: SizedBox(
+        width: 100,
+        height: 100,
+        child: Image.network(
+          widget.imageUrl!,
+          fit: BoxFit.cover,
+          loadingBuilder: (BuildContext context, Widget child,
+              ImageChunkEvent? loadingProgress) {
+            if (loadingProgress == null) {
+              if (!_imageLoaded) {
+                widget.onComplete();
+                _imageLoaded = true;
+              }
+              return child;
+            } else {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          },
+          errorBuilder:
+              (BuildContext context, Object error, StackTrace? stackTrace) {
+            return Center(
+              child: Icon(Icons.error),
+            );
+          },
+        ),
+      ),
+    );
   }
 
   void _showFullImage(BuildContext context, String imageUrl) {
@@ -133,7 +153,7 @@ class _BubbleState extends State<Bubble> {
             boundaryMargin: EdgeInsets.zero, // 设置边界留白为零
             minScale: 0.1, // 最小缩放比例
             maxScale: 4.0, // 最大缩放比例，可以根据需要调整
-            child: Image.asset(imageUrl),
+            child: Image.network(imageUrl),
           ),
         );
       },
