@@ -8,6 +8,7 @@ import 'survey_models.dart';
 
 List<Task> TaskDay0 = [
   impulseRetrospect,
+  // task1,
   task2,
   task5,
   task6,
@@ -68,6 +69,12 @@ List<Content> chatbotContentCustom = [
   Content(
     text: '你好！先来介绍一下我自己吧～我是小E。在你学习如何进行饮食康复的旅程中，我会一直陪伴着你～',
     type: ContentType.TEXT,
+    responseType: ResponseType.auto,
+  ),
+  Content(
+    imageUrl:
+        'https://pbs.twimg.com/profile_images/1511434207079407618/AwzUxnVf_400x400.png',
+    type: ContentType.IMAGE,
     responseType: ResponseType.auto,
   ),
   Content(
