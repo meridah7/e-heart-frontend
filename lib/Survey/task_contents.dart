@@ -8,7 +8,8 @@ import 'survey_models.dart';
 
 List<Task> TaskDay0 = [
   impulseRetrospect,
-  task1,
+  chatboxTester,
+  // task1,
   task2,
   task5,
   task6,
@@ -34,6 +35,15 @@ Task task1 = Task(
   isCompleted: false,
   day: 0,
   chatbotContent: chatbotContent2,
+);
+
+Task chatboxTester = Task(
+  title: "Chatbox tester",
+  id: 'chatboxTester',
+  type: TaskType.CHATBOT,
+  isCompleted: false,
+  day: 0,
+  chatbotContent: chatbotTestContent,
 );
 
 Task task2 = Task(
@@ -72,15 +82,10 @@ List<Content> chatbotContentCustom = [
     responseType: ResponseType.auto,
   ),
   Content(
-    imageUrl:
-        'https://pbs.twimg.com/profile_images/1511434207079407618/AwzUxnVf_400x400.png',
-    type: ContentType.IMAGE,
-    responseType: ResponseType.auto,
-  ),
-  Content(
     text: '让小E先来带你看看我们一期的饮食康复之路会有哪些内容。',
+    choices: ['好的～我已经准备好啦！'],
     type: ContentType.TEXT,
-    responseType: ResponseType.auto,
+    responseType: ResponseType.choices,
   ),
   Content(
     text: '克服暴食/清除食物是我们的一个大敌人。想要打败它，我们首先需要磨练两项基础内功。',
@@ -89,25 +94,23 @@ List<Content> chatbotContentCustom = [
   ),
   Content(
     text: '内功一：饮食日志及其反思分析',
-    choices: ['好的～我已经准备好啦！'],
-    type: ContentType.TEXT,
-    responseType: ResponseType.choices,
-  ),
-  Content(
-    text:
-        '第一项内功——饮食日志，是我们之后每天都需要完成的内容，我们等等会教你如何完成它。放心！每天完成饮食日志的时间约只有4-6分钟。时间不长，但坚持很重要呀～',
     type: ContentType.TEXT,
     responseType: ResponseType.auto,
   ),
   Content(
-    text: '还有第二项内容：内功二：计划饮食及其反思分析',
-    choices: ['我明白了，继续。'],
+    text:
+        '第一项内功——饮食日志，是我们之后每天都需要完成的内容，我们等等会教你如何完成它。放心！每天完成饮食日志的时间约只有4-6分钟。时间不长，但坚持很重要呀～',
+    choices: ['好的，我明白了！'],
     type: ContentType.TEXT,
     responseType: ResponseType.choices,
   ),
   Content(
-    text:
-        '第二项内功——计划饮食，会从第二周的第一天开始。它同样也需要每天完成，但每天只需要约2分钟！也要努力坚持哦～毕竟内功需要的就是持之以恒的锻炼。',
+    text: '内功二：计划饮食及其反思分析',
+    type: ContentType.TEXT,
+    responseType: ResponseType.auto,
+  ),
+  Content(
+    text: '第二项内功——计划饮食，它会从第二周的第一天开，同样也要每天完成，但每天只需约2分钟！也要努力坚持哦～',
     type: ContentType.TEXT,
     responseType: ResponseType.auto,
   ),
@@ -118,10 +121,9 @@ List<Content> chatbotContentCustom = [
   ),
   Content(
     text:
-        "除了内功外，小E还会教你战胜敌人的心法（选修教学内容）；为你打造个性化的武器（冲动替代策略）；教你各种各样的招式（DBT技巧训练）；同时，你需要在应对暴食的实战中不断训练，提升自己的武艺。（冲动应对及其反思分析）",
-    choices: ['好的。'],
+        "除了内功外，小E还会教你战胜敌人的心法（选修教学内容）；为你打造个性化的武器（冲动替代策略）；同时，你需要在应对暴食的实战中不断训练，提升自己的武艺。（冲动应对及其反思分析）",
     type: ContentType.TEXT,
-    responseType: ResponseType.choices,
+    responseType: ResponseType.auto,
   ),
   Content(
     text: "今天是我们的起始日，我们来学习第一项非常重要的基本功——填写饮食日志",
@@ -138,16 +140,40 @@ List<Content> chatbotContentCustom = [
   Content(
       text:
           "我同意，机械的记录不会有多大的帮助，精确的卡路里计算反而会让我们更愧疚。但是，我们的饮食日志和你看到过所有的饮食日志都不一样。它是被临床心理学家设计用来改善饮食障碍的，是我们治疗方案中的一个重要部分。它能够帮助你从更宏观的角度洞察、分析自己的饮食模式，找到改善暴食和清除食物行为的切入点。",
+      choices: ['好的！那么我该如何填写呢？'],
       type: ContentType.TEXT,
-      responseType: ResponseType.userInput),
-  Content(
-      text: "好的！那么我该如何填写呢？",
-      type: ContentType.TEXT,
-      responseType: ResponseType.userInput),
+      responseType: ResponseType.choices),
   Content(
       text: "这是一个重要的问题！让小E来带你看看吧。",
       type: ContentType.TEXT,
       responseType: ResponseType.auto),
+];
+
+final List<Content> chatbotTestContent = [
+  Content(
+      text: 'ContentType-TEXT-auto',
+      type: ContentType.TEXT,
+      responseType: ResponseType.auto),
+  Content(
+    imageUrl:
+        'https://pbs.twimg.com/profile_images/1511434207079407618/AwzUxnVf_400x400.png',
+    type: ContentType.IMAGE,
+    responseType: ResponseType.auto,
+  ),
+  Content(
+      text: 'ResponseType-choices',
+      choices: ['A'],
+      type: ContentType.TEXT,
+      responseType: ResponseType.choices),
+  Content(
+      text: 'ResponseType-multiChoices',
+      choices: ['A', 'B', 'C'],
+      type: ContentType.TEXT,
+      responseType: ResponseType.multiChoices),
+  Content(
+      text: 'ResponseType-userInput',
+      type: ContentType.TEXT,
+      responseType: ResponseType.userInput)
 ];
 
 final List<Content> chatbotContent2 = [

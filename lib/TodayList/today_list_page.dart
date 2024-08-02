@@ -168,8 +168,10 @@ class _TodayListPageState extends State<TodayListPage> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) =>
-                              ChatbotPage(contents: task.chatbotContent!)));
+                          builder: (context) => ChatbotPage(
+                                contents: task.chatbotContent!,
+                                taskId: task.id,
+                              )));
                   break;
                 case TaskType.SURVEY:
                   Navigator.push(
