@@ -263,7 +263,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
               messages.add(ChatMessage(
                   text: contents[_currentContentIndex]
                       .selectedChoices!
-                      .join(', '),
+                      .join('\n'),
                   isUser: true));
               contents[_currentContentIndex].setShowChoices(false);
               _currentContentIndex++;
