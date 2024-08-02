@@ -102,10 +102,26 @@ class Preferences {
     return _prefs!.getKeys();
   }
 
+  // Check if there is a corresponding key
   bool hasKey(String key) {
     String? fullKey = _prefs!
         .getKeys()
         .firstWhere((k) => k.contains('_${namespace}_$key'), orElse: () => '');
     return fullKey.isNotEmpty;
+  }
+
+  // Method to delete a key
+  Future<void> deleteKey(String key) async {
+    if (_prefs == null) {
+      throw Exception("SharedPreferences not initialized. Call init() first.");
+    }
+
+    String? fullKey = _prefs!
+        .getKeys()
+        .firstWhere((k) => k.contains('_${namespace}_$key'), orElse: () => '');
+
+    if (fullKey.isNotEmpty) {
+      await _prefs!.remove(fullKey);
+    }
   }
 }

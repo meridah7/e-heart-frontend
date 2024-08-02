@@ -35,7 +35,6 @@ class _ChatbotPageState extends State<ChatbotPage> {
   @override
   void initState() {
     super.initState();
-    contents = widget.contents;
     _initWidget();
   }
 
@@ -59,11 +58,17 @@ class _ChatbotPageState extends State<ChatbotPage> {
         ..._buildBodyWidgets(),
         if (_shouldShowUserInterface) ..._buildInteractWidgets(),
         // TODO: add final button here
+        if (_userFinished) _buildFinishedButtons(),
       ]),
     );
   }
 
   Future<void> _initWidget() async {
+    setState(() {
+      contents = widget.contents;
+      messages = [];
+      _currentContentIndex = 0;
+    });
     await _initializePreferences();
     if (_userPref.hasKey(widget.taskId)) {
       // 如果有记录，直接展示最终结果
@@ -153,6 +158,10 @@ class _ChatbotPageState extends State<ChatbotPage> {
   void _onConversationEnd() {
     print('Conversation has ended. User responses: $userResponses');
     _userPref.setData(widget.taskId, userResponses);
+    setState(() {
+      _userFinished = true;
+      userResponses.clear();
+    });
   }
 
 // _promptUserInput函数显示用户输入的对话框。
@@ -192,6 +201,61 @@ class _ChatbotPageState extends State<ChatbotPage> {
     List<Widget> widgets = [];
     widgets.add(Expanded(child: _buildMessageList()));
     return widgets;
+  }
+
+  Widget _buildFinishedButtons() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10.0),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Colors.grey[100]!, Colors.grey[300]!],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ElevatedButton(
+                onPressed: () async {
+                  await _userPref.deleteKey(widget.taskId);
+                  setState(() {
+                    _userFinished = false;
+                    _initWidget();
+                  });
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.teal[300], // Use a soft purple
+                ),
+                child: Text('Restart',
+                    style: TextStyle(
+                      color: Colors.white, // Text color for contrast
+                    )),
+              ),
+            ),
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.purple[300], // Use the same color
+                ),
+                child: Text('Exit',
+                    style: TextStyle(
+                      color: Colors.white, // Text color for contrast
+                    )),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   // 判断当前内容是否需要用户输入，然后显示输入框。
@@ -387,9 +451,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
       userResponses.add(choice);
 
       // 3. 显示下一个内容
-      if (_currentContentIndex < contents.length) {
-        _displayNextContent();
-      }
+      _displayNextContent();
       _shouldShowUserInterface = false;
     });
   }
@@ -397,21 +459,21 @@ class _ChatbotPageState extends State<ChatbotPage> {
   // _handleChoiceButtonPressed函数处理单选项按钮的点击后的逻辑。
   void _handleMultiChoiceButtonPressed() {
     setState(() {
-      // 1. 添加用户的选择到聊天记录中
+      // 添加用户的选择到聊天记录中
       messages.add(ChatMessage(
           text: contents[_currentContentIndex].selectedChoices!.join('\n'),
           isUser: true));
       contents[_currentContentIndex].setShowChoices(false);
 
-      userResponses.add(contents[_currentContentIndex].selectedChoices!);
+      userResponses
+          .add(List.from(contents[_currentContentIndex].selectedChoices!));
+      contents[_currentContentIndex].selectedChoices!.clear();
 
-      // 2. 增加当前内容索引
+      // 增加当前内容索引
       _currentContentIndex++;
 
-      // 3. 显示下一个内容
-      if (_currentContentIndex < contents.length) {
-        _displayNextContent();
-      }
+      // 显示下一个内容
+      _displayNextContent();
       _shouldShowUserInterface = false;
     });
   }
