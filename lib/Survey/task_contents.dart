@@ -8,7 +8,7 @@ import 'survey_models.dart';
 
 List<Task> TaskDay0 = [
   impulseRetrospect,
-  // task1,
+  task1,
   task2,
   task5,
   task6,
