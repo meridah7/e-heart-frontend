@@ -6,33 +6,34 @@ import 'TodayList/today_list_page.dart';
 import 'AnalysisReview/review_analysis_page.dart';
 import 'Chatbot/chat_models.dart';
 import 'MyPage/my_page.dart';
-import 'DietaryAnalysis/dietary_analysis_page.dart'; 
+import 'DietaryAnalysis/dietary_analysis_page.dart';
 //import 'DAO/database_helper.dart';
 import 'Login/login_page.dart';
 import 'package:flutter/material.dart';
 import 'Login/register_page.dart';
 import 'Login/user_model.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-
-
+import 'user_preference.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  // TODO: replace anonymous to actual UserName
+  final userPref = await Preferences.getInstance(namespace: 'anonymous');
 
   // 假设你保存用户信息为字符串
-  final String? userId = prefs.getString('userId');
-  final String? username = prefs.getString('username');
-  final String? email = prefs.getString('email');
+  final String? userId = userPref.getData('userId');
+  final String? username = userPref.getData('username');
+  final String? email = userPref.getData('email');
 
   // 检查是否存在保存的用户信息
   bool isLoggedIn = userId != null && username != null && email != null;
 
-  runApp(MyApp(isLoggedIn: isLoggedIn, userId: userId, username: username, email: email));
+  runApp(MyApp(
+      isLoggedIn: isLoggedIn,
+      userId: userId,
+      username: username,
+      email: email));
 }
-
 
 class MyApp extends StatelessWidget {
   final bool isLoggedIn; // 添加一个字段来存储登录状态
@@ -41,16 +42,17 @@ class MyApp extends StatelessWidget {
   final String? email;
   MyApp({required this.isLoggedIn, this.userId, this.username, this.email});
 
-
   @override
   Widget build(BuildContext context) {
-    return MultiProvider( // 使用MultiProvider包裹MaterialApp
+    return MultiProvider(
+      // 使用MultiProvider包裹MaterialApp
       providers: [
-        ChangeNotifierProvider(create: (context) => UserProvider()), // 创建UserProvider实例
+        ChangeNotifierProvider(
+            create: (context) => UserProvider()), // 创建UserProvider实例
       ],
       child: MaterialApp(
         title: 'CBT-E App',
-        home: isLoggedIn ? MainScreen() : MainScreen(),  // 初始路由为登录页面
+        home: isLoggedIn ? MainScreen() : LoginPage(), // 初始路由为登录页面
         routes: {
           '/login': (context) => LoginPage(), // 登录页面
           '/home': (context) => MainScreen(), // 主屏幕，登录成功后跳转的页面
@@ -60,7 +62,6 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
 
 class MainScreen extends StatefulWidget {
   @override
@@ -72,7 +73,7 @@ class _MainScreenState extends State<MainScreen> {
   static List<Widget> _widgetOptions = <Widget>[
     TodayListPage(),
     ReviewAnalysisPage(),
-    MyPage(), 
+    MyPage(),
   ];
 
   @override
@@ -118,24 +119,25 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-
   @override
   void initState() {
     super.initState();
     _setUserIfLoggedIn();
   }
-  void _setUserIfLoggedIn() async {
-  final prefs = await SharedPreferences.getInstance();
-  final isLoggedIn = prefs.getString('userId') != null;
 
-  if (isLoggedIn) {
-    final userId = prefs.getString('userId')!;
-    final username = prefs.getString('username')!;
-    final email = prefs.getString('email')!;
-    final userProvider = Provider.of<UserProvider>(context, listen: false);
-    userProvider.setUserFromSavedData(userId, username, email);
+  void _setUserIfLoggedIn() async {
+    // TODO: replace anonymous to actual UserName
+    final userPref = await Preferences.getInstance(namespace: 'anonymous');
+    final isLoggedIn = userPref.getData('userId') != null;
+
+    if (isLoggedIn) {
+      final userId = userPref.getData('userId')!;
+      final username = userPref.getData('username')!;
+      final email = userPref.getData('email')!;
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
+      userProvider.setUserFromSavedData(userId, username, email);
+    }
   }
-}
 
   // void _createRootUserIfNeeded() async {
   //   print("debug!!");
@@ -148,7 +150,4 @@ class _MainScreenState extends State<MainScreen> {
   //   //   insertUser(db, "root", 0); // 假设 root 用户的 age 是 0
   //   // }
   // }
-  
-
-  
 }

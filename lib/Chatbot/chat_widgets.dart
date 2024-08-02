@@ -64,6 +64,7 @@ class Bubble extends StatefulWidget {
   final String? text;
   final String? imageUrl;
   final bool isUser;
+  final bool shouldUseTyperEffect;
   final VoidCallback onComplete;
   final VoidCallback onChanged;
 
@@ -71,6 +72,7 @@ class Bubble extends StatefulWidget {
     this.text,
     this.imageUrl,
     required this.isUser,
+    required this.shouldUseTyperEffect,
     required this.onComplete,
     required this.onChanged,
   });
@@ -96,17 +98,26 @@ class _BubbleState extends State<Bubble> with AutomaticKeepAliveClientMixin {
             : Color(0xFF6FCF97),
         borderRadius: BorderRadius.circular(10),
       ),
-      child: widget.imageUrl == null
-          ? TypeWriterText(
-              widget.text!,
-              style: TextStyle(color: Colors.black),
-              onChanged: widget.onChanged,
-              onComplete: widget.isUser
-                  ? null
-                  : widget.onComplete, // 根据isUser的值来决定是否传递onComplete
-            )
-          : _buildImageBubble(),
+      child: widget.imageUrl == null ? _buildWriterText() : _buildImageBubble(),
     );
+  }
+
+  Widget _buildWriterText() {
+    if (widget.shouldUseTyperEffect) {
+      return TypeWriterText(
+        widget.text!,
+        style: TextStyle(color: Colors.black),
+        onChanged: widget.onChanged,
+        onComplete: widget.isUser
+            ? null
+            : widget.onComplete, // 根据isUser的值来决定是否传递onComplete
+      );
+    } else {
+      return Text(
+        widget.text!,
+        style: TextStyle(color: Colors.black),
+      );
+    }
   }
 
   Widget _buildImageBubble() {

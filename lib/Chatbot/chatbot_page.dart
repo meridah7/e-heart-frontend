@@ -4,12 +4,14 @@ import 'package:namer_app/global_setting.dart';
 import 'chat_models.dart';
 import 'chat_widgets.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import '../user_preference.dart';
 
 // ChatbotPage class是chatbot的主页面，负责显示聊天界面和处理用户输入。
 class ChatbotPage extends StatefulWidget {
   final List<Content> contents;
+  final String taskId;
 
-  ChatbotPage({required this.contents});
+  ChatbotPage({required this.contents, required this.taskId});
 
   @override
   _ChatbotPageState createState() => _ChatbotPageState();
@@ -19,19 +21,22 @@ class ChatbotPage extends StatefulWidget {
 class _ChatbotPageState extends State<ChatbotPage> {
   final ScrollController _scrollController = ScrollController();
   int _currentContentIndex = 0;
+  // 判断展示用户交互画面的时机
   bool _shouldShowUserInterface = false;
+  // 是否需要使用打字机效果
+  bool _userFinished = false;
   List<ChatMessage> messages = [];
   final _textFieldController = TextEditingController();
-  List<UserResponse> userResponses = [];
-
+  List userResponses = [];
   List<Content> contents = [];
+  late Preferences _userPref;
 
   //初始化的状态
   @override
   void initState() {
     super.initState();
     contents = widget.contents;
-    _displayNextContent();
+    _initWidget();
   }
 
   @override
@@ -53,11 +58,31 @@ class _ChatbotPageState extends State<ChatbotPage> {
       body: Column(children: [
         ..._buildBodyWidgets(),
         if (_shouldShowUserInterface) ..._buildInteractWidgets(),
+        // TODO: add final button here
       ]),
     );
   }
 
-// _displayNextContent函数用于显示下一个聊天内容。
+  Future<void> _initWidget() async {
+    await _initializePreferences();
+    if (_userPref.hasKey(widget.taskId)) {
+      // 如果有记录，直接展示最终结果
+      setState(() {
+        _userFinished = true;
+      });
+      _displayAllContent();
+    } else {
+      // 如果没有记录，则从头开始
+      _displayNextContent();
+    }
+  }
+
+  Future<void> _initializePreferences() async {
+    // TODO: replace anonymous to actual UserName
+    _userPref = await Preferences.getInstance(namespace: 'anonymous');
+  }
+
+  // _displayNextContent函数用于显示下一个聊天内容。
   void _displayNextContent() {
     if (_currentContentIndex < contents.length) {
       Future.delayed(Duration(seconds: 1), () {
@@ -85,12 +110,49 @@ class _ChatbotPageState extends State<ChatbotPage> {
     }
   }
 
+  // Display the full content when the user finished this before
+  void _displayAllContent() {
+    final List answer = _userPref.getData(widget.taskId);
+    List<ChatMessage> msg = [];
+    int curAnsIndex = 0;
+    for (int currentContentIndex = 0;
+        currentContentIndex < contents.length;
+        currentContentIndex++) {
+      Content currentContent = contents[currentContentIndex];
+      // handle the question part
+      switch (currentContent.type) {
+        case ContentType.TEXT:
+          msg.add(ChatMessage(text: currentContent.text!, isUser: false));
+          break;
+        case ContentType.IMAGE:
+          msg.add(ChatMessage(
+              text: "", imageUrl: currentContent.imageUrl, isUser: false));
+          break;
+        default:
+        // do nothing
+      }
+      // handle the answer part
+      if (contents[currentContentIndex].responseType != ResponseType.auto &&
+          curAnsIndex < answer.length) {
+        // Because the answer would be pure String or List, we need to handle it separately
+        if (answer[curAnsIndex] is List) {
+          msg.add(
+              ChatMessage(text: answer[curAnsIndex].join('\n'), isUser: true));
+        } else {
+          msg.add(ChatMessage(text: answer[curAnsIndex], isUser: true));
+        }
+        curAnsIndex++;
+      }
+    }
+    setState(() {
+      messages = msg;
+    });
+  }
+
 // _onConversationEnd函数用于处理对话结束时的逻辑。当所有预设chatbot的contents被处理完的时候，会触发这个函数
   void _onConversationEnd() {
-    print('Conversation has ended. User responses:');
-    for (UserResponse response in userResponses) {
-      print('Content ID: ${response.contentId}, Ue: ${response.userResponse}');
-    }
+    print('Conversation has ended. User responses: $userResponses');
+    _userPref.setData(widget.taskId, userResponses);
   }
 
 // _promptUserInput函数显示用户输入的对话框。
@@ -191,6 +253,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
         text: message.text,
         imageUrl: message.imageUrl,
         isUser: message.isUser,
+        shouldUseTyperEffect: !_userFinished,
         onChanged: _scrollToBottom,
         onComplete: _handleBubbleComplete);
   }
@@ -200,13 +263,15 @@ class _ChatbotPageState extends State<ChatbotPage> {
   // 反之，等待用户的回复
   void _handleBubbleComplete() {
     _scrollToBottom();
-    if (contents[_currentContentIndex].responseType == ResponseType.auto) {
-      _currentContentIndex++;
-      _displayNextContent();
-    } else {
-      setState(() {
-        _shouldShowUserInterface = true;
-      });
+    if (!_userFinished) {
+      if (contents[_currentContentIndex].responseType == ResponseType.auto) {
+        _currentContentIndex++;
+        _displayNextContent();
+      } else {
+        setState(() {
+          _shouldShowUserInterface = true;
+        });
+      }
     }
   }
 
@@ -258,19 +323,20 @@ class _ChatbotPageState extends State<ChatbotPage> {
         width: screenWidth * 0.8, // 设置每个选项的宽度为屏幕宽度的80%
         padding: EdgeInsets.symmetric(vertical: 4.0), // 垂直方向上的padding
         child: ElevatedButton(
-          onPressed: () {
-            setState(() {
-              messages.add(ChatMessage(
-                  text: contents[_currentContentIndex]
-                      .selectedChoices!
-                      .join('\n'),
-                  isUser: true));
-              contents[_currentContentIndex].setShowChoices(false);
-              _currentContentIndex++;
-              _displayNextContent();
-              _shouldShowUserInterface = false;
-            });
-          },
+          onPressed: () => _handleMultiChoiceButtonPressed(),
+          // () {
+          //   setState(() {
+          //     messages.add(ChatMessage(
+          //         text: contents[_currentContentIndex]
+          //             .selectedChoices!
+          //             .join('\n'),
+          //         isUser: true));
+          //     contents[_currentContentIndex].setShowChoices(false);
+          //     _currentContentIndex++;
+          //     _displayNextContent();
+          //     _shouldShowUserInterface = false;
+          //   });
+          // },
           style: ElevatedButton.styleFrom(
             backgroundColor: Color(0xFF9D9BE9), // 设置按钮的颜色
             shape: RoundedRectangleBorder(
@@ -318,9 +384,29 @@ class _ChatbotPageState extends State<ChatbotPage> {
 
       // 2. 增加当前内容索引
       _currentContentIndex++;
-      UserResponse response = UserResponse(
-          contentId: contents[_currentContentIndex].id, userResponse: choice);
-      userResponses.add(response);
+      userResponses.add(choice);
+
+      // 3. 显示下一个内容
+      if (_currentContentIndex < contents.length) {
+        _displayNextContent();
+      }
+      _shouldShowUserInterface = false;
+    });
+  }
+
+  // _handleChoiceButtonPressed函数处理单选项按钮的点击后的逻辑。
+  void _handleMultiChoiceButtonPressed() {
+    setState(() {
+      // 1. 添加用户的选择到聊天记录中
+      messages.add(ChatMessage(
+          text: contents[_currentContentIndex].selectedChoices!.join('\n'),
+          isUser: true));
+      contents[_currentContentIndex].setShowChoices(false);
+
+      userResponses.add(contents[_currentContentIndex].selectedChoices!);
+
+      // 2. 增加当前内容索引
+      _currentContentIndex++;
 
       // 3. 显示下一个内容
       if (_currentContentIndex < contents.length) {
@@ -392,9 +478,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
     setState(() {
       messages.add(ChatMessage(text: inputText, isUser: true));
     });
-    UserResponse response = UserResponse(
-        contentId: contents[_currentContentIndex].id, userResponse: inputText);
-    userResponses.add(response);
+    userResponses.add(inputText);
 
     _currentContentIndex++;
     _displayNextContent();
