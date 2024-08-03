@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+<<<<<<< HEAD
 import 'package:namer_app/Tasks/daily_tasks.dart';
+=======
+import 'package:namer_app/Survey/task_contents.dart';
+import 'package:namer_app/ResponseCard/response_card_model.dart';
+>>>>>>> 3e0e734 (feat: 完善冲动应对卡片页面，实现冲动记录问卷内冲动策略卡的展示)
 
 // 定义了用于创建survey的class和相关功能。
 
@@ -266,6 +271,19 @@ class ChartQuestion extends Question {
 }
 
 enum ChartType { Bar, Pie, None, Bulleted }
+
+class ResponseCardQuestion extends Question {
+  final List<ResponseCardModel> listData;
+  final QuestionType questionType = QuestionType.None;
+  String? selectedOption;
+  List<String> selectedOptions = [];
+  String? answerText;
+
+  ResponseCardQuestion(
+    String questionText,
+    this.listData,
+  ) : super(questionText);
+}
 
 class PriorityQuestion extends Question {
   final List<String> options;

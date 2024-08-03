@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_reorderable_grid_view/widgets/widgets.dart';
 import './response_card_model.dart';
 import './response_card.dart';
+import './editable_card.dart';
+import 'dart:convert';
+import 'package:flutter/services.dart' show rootBundle;
+import './edit_card_dialog.dart';
+import 'hero_dialog_route.dart';
 
 class BingeEatingResponseCard extends StatefulWidget {
   const BingeEatingResponseCard({Key? key}) : super(key: key);
@@ -14,32 +19,34 @@ class _BingeEatingResponseCardState extends State<BingeEatingResponseCard>
     with SingleTickerProviderStateMixin {
   final _scrollController = ScrollController();
   late AnimationController _controller;
+  late List<ResponseCardModel> _cardList = [];
 
   final _gridViewKey = GlobalKey();
 
-  bool isEditing = false;
+  bool _isEditing = false;
 
-  var lockedIndices;
+  List<int> lockedIndices = [];
 
-  var nonDraggableIndices;
+  List<int> nonDraggableIndices = [];
 
-  List<ResponseCardModel> _box = [
-    ResponseCardModel(
-        custom_activity: "title 1", details: "desc", activity_order: 1),
-    ResponseCardModel(
-        custom_activity: "title 2", details: "desc", activity_order: 2),
-    ResponseCardModel(
-        custom_activity: "title 3", details: "desc", activity_order: 3),
-    ResponseCardModel(
-        custom_activity: "title 4", details: "desc", activity_order: 4),
-    ResponseCardModel(
-        custom_activity: "title 5", details: "desc", activity_order: 5),
-  ];
+  Future<List<ResponseCardModel>> loadMockData() async {
+    String jsonString = await rootBundle.loadString('assets/mock_data.json');
+    List<dynamic> jsonList = json.decode(jsonString);
+    return jsonList.map((json) => ResponseCardModel.fromJson(json)).toList();
+  }
+
+  Future<void> _initializeMockData() async {
+    _cardList = await loadMockData();
+    setState(() {
+      lockedIndices = [_cardList.length];
+      nonDraggableIndices = [_cardList.length];
+    });
+  }
 
   void toggleEditing() {
     setState(() {
-      isEditing = !isEditing;
-      if (isEditing) {
+      _isEditing = !_isEditing;
+      if (_isEditing) {
         _controller.repeat(reverse: true);
       } else {
         _controller.stop();
@@ -50,12 +57,13 @@ class _BingeEatingResponseCardState extends State<BingeEatingResponseCard>
   @override
   void initState() {
     super.initState();
+    _initializeMockData();
     _controller = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
     )..repeat(reverse: true);
-    lockedIndices = [_box.length];
-    nonDraggableIndices = [_box.length];
+    lockedIndices = [_cardList.length];
+    nonDraggableIndices = [_cardList.length];
   }
 
   @override
@@ -64,20 +72,15 @@ class _BingeEatingResponseCardState extends State<BingeEatingResponseCard>
     super.dispose();
   }
 
-  // static const _startCounter = 20;
-
-  // int keyCounter = _startCounter;
-  // List<int> children = List.generate(_startCounter, (index) => index);
-
   // 应对卡列表容器
   Widget _getReorderableWidget() {
-    final generatedChildren = _getGeneratedChildren(_box);
+    final generatedChildren = _getGeneratedChildren(_cardList);
     return ReorderableBuilder(
       key: Key(_gridViewKey.toString()),
       onReorder: _handleReorder,
+      // onUpdatedDraggedChild: _handleUpdatedDraggedChild,
+      // onDragEnd: _handleDragEnd,
       onDragStarted: _handleDragStarted,
-      onUpdatedDraggedChild: _handleUpdatedDraggedChild,
-      onDragEnd: _handleDragEnd,
       scrollController: _scrollController,
       enableLongPress: true,
       nonDraggableIndices: nonDraggableIndices,
@@ -90,8 +93,9 @@ class _BingeEatingResponseCardState extends State<BingeEatingResponseCard>
           padding: EdgeInsets.all(8),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 3,
-            mainAxisSpacing: 8,
-            crossAxisSpacing: 8,
+            mainAxisSpacing: 4,
+            crossAxisSpacing: 4,
+            childAspectRatio: 9 / 16,
           ),
           children: children,
         );
@@ -101,28 +105,35 @@ class _BingeEatingResponseCardState extends State<BingeEatingResponseCard>
 
   //  应对卡列表
   List<Widget> _getGeneratedChildren(list) {
-    var length = isEditing ? list.length + 1 : list.length;
-
+    var length = _isEditing ? list.length + 1 : list.length;
     return List<Widget>.generate(length, (index) {
-      if (isEditing && index == list.length) {
-        return Container(
+      if (_isEditing && index == list.length) {
+        return Card(
           key: Key('card add'),
-          decoration:
-              BoxDecoration(color: Theme.of(context).colorScheme.secondary),
-          height: 300.0,
-          width: 100.0,
+          elevation: 1,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          // color: Theme.of(context).colorScheme.secondary,
+          color: Colors.white60,
           child: IconButton(
             onPressed: () {
               setState(() {
-                _box.add(ResponseCardModel(
-                    custom_activity: 'title ${index.toString()}',
-                    details: "desc",
+                _cardList.add(ResponseCardModel(
+                    custom_activity: '请填写你的冲动应对策略',
+                    details: "请填应对策略的详细执行方法",
                     activity_order: index + 1));
-                lockedIndices = [_box.length];
-                nonDraggableIndices = [_box.length];
+                lockedIndices = [_cardList.length];
+                nonDraggableIndices = [_cardList.length];
+                _openEditDialog(
+                    context, _cardList[_cardList.length - 1], DetailScene.edit);
               });
             },
-            icon: Icon(Icons.add),
+            icon: Icon(
+              Icons.add,
+              color: Colors.white,
+              size: 48,
+            ),
           ),
         );
       }
@@ -130,73 +141,124 @@ class _BingeEatingResponseCardState extends State<BingeEatingResponseCard>
     });
   }
 
-  Widget _buildIcon(int index, bool isDragging) {
-    return Stack(
-      children: [
-        AnimatedBuilder(
-          animation: _controller,
-          child: Icon(Icons.apps, size: 50),
-          builder: (context, child) {
-            return Transform.rotate(
-              angle:
-                  isEditing && !isDragging ? _controller.value * 0.1 - 0.05 : 0,
-              child: child,
-            );
-          },
-        ),
-        if (isEditing && !isDragging)
-          Positioned(
-            top: 0,
-            right: -4,
-            child: IconButton(
-              icon: Icon(Icons.close, color: Colors.red),
-              onPressed: () {
-                setState(() {
-                  _box.removeAt(index);
-                });
-              },
-            ),
-          ),
-      ],
-    );
-  }
-
   // 应对卡列表项
   Widget _getChild({required int index, required ResponseCardModel card}) {
-    return CustomDraggable(
+    return EditableCard(
+      isEditing: _isEditing, // 控制是否处于编辑状态的变量
+      onDelete: () {
+        showDeleteConfirmationDialog(context, index);
+        // 处理删除逻辑
+      },
       key: Key(card.activity_order.toString()),
-      data: index,
-      child: Container(
-          width: 80,
-          height: 240,
-          // decoration:
-          //     BoxDecoration(color: Theme.of(context).colorScheme.primary),
-          child: ResponseCard(responseCard: card)),
+      child: CustomDraggable(
+        key: Key(card.activity_order.toString()),
+        data: index,
+        child: GestureDetector(
+          onTap: () =>
+              _openEditDialog(context, _cardList[index], DetailScene.check),
+          child: Hero(
+            tag:
+                'card-${card.activity_order.toString() + card.custom_activity}',
+            child: Material(
+              color: Colors.transparent,
+              child: ResponseCard(
+                responseCard: card,
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 
   // 触发拖拽
   void _handleDragStarted(int index) {
-    if (!isEditing) {
+    if (!_isEditing) {
       toggleEditing();
     }
   }
 
-  void _handleUpdatedDraggedChild(int index) {
-    // ScaffoldMessenger.of(context).showSnackBar(
-    //     SnackBar(content: Text('Dragging child updated at $index!')));
+  // 确认删除弹窗
+  Future<void> showDeleteConfirmationDialog(
+      BuildContext context, int index) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // 用户必须点击按钮才能关闭对话框
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('确认删除'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('你确定要删除该应对卡吗？'),
+                Text('此操作无法撤销。'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('取消'),
+              onPressed: () {
+                Navigator.of(context).pop(); // 关闭对话框
+              },
+            ),
+            TextButton(
+              child: Text('删除'),
+              onPressed: () {
+                //TODO 在这里添加删除操作的接口
+                _handleDelete(index);
+                Navigator.of(context).pop(); // 关闭对话框
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
-  void _handleReorder(ReorderedListFunction reorderedListFunction) {
+  void _handleDelete(int index) {
     setState(() {
-      _box = reorderedListFunction(_box) as List<ResponseCardModel>;
+      _cardList.removeAt(index);
     });
   }
 
-  void _handleDragEnd(int index) {
-    ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Dragging was finished at $index!')));
+  // 列表重新排序
+  void _handleReorder(ReorderedListFunction reorderedListFunction) {
+    setState(() {
+      _cardList = reorderedListFunction(_cardList) as List<ResponseCardModel>;
+    });
   }
+
+  // 详情弹窗
+
+  void _openEditDialog(
+      BuildContext context, ResponseCardModel card, DetailScene scene) {
+    Navigator.of(context).push(HeroDialogRoute(builder: (context) {
+      return EditCardDialog(
+        card: card,
+        onSave: (updatedCard) {
+          setState(() {
+            int index = _cardList.indexWhere(
+                (item) => item.activity_order == updatedCard.activity_order);
+            if (index != -1) {
+              _cardList[index] = updatedCard;
+            }
+          });
+        },
+        scene: scene,
+      );
+    }));
+  }
+
+  // 调试拖拽场景用的方法
+  // void _handleUpdatedDraggedChild(int index) {
+  //   // ScaffoldMessenger.of(context).showSnackBar(
+  //   //     SnackBar(content: Text('Dragging child updated at $index!')));
+  // }
+  // void _handleDragEnd(int index) {
+  //   ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text('Dragging was finished at $index!')));
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -206,7 +268,7 @@ class _BingeEatingResponseCardState extends State<BingeEatingResponseCard>
         actions: [
           IconButton(
               onPressed: toggleEditing,
-              icon: Icon(isEditing ? Icons.done : Icons.edit))
+              icon: Icon(_isEditing ? Icons.done : Icons.edit))
         ],
         backgroundColor: Color.fromARGB(255, 223, 221, 240),
       ),

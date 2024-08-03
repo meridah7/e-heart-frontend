@@ -4,6 +4,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:namer_app/Survey/survey_widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:namer_app/ResponseCard/swipeable_response_card.dart';
 
 Widget questionWidgetFactory(BuildContext context, Question question,
     void Function(void Function()) setState) {
@@ -26,6 +27,8 @@ Widget questionWidgetFactory(BuildContext context, Question question,
     questionWidget = buildMealQuestion(context, question, setState);
   } else if (question is SliderQuestion) {
     questionWidget = buildSliderQuestion(context, question, setState);
+  } else if (question is ResponseCardQuestion) {
+    questionWidget = buildResponseCardQuestion(context, question, setState);
   } else {
     questionWidget = SizedBox.shrink(); // Handle unknown question type
   }
@@ -423,6 +426,11 @@ Widget buildChartQuestion(
   );
 }
 
+Widget buildResponseCardQuestion(BuildContext context,
+    ResponseCardQuestion question, void Function(void Function()) setState) {
+  return SizedBox(height: 630, child: SwipeableResponseCardList());
+}
+
 List<Widget> buildChoiceOptions(
     ChartQuestion question, void Function(void Function()) setState) {
   List<Widget> optionWidgets = [];
@@ -703,6 +711,8 @@ Widget buildSubQuestion(BuildContext context, Question subQuestion,
               buildSliderQuestion(context, subQuestion, setState),
             if (subQuestion is PriorityQuestion)
               buildPriorityQuestion(subQuestion, setState),
+            if (subQuestion is ResponseCardQuestion)
+              buildResponseCardQuestion(context, subQuestion, setState)
           ],
         ),
       ),

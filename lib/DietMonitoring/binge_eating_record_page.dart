@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:namer_app/Survey/survey_models.dart'; // Adjust import path as necessary
 import 'package:namer_app/Survey/survey_page.dart'; // Assuming SurveyPage can be reused or adapted
-import 'image_carousel.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:namer_app/DietMonitoring/binge_eating_card.dart';
 
 class BingeEatingRecordPage extends StatefulWidget {
   @override
@@ -39,19 +36,15 @@ class _BingeEatingRecordPageState extends State<BingeEatingRecordPage> {
     TextQuestion('此冲动的诱因是什么？', false),
 
     // TextQuestion('结合你的替代策略，制定你对这次冲动的应对方案', false),
-    SingleChoiceQuestion(
-        '结合你的替代策略，制定你对这次冲动的应对方案',
-        ['A. 回顾“冲动冲浪”', 'B. 展示“冲动替代策略卡”'],
-        {'A. 回顾“冲动冲浪”': [], 'B. 展示“冲动替代策略卡”': []}),
+    SingleChoiceQuestion('结合你的替代策略，制定你对这次冲动的应对方案', [
+      'A. 回顾“冲动冲浪”',
+      'B. 展示“冲动替代策略卡”'
+    ], {
+      'A. 回顾“冲动冲浪”': [],
+      'B. 展示“冲动替代策略卡”': [ResponseCardQuestion('questionText', [])]
+    }),
     // More questions can be added here
   ]);
-
-  final List<String> imageUrls = [
-    'https://images.unsplash.com/photo-1547721064-da6cfb341d50',
-    'https://images.unsplash.com/photo-1519985176271-adb1088fa94c',
-    'https://images.unsplash.com/photo-1551218808-94e220e084d2',
-    'https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0',
-  ];
 
   @override
   Widget build(BuildContext context) {
