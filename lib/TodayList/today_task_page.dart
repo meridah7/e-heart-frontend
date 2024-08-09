@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../Survey/task_contents.dart';
+import '../Tasks/daily_tasks.dart';
 import 'task_models.dart';
 import '../Chatbot/chatbot_page.dart';
-import '../Survey/survey_page.dart'; 
+import '../Survey/survey_page.dart';
 
 class TodayTaskPage extends StatefulWidget {
   @override
@@ -31,7 +31,9 @@ class _TodayTaskPageState extends State<TodayTaskPage> {
               title: Text('任务 ${index + 1}'),
               subtitle: Text(task.type == TaskType.CHATBOT ? '聊天机器人' : '问卷调查'),
               trailing: IconButton(
-                icon: Icon(task.isCompleted ? Icons.check_box : Icons.check_box_outline_blank),
+                icon: Icon(task.isCompleted
+                    ? Icons.check_box
+                    : Icons.check_box_outline_blank),
                 onPressed: () {
                   setState(() {
                     task.isCompleted = !task.isCompleted;
@@ -43,7 +45,8 @@ class _TodayTaskPageState extends State<TodayTaskPage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ChatbotPage(contents: task.chatbotContent!),
+                      builder: (context) =>
+                          ChatbotPage(contents: task.chatbotContent!),
                     ),
                   );
                 } else if (task.type == TaskType.SURVEY) {

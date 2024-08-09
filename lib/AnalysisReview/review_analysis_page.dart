@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../Survey/task_contents.dart';
+import '../Tasks/daily_tasks.dart';
 import '../TodayList/task_models.dart';
 import '../Chatbot/diet_contents.dart';
 import '../DailyDiet/diet_models.dart';
@@ -19,7 +19,9 @@ class _ReviewAnalysisPageState extends State<ReviewAnalysisPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('分析反思',style:TextStyle(color: Colors.black)), // Text color changed to black
+        title: Text('分析反思',
+            style:
+                TextStyle(color: Colors.black)), // Text color changed to black
         backgroundColor: themeColor, // AppBar color changed as specified
       ),
       body: SingleChildScrollView(

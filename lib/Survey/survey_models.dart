@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:namer_app/Survey/task_contents.dart';
+import 'package:namer_app/Tasks/daily_tasks.dart';
 
 // 定义了用于创建survey的class和相关功能。
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:namer_app/DailyDiet/diet_models.dart';
 import 'package:namer_app/DietMonitoring/binge_eating_options.dart';
-import '../Survey/task_contents.dart';
+import '../Tasks/daily_tasks.dart';
 import 'task_models.dart';
 import '../Chatbot/diet_contents.dart';
 import '../DailyDiet/diet_models.dart';
@@ -19,6 +19,7 @@ class TodayListPage extends StatefulWidget {
 
 class _TodayListPageState extends State<TodayListPage> {
   bool showTasks = true;
+  int currentDate = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +43,7 @@ class _TodayListPageState extends State<TodayListPage> {
               _buildSegmentedControl(),
               Expanded(
                 child: showTasks
-                    ? _buildTaskListView(TaskDay0)
+                    ? _buildTaskListView(DailyTask[currentDate])
                     : _buildDietListView(DietDay0),
               ),
             ],
