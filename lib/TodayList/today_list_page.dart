@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:namer_app/DailyDiet/diet_models.dart';
-<<<<<<< HEAD
 import 'package:namer_app/DietMonitoring/binge_eating_options.dart';
 import '../Tasks/daily_tasks.dart';
-=======
-import '../Survey/task_contents.dart';
->>>>>>> 3e0e734 (feat: 完善冲动应对卡片页面，实现冲动记录问卷内冲动策略卡的展示)
 import 'task_models.dart';
 import '../Chatbot/diet_contents.dart';
 import '../Chatbot/chatbot_page.dart';
