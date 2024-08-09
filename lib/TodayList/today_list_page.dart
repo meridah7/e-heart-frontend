@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:namer_app/DailyDiet/diet_models.dart';
+<<<<<<< HEAD
 import 'package:namer_app/DietMonitoring/binge_eating_options.dart';
 import '../Tasks/daily_tasks.dart';
+=======
+import '../Survey/task_contents.dart';
+>>>>>>> 3e0e734 (feat: 完善冲动应对卡片页面，实现冲动记录问卷内冲动策略卡的展示)
 import 'task_models.dart';
 import '../Chatbot/diet_contents.dart';
-import '../DailyDiet/diet_models.dart';
 import '../Chatbot/chatbot_page.dart';
 import '../Survey/survey_page.dart';
 import '../Survey/flippable_survey_page.dart';
 import '../DietMonitoring/binge_eating_record_page.dart';
 import '../DietMonitoring/diet_monitoring_page.dart';
 import 'package:intl/intl.dart';
+import '../ResponseCard/response_card_page.dart';
 
 class TodayListPage extends StatefulWidget {
   @override
@@ -121,6 +125,17 @@ class _TodayListPageState extends State<TodayListPage> {
           icon: Icons.record_voice_over,
           onPressed: () => Navigator.push(context,
               MaterialPageRoute(builder: (context) => BingeEatingRecordPage())),
+          color: dietColor,
+        ),
+        // FIXME: 调试用
+        _buildCircleButton(
+          '冲动应对卡',
+          icon: Icons.card_travel,
+          onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  // builder: (context) => BingeEatingResponsePage())),
+                  builder: (context) => BingeEatingResponseCard())),
           color: dietColor,
         ),
       ],

@@ -9,10 +9,8 @@ class BingeEatingRecordPage extends StatefulWidget {
 
 class _BingeEatingRecordPageState extends State<BingeEatingRecordPage> {
   // Assume we have a survey object for binge eating records
-  var impulseRecordingSurvey = Survey(
-  title: '冲动记录',
-  questions: [
-     SingleChoiceQuestion(
+  var impulseRecordingSurvey = Survey(title: '冲动记录', questions: [
+    SingleChoiceQuestion(
       '你这次冲动属于',
       ['A. 暴食冲动', 'B. 清除食物的冲动'],
       {
@@ -26,17 +24,27 @@ class _BingeEatingRecordPageState extends State<BingeEatingRecordPage> {
       {}, // No sub-questions for these options
     ),
     TimeQuestion('刚刚识别到此冲动的具体时间', initialTime: DateTime.now()),
-    SliderQuestion('此冲动的强烈程度',{}, min: 1, max: 10, divisions: 9, labelBuilder: (value) {
-      if (value == 1) return '轻度';
-      else if (value == 5) return '中度';
+    SliderQuestion('此冲动的强烈程度', {}, min: 1, max: 10, divisions: 9,
+        labelBuilder: (value) {
+      if (value == 1)
+        return '轻度';
+      else if (value == 5)
+        return '中度';
       else if (value == 10) return '重度';
       return value.toInt().toString();
     }),
     TextQuestion('此冲动的诱因是什么？', false),
-    TextQuestion('结合你的替代策略，制定你对这次冲动的应对方案', false),
+
+    // TextQuestion('结合你的替代策略，制定你对这次冲动的应对方案', false),
+    SingleChoiceQuestion('结合你的替代策略，制定你对这次冲动的应对方案', [
+      'A. 回顾“冲动冲浪”',
+      'B. 展示“冲动替代策略卡”'
+    ], {
+      'A. 回顾“冲动冲浪”': [],
+      'B. 展示“冲动替代策略卡”': [ResponseCardQuestion('questionText', [])]
+    }),
     // More questions can be added here
-  ]
-);
+  ]);
 
   @override
   Widget build(BuildContext context) {
@@ -48,4 +56,3 @@ class _BingeEatingRecordPageState extends State<BingeEatingRecordPage> {
     );
   }
 }
-

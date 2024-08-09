@@ -1,0 +1,22 @@
+[
+  {
+    "activity_order": 1,
+    "custom_activity": "周末远足",
+    "details": "在附近的山上进行一次轻松的远足，欣赏自然风光。"
+  },
+  {
+    "activity_order": 2,
+    "custom_activity": "烹饪新菜谱",
+    "details": "尝试制作一道从未尝试过的菜品，扩展你的烹饪技能。"
+  },
+  {
+    "activity_order": 3,
+    "custom_activity": "看一部引人入胜的电影",
+    "details": "准备每周一次，在四月之前看完哈利波特。"
+  },
+  {
+    "activity_order": 4,
+    "custom_activity": "烹饪新菜谱2",
+    "details": "尝试制作一道从未尝试过的菜品2，扩展你的烹饪技能。"
+  }
+]
