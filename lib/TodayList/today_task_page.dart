@@ -45,8 +45,8 @@ class _TodayTaskPageState extends State<TodayTaskPage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          ChatbotPage(contents: task.chatbotContent!),
+                      builder: (context) => ChatbotPage(
+                          contents: task.chatbotContent!, taskId: task.id),
                     ),
                   );
                 } else if (task.type == TaskType.SURVEY) {
