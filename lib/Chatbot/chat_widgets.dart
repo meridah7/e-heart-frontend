@@ -155,15 +155,22 @@ class _BubbleState extends State<Bubble> with AutomaticKeepAliveClientMixin {
   }
 
   void _showFullImage(BuildContext context, String imageUrl) {
-    showDialog(
+    showGeneralDialog(
       context: context,
-      builder: (BuildContext context) {
-        return Dialog(
+      barrierDismissible: true,
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      barrierColor: Colors
+          .black54, // Optional: You can set a semi-transparent barrier color here
+      transitionDuration: Duration(milliseconds: 200),
+      pageBuilder: (BuildContext context, Animation animation,
+          Animation secondaryAnimation) {
+        return Center(
           child: InteractiveViewer(
-            panEnabled: true, // 允许平移
-            boundaryMargin: EdgeInsets.zero, // 设置边界留白为零
-            minScale: 0.1, // 最小缩放比例
-            maxScale: 4.0, // 最大缩放比例，可以根据需要调整
+            panEnabled: false,
+            boundaryMargin: EdgeInsets.all(double.infinity),
+            minScale: 0.1,
+            maxScale: 4.0,
+            clipBehavior: Clip.none,
             child: Image.network(imageUrl),
           ),
         );
