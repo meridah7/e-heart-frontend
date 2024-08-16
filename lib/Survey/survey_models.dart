@@ -265,7 +265,7 @@ class ChartQuestion extends Question {
   }
 }
 
-enum ChartType { Bar, Pie, None, Bulleted }
+enum ChartType { Bar, Pie, None, Bulleted, Line }
 
 class ResponseCardQuestion extends Question {
   final List<ResponseCardModel> listData;

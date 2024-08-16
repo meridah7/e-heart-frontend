@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'survey_models.dart';
 import 'package:namer_app/global_setting.dart';
 import 'survey_question_factory.dart';
+import 'SurveySummaryPage.dart';
 
 /// @desc 可翻页的问券
 ///
@@ -24,6 +25,27 @@ class _FlippableSurveyPageState extends State<FlippableSurveyPage> {
       if (_curStep < widget.survey.questions.length - 1) {
         print('aaa i am here');
         _curStep = _curStep + 1;
+      } else {
+        if (widget.survey.navigateToSummary) {
+          // 获取问卷摘要
+          List<String> summary = widget.survey.getSurveySummary();
+
+// 打印问卷摘要到控制台
+          for (String line in summary) {
+            print(line);
+          }
+
+// 导航到问卷摘要页面
+          if (widget.survey.navigateToSummary) {
+// 导航到问卷摘要页面
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SurveySummaryPage(summary: summary),
+              ),
+            );
+          }
+        }
       }
     });
   }

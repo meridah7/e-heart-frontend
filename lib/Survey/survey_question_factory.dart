@@ -407,6 +407,30 @@ Widget buildChartQuestion(
         ),
       ),
     );
+  } else if (question.chartType == ChartType.Line) {
+    // List<charts.Series<ChartData, num>> seriesList = [
+    //   charts.Series<ChartData, num>(
+    //     id: 'ChartData',
+    //     domainFn: (ChartData data, _) => data.category,
+    //     measureFn: (ChartData data, _) => data.value,
+    //     data: question.chartData,
+    //     labelAccessorFn: (ChartData data, _) =>
+    //         '${data.category}: ${data.value}',
+    //   ),
+    // ];
+
+    // children.add(
+    //   SizedBox(
+    //     height: 200.0,
+    //     child: question.orientation == ChartOrientation.horizontal
+    //         ? charts.LineChart(seriesList, animate: true)
+    //         : charts.LineChart(
+    //             seriesList as dynamic,
+    //             animate: true,
+    //             flipVerticalAxis: true,
+    //           ),
+    //   ),
+    // );
   }
 
   children.addAll([
@@ -712,7 +736,9 @@ Widget buildSubQuestion(BuildContext context, Question subQuestion,
             if (subQuestion is PriorityQuestion)
               buildPriorityQuestion(subQuestion, setState),
             if (subQuestion is ResponseCardQuestion)
-              buildResponseCardQuestion(context, subQuestion, setState)
+              buildResponseCardQuestion(context, subQuestion, setState),
+            if (subQuestion is ChartQuestion)
+              buildChartQuestion(subQuestion, setState)
           ],
         ),
       ),

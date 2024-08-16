@@ -67,7 +67,7 @@ Task impulseWave = Task(
 Task monitoringTeachingReflection = Task(
   title: "饮食日志反思",
   id: 'task9',
-  type: TaskType.SURVEY,
+  type: TaskType.SURVEY_FLIPPABLE,
   isCompleted: false,
   day: 1, // Assuming this is for the second day
   survey: monitoringTeachingReflectionSurvey,

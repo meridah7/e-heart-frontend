@@ -28,31 +28,34 @@ class _SurveyPageState extends State<SurveyPage> {
         title: Text(widget.survey.title),
         backgroundColor: themeColor,
       ),
-      body: Column(children: [
-        isNeedTopArea
-            ? SizedBox(
-                height: MediaQuery.of(context).size.height * 0.45,
-                child: ImpulsiveRecordAndReflectionSummary(),
-              )
-            : Container(),
-        Expanded(
-            child: ListView.builder(
-          itemCount: widget.survey.questions.length,
-          itemBuilder: (context, index) {
-            final question = widget.survey.questions[index];
-            Widget questionWidget =
-                questionWidgetFactory(context, question, setState);
+      body: Padding(
+        padding: const EdgeInsets.only(bottom: 40.0),
+        child: Column(children: [
+          isNeedTopArea
+              ? SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.45,
+                  child: ImpulsiveRecordAndReflectionSummary(),
+                )
+              : Container(),
+          Expanded(
+              child: ListView.builder(
+            itemCount: widget.survey.questions.length,
+            itemBuilder: (context, index) {
+              final question = widget.survey.questions[index];
+              Widget questionWidget =
+                  questionWidgetFactory(context, question, setState);
 
-            return Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: 5.0,
-                horizontal: 16.0,
-              ),
-              child: questionWidget,
-            );
-          },
-        ))
-      ]),
+              return Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 5.0,
+                  horizontal: 16.0,
+                ),
+                child: questionWidget,
+              );
+            },
+          ))
+        ]),
+      ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.check),
         onPressed: () {
