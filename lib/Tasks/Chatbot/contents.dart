@@ -1,67 +1,6 @@
 import '../../Chatbot/chat_models.dart';
 
-final List<Content> chatbotContent2 = [
-  Content(
-      text: 'Hi, hello there, I am E-Heart assistant',
-      type: ContentType.TEXT,
-      responseType: ResponseType.auto),
-  Content(
-      text:
-          'First of all, I want to congratulate you! Congratulations on bravely taking the first step towards combating binge eating and becoming a better version of yourself!',
-      type: ContentType.TEXT,
-      responseType: ResponseType.auto),
-  Content(
-      text: 'You mainly belong to',
-      choices: ['Subjective Binge Eating', 'Objective Binge Eating'],
-      type: ContentType.TEXT,
-      responseType: ResponseType.choices),
-  Content(
-      text: 'Common benefits you can choose, multiple selections allowed!',
-      choices: [
-        "A. Get rid of fatigue easily, more energetic",
-        "B. No more cold hands and feet",
-        "C. Improved immunity",
-        "D. Reduced symptoms of hypoglycemia",
-        "E. No longer overweight or obese",
-        "F. Alleviate gastrointestinal discomfort",
-      ],
-      type: ContentType.TEXT,
-      responseType: ResponseType.multiChoices),
-  Content(
-      text:
-          'Great! In addition to the above, you can continue to add other health benefits in text form. Send each benefit to me separately. When you have sent all the benefits',
-      type: ContentType.TEXT,
-      responseType: ResponseType.userInput),
-];
-
-final List<Content> chatbotTestContent = [
-  Content(
-      text: 'ContentType-TEXT-auto',
-      type: ContentType.TEXT,
-      responseType: ResponseType.auto),
-  Content(
-    imageUrl:
-        'https://pbs.twimg.com/profile_images/1511434207079407618/AwzUxnVf_400x400.png',
-    type: ContentType.IMAGE,
-    responseType: ResponseType.auto,
-  ),
-  Content(
-      text: 'ResponseType-choices',
-      choices: ['A'],
-      type: ContentType.TEXT,
-      responseType: ResponseType.choices),
-  Content(
-      text: 'ResponseType-multiChoices',
-      choices: ['A', 'B', 'C'],
-      type: ContentType.TEXT,
-      responseType: ResponseType.multiChoices),
-  Content(
-      text: 'ResponseType-userInput',
-      type: ContentType.TEXT,
-      responseType: ResponseType.userInput)
-];
-
-List<Content> chatbotContentCustom = [
+List<Content> day0DietLogTutorContent = [
   Content(
     text: '你好！先来介绍一下我自己吧～我是小E。在你学习如何进行饮食康复的旅程中，我会一直陪伴着你～',
     type: ContentType.TEXT,
@@ -133,4 +72,68 @@ List<Content> chatbotContentCustom = [
       text: "这是一个重要的问题！让小E来带你看看吧。",
       type: ContentType.TEXT,
       responseType: ResponseType.auto),
+];
+
+final List<Content> chatbotContent2 = [
+  Content(
+      text: 'Hi, hello there, I am E-Heart assistant',
+      type: ContentType.TEXT,
+      responseType: ResponseType.auto),
+  Content(
+      text:
+          'First of all, I want to congratulate you! Congratulations on bravely taking the first step towards combating binge eating and becoming a better version of yourself!',
+      type: ContentType.TEXT,
+      responseType: ResponseType.auto),
+  Content(
+      text: 'You mainly belong to',
+      choices: ['Subjective Binge Eating', 'Objective Binge Eating'],
+      type: ContentType.TEXT,
+      responseType: ResponseType.choices),
+  Content(
+      text: 'Common benefits you can choose, multiple selections allowed!',
+      choices: [
+        "A. Get rid of fatigue easily, more energetic",
+        "B. No more cold hands and feet",
+        "C. Improved immunity",
+        "D. Reduced symptoms of hypoglycemia",
+        "E. No longer overweight or obese",
+        "F. Alleviate gastrointestinal discomfort",
+      ],
+      type: ContentType.TEXT,
+      responseType: ResponseType.multiChoices),
+  Content(
+      text:
+          'Great! In addition to the above, you can continue to add other health benefits in text form. Send each benefit to me separately. When you have sent all the benefits',
+      type: ContentType.TEXT,
+      responseType: ResponseType.userInput),
+];
+
+final List<Content> chatbotTestContent = [
+  Content(
+      text: 'ContentType-TEXT-auto',
+      type: ContentType.TEXT,
+      responseType: ResponseType.auto),
+  Content(
+    // Local image example
+    // imageUrl: 'images/day0-DietLogTutor-1.PNG',
+    // Online image example
+    imageUrl:
+        'https://pbs.twimg.com/profile_images/1511434207079407618/AwzUxnVf_400x400.png',
+    type: ContentType.IMAGE,
+    responseType: ResponseType.auto,
+  ),
+  Content(
+      text: 'ResponseType-choices',
+      choices: ['A'],
+      type: ContentType.TEXT,
+      responseType: ResponseType.choices),
+  Content(
+      text: 'ResponseType-multiChoices',
+      choices: ['A', 'B', 'C'],
+      type: ContentType.TEXT,
+      responseType: ResponseType.multiChoices),
+  Content(
+      text: 'ResponseType-userInput',
+      type: ContentType.TEXT,
+      responseType: ResponseType.userInput)
 ];

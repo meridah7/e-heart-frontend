@@ -19,11 +19,11 @@ Task chatbotTester = Task(
   chatbotContent: chatbotTestContent,
 );
 
-Task task2 = Task(
+Task day0DietLogTutor = Task(
   title: "饮食日志教学",
   id: 'task2',
   type: TaskType.CHATBOT,
   isCompleted: false,
   day: 0,
-  chatbotContent: chatbotContentCustom,
+  chatbotContent: day0DietLogTutorContent,
 );
