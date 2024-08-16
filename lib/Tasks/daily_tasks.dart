@@ -11,7 +11,7 @@ List<Task> TaskDay0 = [
   impulseRetrospect,
   chatbotTester,
   // task1,
-  task2,
+  day0DietLogTutor,
   task5,
   task6,
   reflectiveActivity,
