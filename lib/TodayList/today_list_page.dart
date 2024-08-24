@@ -26,7 +26,7 @@ class _TodayListPageState extends State<TodayListPage> {
   // 2. check db's data, if has, use it
   // 3. start from day 0
   int? _currentDay;
-  List<String>? _finishedTaskIds;
+  List<String>? _finishedTaskIds = [];
 
   //初始化的状态
   @override
@@ -39,10 +39,10 @@ class _TodayListPageState extends State<TodayListPage> {
     try {
       // TODO: replace anonymous to actual UserName
       _userPref = await Preferences.getInstance(namespace: 'anonymous');
-      if (_userPref.hasKey('progress') &&
-          _userPref.hasKey('progressLastUpdatedDate')) {
-        int userProgress = _userPref.getData('progress');
-        String lastUpdatedDate = _userPref.getData('progressLastUpdatedDate');
+      int userProgress = _userPref.getData('progress');
+      String lastUpdatedDate = _userPref.getData('progressLastUpdatedDate');
+
+      if (lastUpdatedDate != '') {
         String currentDate = DateFormat('yyyyMMdd').format(DateTime.now());
 
         setState(() {
@@ -60,16 +60,10 @@ class _TodayListPageState extends State<TodayListPage> {
         });
       }
 
-      if (_userPref.hasKey('finishedTaskIds')) {
-        List<String> taskIds = _userPref.getData('finishedTaskIds');
-        setState(() {
-          _finishedTaskIds = taskIds;
-        });
-      } else {
-        setState(() {
-          _finishedTaskIds = [];
-        });
-      }
+      List<String> taskIds = _userPref.getData('finishedTaskIds');
+      setState(() {
+        _finishedTaskIds = taskIds;
+      });
     } catch (e) {
       print('Error in _initWidget: $e');
     }

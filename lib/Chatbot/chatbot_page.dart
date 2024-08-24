@@ -72,8 +72,10 @@ class _ChatbotPageState extends State<ChatbotPage> {
       messages = [];
       _currentContentIndex = 0;
     });
+
     await _initializePreferences();
-    if (_userPref.hasKey(widget.taskId)) {
+    Map answers = _userPref.getData('completedTaskAnswers');
+    if (answers.containsKey(widget.taskId)) {
       // 如果有记录，直接展示最终结果
       setState(() {
         _userFinished = true;
@@ -120,7 +122,9 @@ class _ChatbotPageState extends State<ChatbotPage> {
 
   // Display the full content when the user finished this before
   void _displayAllContent() {
-    final List answer = _userPref.getData(widget.taskId);
+    Map answers = _userPref.getData('completedTaskAnswers');
+    // It can be asserted directly is because _initWidget make sure the answers contain current taskId
+    final List answer = answers[widget.taskId]!;
     List<ChatMessage> msg = [];
     int curAnsIndex = 0;
     for (int currentContentIndex = 0;
@@ -160,7 +164,9 @@ class _ChatbotPageState extends State<ChatbotPage> {
 // _onConversationEnd函数用于处理对话结束时的逻辑。当所有预设chatbot的contents被处理完的时候，会触发这个函数
   void _onConversationEnd() async {
     print('Conversation has ended. User responses: $userResponses');
-    _userPref.setData(widget.taskId, userResponses);
+    Map answers = _userPref.getData('completedTaskAnswers');
+    answers[widget.taskId] = userResponses;
+    await _userPref.setData('completedTaskAnswers', answers);
 
     if (widget.isLastTask) {
       int? userProgress = _userPref.getData('progress');
@@ -171,11 +177,10 @@ class _ChatbotPageState extends State<ChatbotPage> {
     }
 
     if (_userPref.hasKey('finishedTaskIds')) {
-      List<String> taskIds = _userPref.getData('finishedTaskIds');
+      List taskIds = _userPref.getData('finishedTaskIds');
       taskIds.add(widget.taskId);
+
       await _userPref.setData('finishedTaskIds', taskIds);
-    } else {
-      await _userPref.setData('finishedTaskIds', [widget.taskId]);
     }
 
     setState(() {
@@ -240,7 +245,9 @@ class _ChatbotPageState extends State<ChatbotPage> {
               padding: const EdgeInsets.all(8.0),
               child: ElevatedButton(
                 onPressed: () async {
-                  await _userPref.deleteKey(widget.taskId);
+                  Map answers = _userPref.getData('completedTaskAnswers');
+                  answers.remove(widget.taskId);
+                  await _userPref.setData('completedTaskAnswers', answers);
                   setState(() {
                     _userFinished = false;
                     _initWidget();
