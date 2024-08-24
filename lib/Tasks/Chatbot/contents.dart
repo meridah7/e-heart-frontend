@@ -113,27 +113,27 @@ final List<Content> chatbotTestContent = [
       text: 'ContentType-TEXT-auto',
       type: ContentType.TEXT,
       responseType: ResponseType.auto),
-  Content(
-    // Local image example
-    // imageUrl: 'images/day0-DietLogTutor-1.PNG',
-    // Online image example
-    imageUrl:
-        'https://pbs.twimg.com/profile_images/1511434207079407618/AwzUxnVf_400x400.png',
-    type: ContentType.IMAGE,
-    responseType: ResponseType.auto,
-  ),
-  Content(
-      text: 'ResponseType-choices',
-      choices: ['A'],
-      type: ContentType.TEXT,
-      responseType: ResponseType.choices),
-  Content(
-      text: 'ResponseType-multiChoices',
-      choices: ['A', 'B', 'C'],
-      type: ContentType.TEXT,
-      responseType: ResponseType.multiChoices),
-  Content(
-      text: 'ResponseType-userInput',
-      type: ContentType.TEXT,
-      responseType: ResponseType.userInput)
+  // Content(
+  //   // Local image example
+  //   // imageUrl: 'images/day0-DietLogTutor-1.PNG',
+  //   // Online image example
+  //   imageUrl:
+  //       'https://pbs.twimg.com/profile_images/1511434207079407618/AwzUxnVf_400x400.png',
+  //   type: ContentType.IMAGE,
+  //   responseType: ResponseType.auto,
+  // ),
+  // Content(
+  //     text: 'ResponseType-choices',
+  //     choices: ['A'],
+  //     type: ContentType.TEXT,
+  //     responseType: ResponseType.choices),
+  // Content(
+  //     text: 'ResponseType-multiChoices',
+  //     choices: ['A', 'B', 'C'],
+  //     type: ContentType.TEXT,
+  //     responseType: ResponseType.multiChoices),
+  // Content(
+  //     text: 'ResponseType-userInput',
+  //     type: ContentType.TEXT,
+  //     responseType: ResponseType.userInput)
 ];

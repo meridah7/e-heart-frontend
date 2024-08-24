@@ -124,4 +124,18 @@ class Preferences {
       await _prefs!.remove(fullKey);
     }
   }
+
+  Future<void> deleteAllKeys() async {
+    if (_prefs == null) {
+      throw Exception("SharedPreferences not initialized. Call init() first.");
+    }
+
+    Set<String> allKeys = _prefs!.getKeys();
+    List<String> keysToDelete =
+        allKeys.where((key) => key.contains('_${namespace}_')).toList();
+
+    for (String key in keysToDelete) {
+      await _prefs!.remove(key);
+    }
+  }
 }

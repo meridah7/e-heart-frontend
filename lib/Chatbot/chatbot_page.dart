@@ -4,14 +4,17 @@ import 'package:namer_app/global_setting.dart';
 import 'chat_models.dart';
 import 'chat_widgets.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:intl/intl.dart';
 import '../user_preference.dart';
 
 // ChatbotPage class是chatbot的主页面，负责显示聊天界面和处理用户输入。
 class ChatbotPage extends StatefulWidget {
   final List<Content> contents;
   final String taskId;
+  final bool isLastTask;
 
-  ChatbotPage({required this.contents, required this.taskId});
+  ChatbotPage(
+      {required this.contents, required this.taskId, required this.isLastTask});
 
   @override
   _ChatbotPageState createState() => _ChatbotPageState();
@@ -155,9 +158,26 @@ class _ChatbotPageState extends State<ChatbotPage> {
   }
 
 // _onConversationEnd函数用于处理对话结束时的逻辑。当所有预设chatbot的contents被处理完的时候，会触发这个函数
-  void _onConversationEnd() {
+  void _onConversationEnd() async {
     print('Conversation has ended. User responses: $userResponses');
     _userPref.setData(widget.taskId, userResponses);
+
+    if (widget.isLastTask) {
+      int? userProgress = _userPref.getData('progress');
+      await _userPref.setData(
+          'progress', userProgress == null ? 1 : userProgress + 1);
+      await _userPref.setData('progressLastUpdatedDate',
+          DateFormat('yyyyMMdd').format(DateTime.now()));
+    }
+
+    if (_userPref.hasKey('finishedTaskIds')) {
+      List<String> taskIds = _userPref.getData('finishedTaskIds');
+      taskIds.add(widget.taskId);
+      await _userPref.setData('finishedTaskIds', taskIds);
+    } else {
+      await _userPref.setData('finishedTaskIds', [widget.taskId]);
+    }
+
     setState(() {
       _userFinished = true;
       userResponses.clear();
