@@ -14,6 +14,7 @@ import 'Login/register_page.dart';
 import 'Login/user_model.dart';
 import 'package:provider/provider.dart';
 import 'user_preference.dart';
+import 'debugButton.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -76,11 +77,28 @@ class _MainScreenState extends State<MainScreen> {
     MyPage(),
   ];
 
+  // ==== debugButton config
+  // Variables for managing debug button display logic
+  int _clickCount = 0;
+  DateTime? _firstClickTime;
+  bool _showDebugButton = false;
+  Offset _debugButtonOffset = Offset(0, 500);
+  // ==== debugButton config
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
+      body: Stack(
+        children: [
+          Center(
+            child: _widgetOptions.elementAt(_selectedIndex),
+          ),
+          DebugButton(
+            offset: _debugButtonOffset,
+            onDrag: _updateDebugButtonPosition,
+            isVisible: _showDebugButton, // Control visibility
+          ),
+        ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
@@ -104,8 +122,37 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _onItemTapped(int index) {
+    // handle debug button
+    if (index == 0) {
+      DateTime now = DateTime.now();
+
+      if (_firstClickTime == null ||
+          now.difference(_firstClickTime!).inSeconds > 10) {
+        _firstClickTime = now;
+        _clickCount = 1;
+      } else {
+        _clickCount++;
+      }
+
+      if (_clickCount == 10) {
+        setState(() {
+          _showDebugButton = true;
+        });
+      }
+    } else {
+      // Reset the click count and time if another button is clicked
+      _clickCount = 0;
+      _firstClickTime = null;
+    }
+
     setState(() {
       _selectedIndex = index;
+    });
+  }
+
+  void _updateDebugButtonPosition(Offset newOffset) {
+    setState(() {
+      _debugButtonOffset = newOffset;
     });
   }
 

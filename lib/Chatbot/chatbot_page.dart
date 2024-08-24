@@ -4,14 +4,17 @@ import 'package:namer_app/global_setting.dart';
 import 'chat_models.dart';
 import 'chat_widgets.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:intl/intl.dart';
 import '../user_preference.dart';
 
 // ChatbotPage class是chatbot的主页面，负责显示聊天界面和处理用户输入。
 class ChatbotPage extends StatefulWidget {
   final List<Content> contents;
   final String taskId;
+  final bool isLastTask;
 
-  ChatbotPage({required this.contents, required this.taskId});
+  ChatbotPage(
+      {required this.contents, required this.taskId, required this.isLastTask});
 
   @override
   _ChatbotPageState createState() => _ChatbotPageState();
@@ -69,8 +72,10 @@ class _ChatbotPageState extends State<ChatbotPage> {
       messages = [];
       _currentContentIndex = 0;
     });
+
     await _initializePreferences();
-    if (_userPref.hasKey(widget.taskId)) {
+    Map answers = _userPref.getData('completedTaskAnswers');
+    if (answers.containsKey(widget.taskId)) {
       // 如果有记录，直接展示最终结果
       setState(() {
         _userFinished = true;
@@ -117,7 +122,9 @@ class _ChatbotPageState extends State<ChatbotPage> {
 
   // Display the full content when the user finished this before
   void _displayAllContent() {
-    final List answer = _userPref.getData(widget.taskId);
+    Map answers = _userPref.getData('completedTaskAnswers');
+    // It can be asserted directly is because _initWidget make sure the answers contain current taskId
+    final List answer = answers[widget.taskId]!;
     List<ChatMessage> msg = [];
     int curAnsIndex = 0;
     for (int currentContentIndex = 0;
@@ -155,9 +162,27 @@ class _ChatbotPageState extends State<ChatbotPage> {
   }
 
 // _onConversationEnd函数用于处理对话结束时的逻辑。当所有预设chatbot的contents被处理完的时候，会触发这个函数
-  void _onConversationEnd() {
+  void _onConversationEnd() async {
     print('Conversation has ended. User responses: $userResponses');
-    _userPref.setData(widget.taskId, userResponses);
+    Map answers = _userPref.getData('completedTaskAnswers');
+    answers[widget.taskId] = userResponses;
+    await _userPref.setData('completedTaskAnswers', answers);
+
+    if (widget.isLastTask) {
+      int? userProgress = _userPref.getData('progress');
+      await _userPref.setData(
+          'progress', userProgress == null ? 1 : userProgress + 1);
+      await _userPref.setData('progressLastUpdatedDate',
+          DateFormat('yyyyMMdd').format(DateTime.now()));
+    }
+
+    if (_userPref.hasKey('finishedTaskIds')) {
+      List taskIds = _userPref.getData('finishedTaskIds');
+      taskIds.add(widget.taskId);
+
+      await _userPref.setData('finishedTaskIds', taskIds);
+    }
+
     setState(() {
       _userFinished = true;
       userResponses.clear();
@@ -220,7 +245,9 @@ class _ChatbotPageState extends State<ChatbotPage> {
               padding: const EdgeInsets.all(8.0),
               child: ElevatedButton(
                 onPressed: () async {
-                  await _userPref.deleteKey(widget.taskId);
+                  Map answers = _userPref.getData('completedTaskAnswers');
+                  answers.remove(widget.taskId);
+                  await _userPref.setData('completedTaskAnswers', answers);
                   setState(() {
                     _userFinished = false;
                     _initWidget();

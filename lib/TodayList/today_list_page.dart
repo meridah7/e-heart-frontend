@@ -11,6 +11,7 @@ import '../DietMonitoring/binge_eating_record_page.dart';
 import '../DietMonitoring/diet_monitoring_page.dart';
 import 'package:intl/intl.dart';
 import '../ResponseCard/response_card_page.dart';
+import '../user_preference.dart';
 
 class TodayListPage extends StatefulWidget {
   @override
@@ -18,14 +19,61 @@ class TodayListPage extends StatefulWidget {
 }
 
 class _TodayListPageState extends State<TodayListPage> {
+  late Preferences _userPref;
   bool showTasks = true;
-  int currentDate = 0;
+  // Fetch rules:
+  // 1. check local storage, if has data, use the data
+  // 2. check db's data, if has, use it
+  // 3. start from day 0
+  int? _currentDay;
+  List<String>? _finishedTaskIds = [];
+
+  //初始化的状态
+  @override
+  void initState() {
+    super.initState();
+    _initWidget();
+  }
+
+  Future<void> _initWidget() async {
+    try {
+      // TODO: replace anonymous to actual UserName
+      _userPref = await Preferences.getInstance(namespace: 'anonymous');
+      int userProgress = _userPref.getData('progress');
+      String lastUpdatedDate = _userPref.getData('progressLastUpdatedDate');
+
+      if (lastUpdatedDate != '') {
+        String currentDate = DateFormat('yyyyMMdd').format(DateTime.now());
+
+        setState(() {
+          if (lastUpdatedDate == currentDate) {
+            // if lastUpdatedDate is today, keep the task list for today
+            _currentDay = userProgress - 1;
+          } else {
+            // if lastUpdatedDate is yesterday, update the task list
+            _currentDay = userProgress;
+          }
+        });
+      } else {
+        setState(() {
+          _currentDay = 0;
+        });
+      }
+
+      List<String> taskIds = _userPref.getData('finishedTaskIds');
+      setState(() {
+        _finishedTaskIds = taskIds;
+      });
+    } catch (e) {
+      print('Error in _initWidget: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Day0', style: TextStyle(color: Colors.black)),
+        title: Text('Day $_currentDay', style: TextStyle(color: Colors.black)),
         backgroundColor: Color.fromARGB(255, 223, 221, 240),
         elevation: 0,
       ),
@@ -42,9 +90,11 @@ class _TodayListPageState extends State<TodayListPage> {
             children: [
               _buildSegmentedControl(),
               Expanded(
-                child: showTasks
-                    ? _buildTaskListView(DailyTask[currentDate])
-                    : _buildDietListView(DietDay0),
+                child: _currentDay != null
+                    ? (showTasks
+                        ? _buildTaskListView(DailyTask[_currentDay!])
+                        : _buildDietListView(DietDay0))
+                    : SizedBox.shrink(),
               ),
             ],
           ),
@@ -183,6 +233,8 @@ class _TodayListPageState extends State<TodayListPage> {
                           builder: (context) => ChatbotPage(
                                 contents: task.chatbotContent!,
                                 taskId: task.id,
+                                isLastTask: DailyTask[_currentDay!].length ==
+                                    _finishedTaskIds!.length + 1,
                               )));
                   break;
                 case TaskType.SURVEY:

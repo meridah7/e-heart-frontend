@@ -18,6 +18,22 @@ class Preferences {
     if (_instance == null || _instance!.namespace != namespace) {
       _instance = Preferences._internal(namespace);
       await _instance!._init(); // Initialize SharedPreferences
+
+      // === prefs registry
+      // 用户 id
+      _instance!.setData('userId', '');
+      // 用户昵称
+      _instance!.setData('username', '');
+      // 用户邮箱
+      _instance!.setData('email', '');
+      // 用户进度到第几天了
+      _instance!.setData('progress', 0);
+      // 用户当天完成的任务 ID 列表（只会保存当天的信息，因为不需要过去天数完成的任务信息）
+      _instance!.setData('progressLastUpdatedDate', '');
+      // 用户当前天数完成的任务 ID 列表
+      _instance!.setData('finishedTaskIds', []);
+      // 用户填写的答案
+      _instance!.setData('completedTaskAnswers', {});
     }
     return _instance!;
   }
@@ -122,6 +138,20 @@ class Preferences {
 
     if (fullKey.isNotEmpty) {
       await _prefs!.remove(fullKey);
+    }
+  }
+
+  Future<void> deleteAllKeys() async {
+    if (_prefs == null) {
+      throw Exception("SharedPreferences not initialized. Call init() first.");
+    }
+
+    Set<String> allKeys = _prefs!.getKeys();
+    List<String> keysToDelete =
+        allKeys.where((key) => key.contains('_${namespace}_')).toList();
+
+    for (String key in keysToDelete) {
+      await _prefs!.remove(key);
     }
   }
 }
