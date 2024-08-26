@@ -73,11 +73,21 @@ class _TodayListPageState extends State<TodayListPage> {
             textColor: showTasks ? Colors.white : Colors.black,
           ),
           SizedBox(width: 10),
-          _buildButton(
-            '今日饮食',
-            onPressed: () => _toggleView(false),
-            color: showTasks ? themeData.scaffoldBackgroundColor : dietColor,
-            textColor: showTasks ? Colors.black : Colors.white,
+          // _buildButton(
+          //   '今日饮食',
+          //   onPressed: () => _toggleView(false),
+          //   color: showTasks ? themeData.scaffoldBackgroundColor : dietColor,
+          //   textColor: showTasks ? Colors.black : Colors.white,
+          // ),
+          _buildCircleButton(
+            '冲动应对卡',
+            icon: Icons.card_travel,
+            onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    // builder: (context) => BingeEatingResponsePage())),
+                    builder: (context) => BingeEatingResponseCard())),
+            color: dietColor,
           ),
         ],
       ),
@@ -122,17 +132,6 @@ class _TodayListPageState extends State<TodayListPage> {
           icon: Icons.record_voice_over,
           onPressed: () => Navigator.push(context,
               MaterialPageRoute(builder: (context) => BingeEatingRecordPage())),
-          color: dietColor,
-        ),
-        // FIXME: 调试用
-        _buildCircleButton(
-          '冲动应对卡',
-          icon: Icons.card_travel,
-          onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                  // builder: (context) => BingeEatingResponsePage())),
-                  builder: (context) => BingeEatingResponseCard())),
           color: dietColor,
         ),
       ],
@@ -191,8 +190,10 @@ class _TodayListPageState extends State<TodayListPage> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) =>
-                              SurveyPage(survey: task.survey!)));
+                          builder: (context) => SurveyPage(
+                                survey: task.survey!,
+                                taskId: task.id,
+                              )));
                   break;
                 case TaskType.SURVEY_FLIPPABLE:
                   Navigator.push(

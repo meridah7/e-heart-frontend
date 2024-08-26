@@ -9,11 +9,11 @@ import 'MyPage/my_page.dart';
 import 'DietaryAnalysis/dietary_analysis_page.dart';
 //import 'DAO/database_helper.dart';
 import 'Login/login_page.dart';
-import 'package:flutter/material.dart';
 import 'Login/register_page.dart';
 import 'Login/user_model.dart';
 import 'package:provider/provider.dart';
 import 'user_preference.dart';
+import 'DailyDiet/daily_diet_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -72,6 +72,7 @@ class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
   static List<Widget> _widgetOptions = <Widget>[
     TodayListPage(),
+    DailyDietPage(),
     ReviewAnalysisPage(),
     MyPage(),
   ];
@@ -89,6 +90,10 @@ class _MainScreenState extends State<MainScreen> {
             label: ('每日任务'),
           ),
           BottomNavigationBarItem(
+            icon: Icon(Icons.ramen_dining_sharp),
+            label: ('今日饮食'),
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.analytics_outlined),
             label: ('分析反思'),
           ),
@@ -99,6 +104,7 @@ class _MainScreenState extends State<MainScreen> {
         ],
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
+        type: BottomNavigationBarType.fixed, // 重要
       ),
     );
   }

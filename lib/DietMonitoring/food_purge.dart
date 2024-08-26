@@ -6,7 +6,10 @@ class FoodPurgePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SurveyPage(survey: foodPurgeSurvey),
+      body: SurveyPage(
+        survey: foodPurgeSurvey,
+        taskId: 'foodPurgeSurvey',
+      ),
     );
   }
 }

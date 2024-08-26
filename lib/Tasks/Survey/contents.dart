@@ -1,3 +1,4 @@
+import 'package:namer_app/user_preference.dart';
 import '../../Survey/survey_models.dart';
 
 var impulseRetrospectSurvey = Survey(title: 'x 月 x 日冲动记录回顾', questions: [
@@ -175,7 +176,6 @@ var dietaryIntakeSurvey = Survey(title: '饮食日志', questions: [
             },
             description: '选择你这次进食的所在之处。若没有对应选项，请于下方手动填写。'),
         SingleChoiceQuestion('有没有节食', ['有', '没有'], {}),
-        // TODO: add some popup sub question
         SliderQuestion(
             '是否暴食',
             {

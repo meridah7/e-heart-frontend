@@ -196,7 +196,10 @@ class DietMonitoringPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SurveyPage(survey: dietaryIntake.survey!),
+      body: SurveyPage(
+        survey: dietaryIntake.survey!,
+        taskId: dietaryIntake.id,
+      ),
     );
   }
 }

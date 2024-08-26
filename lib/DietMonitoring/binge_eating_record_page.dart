@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:namer_app/Survey/survey_models.dart'; // Adjust import path as necessary
 import 'package:namer_app/Survey/survey_page.dart'; // Assuming SurveyPage can be reused or adapted
-import 'package:namer_app/Tasks/Survey/contents.dart';
+import 'package:namer_app/Tasks/Survey/tasks.dart';
 
 class BingeEatingRecordPage extends StatefulWidget {
   @override
@@ -58,7 +57,10 @@ class _BingeEatingRecordPageState extends State<BingeEatingRecordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       // Use the SurveyPage widget if it's designed to be directly reusable
-      body: SurveyPage(survey: impulseRecordingSurvey),
+      body: SurveyPage(
+        survey: impulseRecording.survey!,
+        taskId: impulseRecording.id,
+      ),
       // If you need to adapt the survey logic specifically for this page,
       // you might integrate it directly here instead of using SurveyPage.
     );
