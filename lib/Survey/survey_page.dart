@@ -6,18 +6,53 @@ import 'survey_models.dart';
 import 'SurveySummaryPage.dart';
 import 'survey_question_factory.dart';
 import 'impulsive_record_and_reflection_summary.dart';
+import 'package:namer_app/user_preference.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 
 class SurveyPage extends StatefulWidget {
   final Survey survey;
+  final String taskId;
 
-  SurveyPage({required this.survey});
+  SurveyPage({required this.survey, required this.taskId});
 
   @override
   _SurveyPageState createState() => _SurveyPageState();
 }
 
 class _SurveyPageState extends State<SurveyPage> {
+  late Preferences _userPref;
+
+  // init State for some survey task
+  Future<void> _initWidget() async {
+    setState(() {
+      // contents = widget.contents;
+      // messages = [];
+      // _currentContentIndex = 0;
+    });
+    await _initializePreferences();
+    // if (_userPref.hasKey(widget.taskId)) {
+    //   // 如果有记录，直接展示最终结果
+    //   setState(() {
+    //     // _userFinished = true;
+    //   });
+    //   // _displayAllContent();
+    // } else {
+    //   // 如果没有记录，则从头开始
+    //   // _displayNextContent();s
+    // }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _initWidget();
+  }
+
+  Future<void> _initializePreferences() async {
+    // TODO: replace anonymous to actual UserName
+    _userPref = await Preferences.getInstance(namespace: 'anonymous');
+  }
+
   @override
   Widget build(BuildContext context) {
     // NOTE: this is currently only available for 冲动记录反思, please refactor it if other questionnaires are needed
@@ -28,31 +63,34 @@ class _SurveyPageState extends State<SurveyPage> {
         title: Text(widget.survey.title),
         backgroundColor: themeColor,
       ),
-      body: Column(children: [
-        isNeedTopArea
-            ? SizedBox(
-                height: MediaQuery.of(context).size.height * 0.45,
-                child: ImpulsiveRecordAndReflectionSummary(),
-              )
-            : Container(),
-        Expanded(
-            child: ListView.builder(
-          itemCount: widget.survey.questions.length,
-          itemBuilder: (context, index) {
-            final question = widget.survey.questions[index];
-            Widget questionWidget =
-                questionWidgetFactory(context, question, setState);
+      body: Padding(
+        padding: const EdgeInsets.only(bottom: 40.0),
+        child: Column(children: [
+          isNeedTopArea
+              ? SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.45,
+                  child: ImpulsiveRecordAndReflectionSummary(),
+                )
+              : Container(),
+          Expanded(
+              child: ListView.builder(
+            itemCount: widget.survey.questions.length,
+            itemBuilder: (context, index) {
+              final question = widget.survey.questions[index];
+              Widget questionWidget =
+                  questionWidgetFactory(context, question, setState);
 
-            return Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: 5.0,
-                horizontal: 16.0,
-              ),
-              child: questionWidget,
-            );
-          },
-        ))
-      ]),
+              return Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 5.0,
+                  horizontal: 16.0,
+                ),
+                child: questionWidget,
+              );
+            },
+          ))
+        ]),
+      ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.check),
         onPressed: () {

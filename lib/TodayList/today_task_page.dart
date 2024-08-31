@@ -53,7 +53,10 @@ class _TodayTaskPageState extends State<TodayTaskPage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => SurveyPage(survey: task.survey!),
+                      builder: (context) => SurveyPage(
+                        survey: task.survey!,
+                        taskId: task.id,
+                      ),
                     ),
                   );
                 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:namer_app/DailyDiet/diet_models.dart';
 import 'package:namer_app/DietMonitoring/binge_eating_options.dart';
 import '../Tasks/daily_tasks.dart';
@@ -122,11 +123,21 @@ class _TodayListPageState extends State<TodayListPage> {
             textColor: showTasks ? Colors.white : Colors.black,
           ),
           SizedBox(width: 10),
-          _buildButton(
-            '今日饮食',
-            onPressed: () => _toggleView(false),
-            color: showTasks ? themeData.scaffoldBackgroundColor : dietColor,
-            textColor: showTasks ? Colors.black : Colors.white,
+          // _buildButton(
+          //   '今日饮食',
+          //   onPressed: () => _toggleView(false),
+          //   color: showTasks ? themeData.scaffoldBackgroundColor : dietColor,
+          //   textColor: showTasks ? Colors.black : Colors.white,
+          // ),
+          _buildCircleButton(
+            '冲动应对卡',
+            icon: Icons.card_travel,
+            onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    // builder: (context) => BingeEatingResponsePage())),
+                    builder: (context) => BingeEatingResponseCard())),
+            color: dietColor,
           ),
         ],
       ),
@@ -173,17 +184,6 @@ class _TodayListPageState extends State<TodayListPage> {
               MaterialPageRoute(builder: (context) => BingeEatingRecordPage())),
           color: dietColor,
         ),
-        // FIXME: 调试用
-        _buildCircleButton(
-          '冲动应对卡',
-          icon: Icons.card_travel,
-          onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                  // builder: (context) => BingeEatingResponsePage())),
-                  builder: (context) => BingeEatingResponseCard())),
-          color: dietColor,
-        ),
       ],
     );
   }
@@ -200,6 +200,7 @@ class _TodayListPageState extends State<TodayListPage> {
 
   Widget _buildTaskListView(List<Task> tasks) {
     return ListView.builder(
+      padding: EdgeInsets.only(bottom: 64),
       itemCount: tasks.length,
       itemBuilder: (context, index) {
         final task = tasks[index];
@@ -241,8 +242,10 @@ class _TodayListPageState extends State<TodayListPage> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) =>
-                              SurveyPage(survey: task.survey!)));
+                          builder: (context) => SurveyPage(
+                                survey: task.survey!,
+                                taskId: task.id,
+                              )));
                   break;
                 case TaskType.SURVEY_FLIPPABLE:
                   Navigator.push(
@@ -264,6 +267,7 @@ class _TodayListPageState extends State<TodayListPage> {
 
   Widget _buildDietListView(List<Diet> diets) {
     return ListView.builder(
+      padding: EdgeInsets.only(bottom: 64),
       itemCount: diets.length,
       itemBuilder: (context, index) {
         final diet = diets[index];
