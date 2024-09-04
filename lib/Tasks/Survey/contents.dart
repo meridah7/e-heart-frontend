@@ -1130,7 +1130,9 @@ var impulseRecordingSurvey = Survey(title: '冲动记录', questions: [
 ''', ['知道了'], {}),
       TextQuestion('你这次的目标是，坚持冲动冲浪几分钟?', false),
     ],
-    'B. 展示“冲动替代策略卡”': [ResponseCardQuestion('questionText', [])]
+    'B. 展示“冲动替代策略卡”': [
+      ResponseCardQuestion('questionText', []),
+    ]
   }),
   // More questions can be added here
   TextQuestion('请你制定一下针对这次冲动的应对策略吧！', false),

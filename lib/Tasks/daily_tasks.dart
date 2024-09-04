@@ -34,32 +34,32 @@ List<List<Task>> DailyTask = [
   TaskDay24,
   TaskDay25
 ];
-
-List<Task> TaskDay0 = [dietLogTutor];
+// TODO: mock task
+List<Task> TaskDay0 = [dietLogTutor, ...SurveyTest];
 List<Task> TaskDay1 = [impulseSurfingTutor];
-List<Task> TaskDay2 = [];
+List<Task> TaskDay2 = [reflectiveActivity];
 List<Task> TaskDay3 = [];
 List<Task> TaskDay4 = [];
 List<Task> TaskDay5 = [];
 List<Task> TaskDay6 = [];
 List<Task> TaskDay7 = [];
-List<Task> TaskDay8 = [scheduleDietTutor];
-List<Task> TaskDay9 = [];
-List<Task> TaskDay10 = [];
-List<Task> TaskDay11 = [];
-List<Task> TaskDay12 = [];
-List<Task> TaskDay13 = [];
-List<Task> TaskDay14 = [];
-List<Task> TaskDay15 = [];
-List<Task> TaskDay16 = [];
-List<Task> TaskDay17 = [];
-List<Task> TaskDay18 = [];
-List<Task> TaskDay19 = [];
-List<Task> TaskDay20 = [];
-List<Task> TaskDay21 = [];
-List<Task> TaskDay22 = [];
-List<Task> TaskDay23 = [];
-List<Task> TaskDay24 = [];
+List<Task> TaskDay8 = [scheduleDietTutor, task5];
+List<Task> TaskDay9 = [task5];
+List<Task> TaskDay10 = [task5];
+List<Task> TaskDay11 = [task5];
+List<Task> TaskDay12 = [task5];
+List<Task> TaskDay13 = [task5];
+List<Task> TaskDay14 = [task5];
+List<Task> TaskDay15 = [task5];
+List<Task> TaskDay16 = [task5];
+List<Task> TaskDay17 = [task5];
+List<Task> TaskDay18 = [task5];
+List<Task> TaskDay19 = [task5];
+List<Task> TaskDay20 = [task5];
+List<Task> TaskDay21 = [task5];
+List<Task> TaskDay22 = [task5];
+List<Task> TaskDay23 = [task5];
+List<Task> TaskDay24 = [task5];
 List<Task> TaskDay25 = [dealingWithSetback];
 
 // NOTE: only for test
@@ -71,4 +71,17 @@ List<Task> ChatbotTest = [
   impulseSurfingTutor,
   scheduleDietTutor,
   dealingWithSetback
+];
+
+// NOTE: only for survey test
+List<Task> SurveyTest = [
+  impulseRetrospect,
+  dietaryIntake,
+  task5,
+  task6,
+  reflectiveActivity,
+  impulseWave,
+  monitoringTeachingReflection,
+  regularDietReflection,
+  impulseRecording
 ];
