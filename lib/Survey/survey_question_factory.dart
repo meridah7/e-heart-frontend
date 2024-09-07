@@ -891,7 +891,7 @@ Widget buildSubTextQuestion(
                     hintText: '输入你的答案',
                     border: OutlineInputBorder(),
                   ),
-                  onSubmitted: (value) {
+                  onChanged: (value) {
                     setState(() {
                       question.answers[index] = value;
                     });
