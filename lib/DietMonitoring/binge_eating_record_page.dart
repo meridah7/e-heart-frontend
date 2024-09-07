@@ -60,6 +60,7 @@ class _BingeEatingRecordPageState extends State<BingeEatingRecordPage> {
       body: SurveyPage(
         survey: impulseRecording.survey!,
         taskId: impulseRecording.id,
+        isLastTask: false,
       ),
       // If you need to adapt the survey logic specifically for this page,
       // you might integrate it directly here instead of using SurveyPage.

@@ -199,6 +199,7 @@ class DietMonitoringPage extends StatelessWidget {
       body: SurveyPage(
         survey: dietaryIntake.survey!,
         taskId: dietaryIntake.id,
+        isLastTask: false,
       ),
     );
   }
