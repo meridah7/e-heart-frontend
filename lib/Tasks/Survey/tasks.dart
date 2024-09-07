@@ -3,11 +3,56 @@ import 'contents.dart';
 
 Task impulseRetrospect = Task(
   title: "x 月 x 日冲动记录回顾",
-  id: 'impulseRetrospect',
+  id: 'S1',
   type: TaskType.SURVEY,
   isCompleted: false,
   day: 0,
   survey: impulseRetrospectSurvey,
+);
+
+Task monitoringTeachingReflection = Task(
+  title: "饮食日志反思",
+  id: 'S2',
+  type: TaskType.SURVEY_FLIPPABLE,
+  isCompleted: false,
+  day: 1, // Assuming this is for the second day
+  survey: monitoringTeachingReflectionSurvey,
+);
+Task task5 = Task(
+  title: "每日饮食计划",
+  id: 'S3',
+  type: TaskType.SURVEY,
+  isCompleted: false,
+  day: 1, // Assuming this is for the second day
+  survey: mealPlanningSurvey,
+);
+
+//regularDietReflection
+Task regularDietReflection = Task(
+  title: "饮食计划反思",
+  id: 'S4',
+  type: TaskType.SURVEY,
+  isCompleted: false,
+  day: 1, // Assuming this is for the second day
+  survey: regularDietReflectionSurvey,
+);
+
+Task task6 = Task(
+  title: "冲动记录反思",
+  id: 'S5',
+  type: TaskType.SURVEY,
+  isCompleted: false,
+  day: 1, // Assuming this is for the second day
+  survey: bingeEatingReflectionSurvey,
+);
+
+Task reflectiveActivity = Task(
+  title: "冲动应对策略制定",
+  id: 'D1',
+  type: TaskType.SURVEY_FLIPPABLE,
+  isCompleted: false,
+  day: 1, // Assuming this is for the second day
+  survey: reflectiveActivitySurvey,
 );
 
 Task task3 = Task(
@@ -28,33 +73,6 @@ Task dietaryIntake = Task(
   survey: dietaryIntakeSurvey,
 );
 
-Task task5 = Task(
-  title: "每日饮食计划",
-  id: 'task5',
-  type: TaskType.SURVEY,
-  isCompleted: false,
-  day: 1, // Assuming this is for the second day
-  survey: mealPlanningSurvey,
-);
-
-Task task6 = Task(
-  title: "冲动记录反思",
-  id: 'task6',
-  type: TaskType.SURVEY,
-  isCompleted: false,
-  day: 1, // Assuming this is for the second day
-  survey: bingeEatingReflectionSurvey,
-);
-
-Task reflectiveActivity = Task(
-  title: "冲动应对策略制定",
-  id: 'task7',
-  type: TaskType.SURVEY_FLIPPABLE,
-  isCompleted: false,
-  day: 1, // Assuming this is for the second day
-  survey: reflectiveActivitySurvey,
-);
-
 Task impulseWave = Task(
   title: "学习冲动冲浪",
   id: 'task8',
@@ -64,24 +82,6 @@ Task impulseWave = Task(
   survey: impulseWaveSurvey,
 );
 
-Task monitoringTeachingReflection = Task(
-  title: "饮食日志反思",
-  id: 'task9',
-  type: TaskType.SURVEY_FLIPPABLE,
-  isCompleted: false,
-  day: 1, // Assuming this is for the second day
-  survey: monitoringTeachingReflectionSurvey,
-);
-
-//regularDietReflection
-Task regularDietReflection = Task(
-  title: "饮食计划反思",
-  id: 'task10',
-  type: TaskType.SURVEY,
-  isCompleted: false,
-  day: 1, // Assuming this is for the second day
-  survey: regularDietReflectionSurvey,
-);
 //impulseRecordingSurvey
 Task impulseRecording = Task(
   title: "记录冲动",
