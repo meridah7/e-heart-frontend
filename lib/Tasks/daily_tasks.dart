@@ -7,6 +7,7 @@ import './Survey/tasks.dart';
 
 List<List<Task>> DailyTask = [
   // ChatbotTest,
+  SurveyTest,
   TaskDay0,
   TaskDay1,
   TaskDay2,

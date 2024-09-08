@@ -243,16 +243,20 @@ class _TodayListPageState extends State<TodayListPage> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => SurveyPage(
-                                survey: task.survey!,
-                                taskId: task.id,
-                              )));
+                              survey: task.survey!,
+                              taskId: task.id,
+                              isLastTask: DailyTask[_currentDay!].length ==
+                                  _finishedTaskIds!.length + 1)));
                   break;
                 case TaskType.SURVEY_FLIPPABLE:
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) =>
-                              FlippableSurveyPage(survey: task.survey!)));
+                          builder: (context) => FlippableSurveyPage(
+                              survey: task.survey!,
+                              taskId: task.id,
+                              isLastTask: DailyTask[_currentDay!].length ==
+                                  _finishedTaskIds!.length + 1)));
                   break;
                 default:
                   // do nothing

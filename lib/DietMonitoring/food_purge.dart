@@ -9,6 +9,7 @@ class FoodPurgePage extends StatelessWidget {
       body: SurveyPage(
         survey: foodPurgeSurvey,
         taskId: 'foodPurgeSurvey',
+        isLastTask: false,
       ),
     );
   }

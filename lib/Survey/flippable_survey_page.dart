@@ -9,8 +9,11 @@ import 'SurveySummaryPage.dart';
 /// @note 当前需求只要求给问题全部分页 / 全部不分页，所以这个组件粗暴的把全部问题分页了，后续如果有混合诉求的话，则考虑把这个跟 SurveyPage 一起重构了
 class FlippableSurveyPage extends StatefulWidget {
   final Survey survey;
+  final String taskId;
+  final bool isLastTask;
 
-  FlippableSurveyPage({required this.survey});
+  FlippableSurveyPage(
+      {required this.survey, required this.taskId, required this.isLastTask});
 
   @override
   _FlippableSurveyPageState createState() => _FlippableSurveyPageState();
@@ -41,7 +44,10 @@ class _FlippableSurveyPageState extends State<FlippableSurveyPage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => SurveySummaryPage(summary: summary),
+                builder: (context) => SurveySummaryPage(
+                  taskId: widget.taskId,
+                  summary: summary,
+                ),
               ),
             );
           }
