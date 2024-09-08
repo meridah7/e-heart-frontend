@@ -11,10 +11,12 @@ import 'DietaryAnalysis/dietary_analysis_page.dart';
 import 'Login/login_page.dart';
 import 'Login/register_page.dart';
 import 'Login/user_model.dart';
+import 'Login/register_info_page.dart';
 import 'package:provider/provider.dart';
 import 'user_preference.dart';
 import 'debugButton.dart';
 import 'DailyDiet/daily_diet_page.dart';
+import 'package:intl/intl.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -51,13 +53,16 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
             create: (context) => UserProvider()), // 创建UserProvider实例
       ],
+
       child: MaterialApp(
         title: 'CBT-E App',
-        home: isLoggedIn ? MainScreen() : MainScreen(), // 初始路由为登录页面
+        // home: isLoggedIn ? MainScreen() : MainScreen(), // 初始路由为登录页面
+        home: isLoggedIn ? LoginPage() : LoginPage(), // 初始路由为登录页面
+        initialRoute: '/',
         routes: {
           '/login': (context) => LoginPage(), // 登录页面
           '/home': (context) => MainScreen(), // 主屏幕，登录成功后跳转的页面
-          '/register': (context) => RegisterPage(), // 添加注册页面的路由
+          '/register': (context) => RegisterInfoPage(), // 添加注册页面的路由
         },
       ),
     );
