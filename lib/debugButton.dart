@@ -36,7 +36,7 @@ class DebugButton extends StatelessWidget {
 
   _onDebugButtonTap(BuildContext context) async {
     // TODO: replace anonymous to actual UserName
-    final userPref = await Preferences.getInstance(namespace: 'anonymous');
+    final userPref = await Preferences.getInstance();
     await userPref.deleteAllKeys();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

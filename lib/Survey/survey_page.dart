@@ -52,7 +52,7 @@ class _SurveyPageState extends State<SurveyPage> {
 
   Future<void> _initializePreferences() async {
     // TODO: replace anonymous to actual UserName
-    _userPref = await Preferences.getInstance(namespace: 'anonymous');
+    _userPref = await Preferences.getInstance();
   }
 
   @override

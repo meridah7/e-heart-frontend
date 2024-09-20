@@ -5,7 +5,7 @@ import 'dart:convert';
 class Preferences {
   SharedPreferences? _prefs;
   // Use UserName to distinguish between different user data
-  final String namespace;
+  String namespace;
 
   // Private constructor with an asynchronous initialization
   Preferences._internal(this.namespace);
@@ -14,9 +14,19 @@ class Preferences {
   static Preferences? _instance;
 
   // Factory constructor to initialize with a parameter
-  static Future<Preferences> getInstance({required String namespace}) async {
-    if (_instance == null || _instance!.namespace != namespace) {
-      _instance = Preferences._internal(namespace);
+  static Future<Preferences> getInstance() async {
+    if (_instance == null) {
+      _instance = Preferences._internal('default_namespace'); // 使用默认的命名空间
+      await _instance!._init(); // 初始化 SharedPreferences
+    }
+    return _instance!;
+  }
+
+  static Future<Preferences> setNamespace(
+      {String newNamespace = 'default_namespace'}) async {
+    if (_instance == null || _instance?.namespace != newNamespace) {
+      // Create new instance with new namespace
+      _instance = Preferences._internal(newNamespace);
       await _instance!._init(); // Initialize SharedPreferences
     }
     return _instance!;
@@ -53,6 +63,8 @@ class Preferences {
     } else if (value is List || value is Map) {
       fullKey = 'JSON_${namespace}_$key';
       await _prefs!.setString(fullKey, jsonEncode(value));
+    } else if (value == null || value is Null) {
+      return;
     } else {
       throw ArgumentError('Unsupported value type');
     }
@@ -62,6 +74,11 @@ class Preferences {
   dynamic getData(String key) {
     if (_prefs == null) {
       throw Exception("SharedPreferences not initialized. Call init() first.");
+    }
+
+    // default 代表没有登录
+    if (key == 'uuid' && namespace == 'default_namespace') {
+      return null;
     }
 
     String? fullKey = _prefs!

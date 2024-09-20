@@ -1,5 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+const String userBaseUrl = 'http://121.41.30.133/api';
+const String agentBaseUrl = ' http://223.4.25.37:3000/api/agent';
 
 class DioClient {
   final Dio _dio;
@@ -25,9 +29,10 @@ class DioClient {
   }
 
   // 配合Dio来处理请求
-  DioClient()
+  // 指定baseUrl， 可以更改
+  DioClient({String baseUrl = userBaseUrl})
       : _dio = Dio(BaseOptions(
-          baseUrl: 'http://121.41.30.133/api', // 设置基本URL
+          baseUrl: baseUrl, // 设置基本URL
           connectTimeout: Duration(seconds: 5), // 连接超时
           receiveTimeout: Duration(seconds: 5), // 接收超时
         )) {
@@ -54,13 +59,15 @@ class DioClient {
         // }
         // 处理Token 存储
         if (response.requestOptions.path == '/auth/verifyCode') {
-          var _data = response.data;
-          storeToken(_data['accessToken'], _data['refreshToken']);
+          var data = response.data;
+          storeToken(data['accessToken'], data['refreshToken']);
         }
         return handler.next(response);
       },
       onError: (error, handler) async {
-        if (error.response?.statusCode == 401) {
+        // 刷新token
+        if (error.response?.statusCode == 401 ||
+            error.response?.statusCode == 403) {
           // Token expired, attempt to refresh
           String? refreshToken = await getRefreshToken();
           if (refreshToken != null) {
@@ -103,11 +110,24 @@ class DioClient {
   Future<Response> postRequest(
       String endpoint, Map<String, dynamic> data) async {
     try {
+      print('dio request ${data}');
       final response = await _dio.post(endpoint, data: data);
       print('dio POST response: $response');
       return response;
     } catch (e) {
       throw Exception('POST请求失败: $e');
+    }
+  }
+
+  // PUT 请求方法
+  Future<Response> putRequest(
+      String endpoint, Map<String, dynamic> data) async {
+    try {
+      final response = await _dio.put(endpoint, data: data);
+      print('dio PUT response: $response');
+      return response;
+    } catch (e) {
+      throw Exception('PUT请求失败: $e');
     }
   }
 }

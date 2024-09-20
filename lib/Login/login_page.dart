@@ -1,10 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:namer_app/Login/user_model.dart';
-import 'package:namer_app/user_preference.dart';
 import 'package:namer_app/utils/dio_client.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -17,11 +15,11 @@ class _LoginPageState extends State<LoginPage> {
   // 用于HTTP 请求的Dio 实例
   final DioClient dioClient = DioClient();
   // 存储用户信息
-  late Preferences _userPref;
 
   // 登录步骤
   var _loginStep = 1;
 
+  // TODO 验证码重发功能
   void _sendSMS() async {
     try {
       await dioClient.postRequest(
@@ -35,6 +33,17 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  // 更新UserPreference
+  Future<void> _updateUserInfo() async {
+    try {
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
+      await userProvider.fetchUser();
+    } catch (err) {
+      print('Error in update preference $err');
+      throw Exception(err);
+    }
+  }
+
   void _loginOrRegister() async {
     try {
       Response response = await dioClient.postRequest('/auth/verifyCode', {
@@ -44,28 +53,14 @@ class _LoginPageState extends State<LoginPage> {
       if (!mounted) return;
       // 如果是新用户 跳转注册页面 补充状态信息
       // ?? 表示response 里没有is_new_user 字段是为false
+      // TODO 完善新用户
       if (response.data['is_new_user'] ?? false) {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('Hello 新用户')));
         // Navigator.pushReplacementNamed(context, '/register');
       } else {
-        // 获取用户信息接口
-        Response userResponse = await dioClient.getRequest('/users/current');
-        var userData = userResponse.data['data'];
-        print('user resp ${userResponse.data}');
-        // // 创建User对象
-        User user = User(
-          userId: userData['id'].toString(), // 将int转换为String
-          username: userData['name'],
-          email: userData['email'],
-        );
-        // // 获取SharedPreferences实例
-        _userPref = await Preferences.getInstance(namespace: user.username);
-
-        // 保存用户信息
-        await _userPref.setData('userId', user.userId); // 将int转换为String
-        await _userPref.setData('username', user.username);
-        await _userPref.setData('email', user.email);
+        // 更新用户信息接口
+        await _updateUserInfo();
         if (mounted) {
           ScaffoldMessenger.of(context)
               .showSnackBar(SnackBar(content: Text('欢迎回来')));
@@ -73,7 +68,6 @@ class _LoginPageState extends State<LoginPage> {
         }
       }
     } catch (err) {
-      print('err in verify $err');
       // 捕获可能的异常并处理
       print('Error while logging in: $err');
       if (mounted) {
@@ -119,7 +113,7 @@ class _LoginPageState extends State<LoginPage> {
                     children: [
                       Text('+86'),
                       SizedBox(width: 8),
-                      Container(
+                      SizedBox(
                         width: 228,
                         child: TextField(
                           controller: _phoneNumberController,
@@ -134,25 +128,11 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ],
             ),
-            SizedBox(height: 8),
-
-            // TextField(
-            //   controller: _usernameController,
-            //   // decoration: InputDecoration(labelText: '用户名'),
-            //   decoration:
-            //       InputDecoration(prefixText: '+86', hintText: '请输入手机号'),
-            // ),
-            // TextField(
-            //   controller: _passwordController,
-            //   // decoration: InputDecoration(labelText: '密码'),
-            //   obscureText: true, // 隐藏输入内容
-            // ),
-            SizedBox(height: 10.0),
+            SizedBox(height: 18.0),
             Visibility(
               visible: _loginStep == 1,
               child: ElevatedButton(
                 onPressed: _sendSMS,
-                child: Text('发送验证码'),
                 style: ElevatedButton.styleFrom(
                     padding:
                         EdgeInsets.symmetric(horizontal: 100, vertical: 15),
@@ -160,6 +140,7 @@ class _LoginPageState extends State<LoginPage> {
                       borderRadius: BorderRadius.circular(32),
                     ),
                     minimumSize: Size(284, 48)),
+                child: Text('发送验证码'),
               ),
             ),
             Visibility(
@@ -199,50 +180,9 @@ class _LoginPageState extends State<LoginPage> {
                 ],
               ),
             ),
-            // TextButton(
-            //   onPressed: () {
-            //     // 导航到注册页面
-            //     Navigator.pushNamed(context, '/register');
-            //   },
-            //   child: Text('没有账号？注册'),
-            // )
           ],
         ),
       ),
     );
-  }
-
-  Future<User> fetchUserFromServer(String username, String password) async {
-    final url = Uri.parse('http://localhost:3000/login');
-
-    try {
-      final response = await http.post(
-        url,
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode(<String, String>{
-          'username': username,
-          'password': password,
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        // 解析响应体
-        final responseData = jsonDecode(response.body);
-        // 创建User对象并返回
-        return User(
-          userId: responseData['userId'],
-          username: responseData['username'],
-          email: responseData['email'],
-        );
-      } else {
-        // 如果请求不成功，则抛出异常
-        throw Exception('Failed to fetch user from server');
-      }
-    } catch (e) {
-      // 捕获可能的异常并抛出
-      throw Exception('Error fetching user from server: $e');
-    }
   }
 }
