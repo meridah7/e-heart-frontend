@@ -34,8 +34,7 @@ class User {
       height: Helper.safeParseNumber(json['height']),
       weight: Helper.safeParseNumber(json['weight']),
       phoneNumber: json['phone_number'],
-      // TODO 生日解析
-      // birthday: DateTime.tryParse(json['birthday']),
+      birthday: DateTime.tryParse(json['birthday']),
     );
   }
 }
@@ -51,15 +50,15 @@ class UserProvider extends ChangeNotifier {
 
   String? get email => _user?.email;
 
-  double? get height => _user?.height;
+  double get height => _user?.height ?? 0;
 
-  double? get weight => _user?.weight;
+  double get weight => _user?.weight ?? 0;
 
   String? get phoneNumber => _user?.phoneNumber;
 
   String get uuid => _user?.uuid ?? '';
 
-  DateTime? get birthday => _user?.birthday;
+  DateTime get birthday => _user?.birthday ?? DateTime(2003, 9, 7);
 
   final ApiService apiService = ApiService();
 
