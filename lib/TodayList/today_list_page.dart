@@ -43,11 +43,10 @@ class _TodayListPageState extends State<TodayListPage> {
 
   Future<void> _initWidget() async {
     try {
-      // TODO: replace anonymous to actual UserName
-      _userPref = await Preferences.getInstance();
+      var userProvider = Provider.of<UserProvider>(context, listen: false);
+      _userPref = await Preferences.getInstance(namespace: userProvider.uuid);
       int userProgress = _userPref.getData('progress');
       String lastUpdatedDate = _userPref.getData('progressLastUpdatedDate');
-
       if (lastUpdatedDate != '') {
         String currentDate = DateFormat('yyyyMMdd').format(DateTime.now());
 
@@ -71,6 +70,7 @@ class _TodayListPageState extends State<TodayListPage> {
         _finishedTaskIds = taskIds;
       });
     } catch (e) {
+      // FIXME: Sting 和int问题
       print('Error in _initWidget: $e');
     }
   }

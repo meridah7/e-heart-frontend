@@ -189,31 +189,13 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
-    // _checkLoggedIn();
+    _checkLoggedIn();
   }
 
-  // void _checkLoggedIn() async {
-  //   // FIXME: replace anonymous to actual UserName
-  //   final userPref = await Preferences.getInstance();
-  //   final isLoggedIn = userPref.getData('uuid') != null;
-
-  //   print('check login ${isLoggedIn} ${userPref.getData('uuid')}');
-
-  //   if (isLoggedIn) {
-  //     if (mounted) {
-  //       final userProvider = Provider.of<UserProvider>(context, listen: false);
-  //       // 已登录
-  //       print('Already Login');
-  //       userProvider.fetchUser();
-  //     }
-  //   } else {
-  //     if (mounted) {
-  //       Navigator.pushNamedAndRemoveUntil(
-  //         context,
-  //         '/login',
-  //         ModalRoute.withName('/login'), // 保留根页面
-  //       );
-  //     }
-  //   }
-  // }
+  void _checkLoggedIn() async {
+    if (mounted) {
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
+      userProvider.fetchUser();
+    }
+  }
 }

@@ -14,63 +14,57 @@ class MyPage extends StatelessWidget {
                 TextStyle(color: Colors.black)), // Text color changed to black
         backgroundColor: themeColor,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView(
-          children: [
-            _buildUserInfo(context),
+      body: Consumer<UserProvider>(builder: (context, user, child) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: ListView(
+            children: [
+              _buildUserInfo(context, user),
 
-            // 分隔线
-            Divider(height: 15, thickness: 1),
+              // 分隔线
+              Divider(height: 15, thickness: 1),
 
-            // 设置选项
-            _buildOption('设置', Icons.settings, context),
+              // 设置选项
+              _buildOption('设置', Icons.settings, context),
 
-            // 分隔线
-            Divider(height: 15, thickness: 1),
+              // 分隔线
+              Divider(height: 15, thickness: 1),
 
-            // 饮食日志补录选项
-            _buildOption('饮食日志补录', Icons.local_dining, context),
+              // 饮食日志补录选项
+              _buildOption('饮食日志补录', Icons.local_dining, context),
 
-            // 分隔线
-            Divider(height: 15, thickness: 1),
+              // 分隔线
+              Divider(height: 15, thickness: 1),
 
-            // 占卜回顾选项
-            _buildOption('占卜回顾', Icons.star, context),
+              // 占卜回顾选项
+              _buildOption('占卜回顾', Icons.star, context),
 
-            // 分隔线
-            Divider(height: 15, thickness: 1),
+              // 分隔线
+              Divider(height: 15, thickness: 1),
 
-            // 我应对复发策略选项
-            _buildOption('我应对复发策略', Icons.security, context),
+              // 我应对复发策略选项
+              _buildOption('我应对复发策略', Icons.security, context),
 
-            // 分隔线
-            Divider(height: 15, thickness: 1),
+              // 分隔线
+              Divider(height: 15, thickness: 1),
 
-            // 当我不在暴食后选项
-            _buildOption('当我不在暴食后', Icons.healing, context),
-          ],
-        ),
-      ),
+              // 当我不在暴食后选项
+              _buildOption('当我不在暴食后', Icons.healing, context),
+            ],
+          ),
+        );
+      }),
     );
   }
 
-  Widget _buildUserInfo(BuildContext context) {
-    // 从Provider获取UserProvider实例
-    final userProvider = Provider.of<UserProvider>(context);
-    // 从UserProvider获取User对象
-    final user = userProvider.user;
-
-    // 检查用户是否为null
-    if (user == null) {
-      // 使用Center widget来居中显示，并增加字体大小
-      return Center(
-        child: Text(
-          '未登录',
-          style:
-              TextStyle(fontSize: 20, fontWeight: FontWeight.bold), // 增加字体大小并加粗
-          textAlign: TextAlign.center, // 文本对齐方式
-        ),
+  Widget _buildUserInfo(BuildContext context, UserProvider user) {
+    if (user.uuid == '') {
+      print('My Page not login: ${user.name}');
+      return Text(
+        '未登录',
+        style:
+            TextStyle(fontSize: 20, fontWeight: FontWeight.bold), // 增加字体大小并加粗
+        textAlign: TextAlign.center, // 文本对齐方式
       );
     } else {
       return Column(

@@ -20,7 +20,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void _editTextField(String fieldName, dynamic currentValue) {
     TextEditingController _controller =
-        TextEditingController(text: currentValue);
+        TextEditingController(text: currentValue.toString());
 
     print('Editing $fieldName');
     // TODO loading
@@ -61,7 +61,6 @@ class _ProfilePageState extends State<ProfilePage> {
       Response response = await dioClient.postRequest('/auth/logout', {});
       if (response.statusCode == 200) {
         // 重置preference
-        await Preferences.setNamespace();
         // 删除token
         await dioClient.deleteAllTokens();
         if (mounted) {

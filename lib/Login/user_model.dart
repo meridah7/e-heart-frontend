@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:namer_app/utils/api_service.dart';
 import 'package:namer_app/utils/helper.dart';
+import 'package:provider/provider.dart';
+import 'package:namer_app/user_preference.dart';
 
 class User {
   final String uuid;
   final int? id; // 用户ID
   final String name;
   final String email;
-  int? height; // 身高
-  int? weight; // 体重
+  double? height; // 身高
+  double? weight; // 体重
   String? phoneNumber; // 手机号
   DateTime? birthday; // 生日
 
@@ -26,11 +28,11 @@ class User {
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       uuid: json['uuid'],
-      id: Helper.safeParseInt(json['id']),
+      id: json['id'],
       name: json['name'],
       email: json['email'],
-      height: Helper.safeParseInt(json['height']),
-      weight: Helper.safeParseInt(json['weight']),
+      height: Helper.safeParseNumber(json['height']),
+      weight: Helper.safeParseNumber(json['weight']),
       phoneNumber: json['phone_number'],
       // TODO 生日解析
       // birthday: DateTime.tryParse(json['birthday']),
@@ -49,13 +51,13 @@ class UserProvider extends ChangeNotifier {
 
   String? get email => _user?.email;
 
-  int? get height => _user?.height;
+  double? get height => _user?.height;
 
-  int? get weight => _user?.weight;
+  double? get weight => _user?.weight;
 
   String? get phoneNumber => _user?.phoneNumber;
 
-  String? get uuid => _user?.uuid;
+  String get uuid => _user?.uuid ?? '';
 
   DateTime? get birthday => _user?.birthday;
 
@@ -71,7 +73,7 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void logOut() {
+  void logOut() async {
     _user = null;
     notifyListeners();
   }
@@ -82,7 +84,10 @@ class UserProvider extends ChangeNotifier {
   }
 
   void setUserFromSavedData(String uuid, int id, String name, String email,
-      {int? height, int? weight, String? phoneNumber, DateTime? birthday}) {
+      {double? height,
+      double? weight,
+      String? phoneNumber,
+      DateTime? birthday}) {
     _user = User(
       uuid: uuid,
       id: id,

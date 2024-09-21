@@ -19,7 +19,7 @@ class ApiService {
       if (response.statusCode == 200) {
         var data = response.data['data'];
         // 每次调用接口更新 preference
-        _userPref = await Preferences.setNamespace(newNamespace: data['uuid']);
+        _userPref = await Preferences.getInstance(namespace: data['uuid']);
         for (var entry in data.entries) {
           await _userPref.setData(entry.key, entry.value);
         }

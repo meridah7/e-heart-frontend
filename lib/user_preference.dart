@@ -5,7 +5,7 @@ import 'dart:convert';
 class Preferences {
   SharedPreferences? _prefs;
   // Use UserName to distinguish between different user data
-  String namespace;
+  final String namespace;
 
   // Private constructor with an asynchronous initialization
   Preferences._internal(this.namespace);
@@ -13,21 +13,40 @@ class Preferences {
   // Static variable to hold the instance
   static Preferences? _instance;
 
-  // Factory constructor to initialize with a parameter
-  static Future<Preferences> getInstance() async {
-    if (_instance == null) {
-      _instance = Preferences._internal('default_namespace'); // 使用默认的命名空间
-      await _instance!._init(); // 初始化 SharedPreferences
-    }
-    return _instance!;
-  }
-
-  static Future<Preferences> setNamespace(
-      {String newNamespace = 'default_namespace'}) async {
-    if (_instance == null || _instance?.namespace != newNamespace) {
-      // Create new instance with new namespace
-      _instance = Preferences._internal(newNamespace);
+  static Future<Preferences> getInstance({required String namespace}) async {
+    if (_instance == null || _instance!.namespace != namespace) {
+      _instance = Preferences._internal(namespace);
       await _instance!._init(); // Initialize SharedPreferences
+
+      // === prefs registry
+      // 用户 id
+      if (_instance!.getData('completedTaskAnswers') == null) {
+        _instance!.setData('userId', '');
+      }
+      // 用户昵称
+      if (_instance!.getData('username') == null) {
+        _instance!.setData('username', '');
+      }
+      // 用户邮箱
+      if (_instance!.getData('email') == null) {
+        _instance!.setData('email', '');
+      }
+      // 用户进度到第几天了
+      if (_instance!.getData('progress') == null) {
+        _instance!.setData('progress', 0);
+      }
+      // 用户当天完成的任务 ID 列表（只会保存当天的信息，因为不需要过去天数完成的任务信息）
+      if (_instance!.getData('progressLastUpdatedDate') == null) {
+        _instance!.setData('progressLastUpdatedDate', '');
+      }
+      // 用户当前天数完成的任务 ID 列表
+      if (_instance!.getData('finishedTaskIds') == null) {
+        _instance!.setData('finishedTaskIds', []);
+      }
+      // 用户填写的答案
+      if (_instance!.getData('completedTaskAnswers') == null) {
+        _instance!.setData('completedTaskAnswers', {});
+      }
     }
     return _instance!;
   }
@@ -74,11 +93,6 @@ class Preferences {
   dynamic getData(String key) {
     if (_prefs == null) {
       throw Exception("SharedPreferences not initialized. Call init() first.");
-    }
-
-    // default 代表没有登录
-    if (key == 'uuid' && namespace == 'default_namespace') {
-      return null;
     }
 
     String? fullKey = _prefs!
