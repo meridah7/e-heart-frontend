@@ -57,6 +57,16 @@ class DioClient {
         //       type: DioExceptionType.badResponse,
         //       error: 'HTTP Error: ${response.statusCode}'));
         // }
+        if (response.statusCode == 403) {
+          // 在这里可以执行重定向逻辑
+          // 将其传递给上层调用
+          throw DioException(
+            requestOptions: response.requestOptions,
+            response: response,
+            type: DioExceptionType.badResponse,
+            error: 'HTTP Error: ${response.statusCode}',
+          );
+        }
         // 处理Token 存储
         if (response.requestOptions.path == '/auth/verifyCode') {
           var data = response.data;
@@ -66,8 +76,7 @@ class DioClient {
       },
       onError: (error, handler) async {
         // 刷新token
-        if (error.response?.statusCode == 401 ||
-            error.response?.statusCode == 403) {
+        if (error.response?.statusCode == 401) {
           // Token expired, attempt to refresh
           String? refreshToken = await getRefreshToken();
           if (refreshToken != null) {

@@ -18,41 +18,16 @@ import 'debugButton.dart';
 import 'DailyDiet/daily_diet_page.dart';
 import 'package:intl/intl.dart';
 import 'package:namer_app/utils/api_service.dart';
+import 'package:dio/dio.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // Check if user is logged in
-  bool isLoggedIn = await checkLoginStatus();
 
-  runApp(MyApp(isLoggedIn: isLoggedIn));
-}
-
-Future<bool> checkLoginStatus() async {
-  try {
-    final ApiService apiService = ApiService();
-    String? token = await apiService.getToken();
-
-    // If no token is stored, user is not logged in
-    if (token == null) {
-      print('No Token');
-      return false;
-    }
-
-    // Send request to check login status
-    User? user = await apiService.fetchUser();
-
-    return user != null;
-  } catch (e) {
-    // In case of error, treat user as not logged in
-    print('Error checking login status: $e');
-    return false;
-  }
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final bool isLoggedIn; // 添加一个字段来存储登录状态
-
-  MyApp({required this.isLoggedIn});
+  MyApp();
 
   @override
   Widget build(BuildContext context) {
@@ -65,8 +40,8 @@ class MyApp extends StatelessWidget {
 
       child: MaterialApp(
         title: 'CBT-E App',
-        // home: isLoggedIn ? MainScreen() : MainScreen(), // 初始路由为登录页面
-        home: isLoggedIn ? MainScreen() : LoginPage(), // 初始路由为登录页面
+        // home: isLoggedIn ? MainScreen() : LoginPage(), // 初始路由为登录页面
+        home: MainScreen(),
         initialRoute: '/',
         routes: {
           '/login': (context) => LoginPage(), // 登录页面
@@ -85,6 +60,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
+  final ApiService apiService = ApiService();
   static List<Widget> _widgetOptions = <Widget>[
     TodayListPage(),
     DailyDietPage(),
@@ -193,9 +169,38 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _checkLoggedIn() async {
-    if (mounted) {
-      final userProvider = Provider.of<UserProvider>(context, listen: false);
-      userProvider.fetchUser();
+    try {
+      final ApiService apiService = ApiService();
+      String? token = await apiService.getToken();
+
+      // If no token is stored, user is not logged in
+      if (token == null) {
+        _redirectToLogin();
+      }
+
+      if (mounted) {
+        final userProvider = Provider.of<UserProvider>(context, listen: false);
+        userProvider.fetchUser();
+      }
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 403) {
+        // 处理 403 错误，重定向到登录页
+        _redirectToLogin();
+      } else {
+        print('请求出错: ${e.response?.statusCode}');
+      }
+    } catch (e) {
+      // In case of error, treat user as not logged in
+      print('Error checking login status: $e');
+      _redirectToLogin();
     }
+  }
+
+  void _redirectToLogin() {
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      '/login',
+      ModalRoute.withName('/login'), // 保留根页面
+    );
   }
 }
