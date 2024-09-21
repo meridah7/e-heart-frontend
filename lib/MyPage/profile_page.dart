@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:namer_app/user_preference.dart';
 import 'package:namer_app/utils/dio_client.dart';
 import 'package:dio/dio.dart';
+import 'package:namer_app/utils/helper.dart';
 import 'package:provider/provider.dart';
 import 'package:namer_app/Login/user_model.dart';
 import 'package:namer_app/utils/api_service.dart';
@@ -18,6 +18,118 @@ class _ProfilePageState extends State<ProfilePage> {
   final DioClient dioClient = DioClient();
   final ApiService apiService = ApiService();
 
+  // 更新生日数据
+  void _editBirthdayField(DateTime currentValue) {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (_) => Container(
+        height: 250,
+        color: Color.fromARGB(255, 255, 255, 255),
+        child: Column(
+          children: [
+            Container(
+              height: 180,
+              child: CupertinoDatePicker(
+                mode: CupertinoDatePickerMode.date,
+                initialDateTime: currentValue,
+                onDateTimeChanged: (DateTime newDateTime) {
+                  setState(() {
+                    currentValue = newDateTime;
+                  });
+                },
+              ),
+            ),
+            CupertinoButton(
+              child: Text('保存'),
+              onPressed: () {
+                Navigator.pop(context); // Close picker
+                _updateUser('birthday',
+                    currentValue.toIso8601String()); // Update user birthday
+              },
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  // 更新体重
+  void _editWeightField(int currentValue) {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (_) => Container(
+        height: 250,
+        color: Color.fromARGB(255, 255, 255, 255),
+        child: Column(
+          children: [
+            Container(
+              height: 180,
+              child: CupertinoPicker(
+                itemExtent: 32.0,
+                scrollController:
+                    FixedExtentScrollController(initialItem: currentValue - 30),
+                onSelectedItemChanged: (int value) {
+                  setState(() {
+                    currentValue = value + 30;
+                  });
+                },
+                children: List<Widget>.generate(150, (int index) {
+                  return Center(child: Text('${index + 30} kg'));
+                }),
+              ),
+            ),
+            CupertinoButton(
+              child: Text('保存'),
+              onPressed: () {
+                Navigator.pop(context); // Close picker
+                _updateUser('weight', currentValue); // Update user weight
+              },
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  // 更新身高
+  void _editHeightField(int currentValue) {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (_) => Container(
+        height: 250,
+        color: Color.fromARGB(255, 255, 255, 255),
+        child: Column(
+          children: [
+            Container(
+              height: 180,
+              child: CupertinoPicker(
+                itemExtent: 32.0,
+                scrollController: FixedExtentScrollController(
+                    initialItem: currentValue - 100),
+                onSelectedItemChanged: (int value) {
+                  setState(() {
+                    currentValue = value + 100;
+                  });
+                },
+                children: List<Widget>.generate(200, (int index) {
+                  return Center(child: Text('${index + 100} cm'));
+                }),
+              ),
+            ),
+            CupertinoButton(
+              child: Text('保存'),
+              onPressed: () {
+                Navigator.pop(context); // Close picker
+                _updateUser('height', currentValue); // Update user height
+              },
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  // 更新文本内容
   void _editTextField(String fieldName, dynamic currentValue) {
     TextEditingController _controller =
         TextEditingController(text: currentValue.toString());
@@ -118,18 +230,20 @@ class _ProfilePageState extends State<ProfilePage> {
         builder: (context, user, child) {
           return ListView(
             children: <Widget>[
+              // TODO 编辑手机号
               _buildListTile('手机号', '${user.phoneNumber}', () => {}),
               _buildListTile('名称', '${user.name}',
                   () => _editTextField('name', user.name ?? '')),
               _buildListTile('邮箱', '${user.email}',
                   () => _editTextField('email', user.email ?? '')),
-              _buildListTile('性别', '男', () => _editTextField('性别', '')),
-              _buildListTile(
-                  '生日', '2003-09-07', () => _editTextField('生日', '')),
-              _buildListTile('身高', '${user.height}cm',
-                  () => _editTextField('height', user.height ?? 0)),
-              _buildListTile('体重', '${user.weight ?? 0}kg',
-                  () => _editTextField('weight', user.weight ?? 0)),
+              // TODO 编辑性别
+              _buildListTile('性别', '男', () => {}),
+              _buildListTile('生日', Helper.formatDateTime(user.birthday),
+                  () => _editBirthdayField(user.birthday)),
+              _buildListTile('身高', '${user.height.toInt()}cm',
+                  () => _editHeightField(user.height.toInt())),
+              _buildListTile('体重', '${user.weight.toInt()}kg',
+                  () => _editWeightField(user.weight.toInt())),
               SizedBox(
                 height: 20,
               ),
