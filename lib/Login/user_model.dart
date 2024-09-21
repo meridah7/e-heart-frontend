@@ -27,15 +27,14 @@ class User {
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      uuid: json['uuid'],
-      id: json['id'],
-      name: json['name'],
-      email: json['email'],
-      height: Helper.safeParseNumber(json['height']),
-      weight: Helper.safeParseNumber(json['weight']),
-      phoneNumber: json['phone_number'],
-      birthday: DateTime.tryParse(json['birthday']),
-    );
+        uuid: json['uuid'],
+        id: json['id'],
+        name: json['name'],
+        email: json['email'],
+        height: Helper.safeParseNumber(json['height']),
+        weight: Helper.safeParseNumber(json['weight']),
+        phoneNumber: json['phone_number'],
+        birthday: Helper.safeParseDateTime(json['birthday']));
   }
 }
 

@@ -6,6 +6,11 @@ class Helper {
     return (num is double) ? num : (num is String ? double.tryParse(num) : 0);
   }
 
+  static DateTime? safeParseDateTime(dynamic dateTime) {
+    if (dateTime == null) return null;
+    return DateTime.tryParse(dateTime);
+  }
+
   static String formatDateTime(DateTime dateTime) {
     final DateFormat formatter = DateFormat('yyyy-MM-dd');
     return formatter.format(dateTime);
