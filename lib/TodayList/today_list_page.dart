@@ -13,6 +13,9 @@ import '../DietMonitoring/diet_monitoring_page.dart';
 import 'package:intl/intl.dart';
 import '../ResponseCard/response_card_page.dart';
 import '../user_preference.dart';
+import 'package:namer_app/utils/dio_client.dart';
+import 'package:provider/provider.dart';
+import 'package:namer_app/Login/user_model.dart';
 
 class TodayListPage extends StatefulWidget {
   @override
@@ -21,6 +24,8 @@ class TodayListPage extends StatefulWidget {
 
 class _TodayListPageState extends State<TodayListPage> {
   late Preferences _userPref;
+  // 用于HTTP 请求的Dio 实例
+  final DioClient dioClient = DioClient();
   bool showTasks = true;
   // Fetch rules:
   // 1. check local storage, if has data, use the data
@@ -38,11 +43,10 @@ class _TodayListPageState extends State<TodayListPage> {
 
   Future<void> _initWidget() async {
     try {
-      // TODO: replace anonymous to actual UserName
-      _userPref = await Preferences.getInstance(namespace: 'anonymous');
+      var userProvider = Provider.of<UserProvider>(context, listen: false);
+      _userPref = await Preferences.getInstance(namespace: userProvider.uuid);
       int userProgress = _userPref.getData('progress');
       String lastUpdatedDate = _userPref.getData('progressLastUpdatedDate');
-
       if (lastUpdatedDate != '') {
         String currentDate = DateFormat('yyyyMMdd').format(DateTime.now());
 
@@ -66,6 +70,7 @@ class _TodayListPageState extends State<TodayListPage> {
         _finishedTaskIds = taskIds;
       });
     } catch (e) {
+      // FIXME: Sting 和int问题
       print('Error in _initWidget: $e');
     }
   }
@@ -123,12 +128,6 @@ class _TodayListPageState extends State<TodayListPage> {
             textColor: showTasks ? Colors.white : Colors.black,
           ),
           SizedBox(width: 10),
-          // _buildButton(
-          //   '今日饮食',
-          //   onPressed: () => _toggleView(false),
-          //   color: showTasks ? themeData.scaffoldBackgroundColor : dietColor,
-          //   textColor: showTasks ? Colors.black : Colors.white,
-          // ),
           _buildCircleButton(
             '冲动应对卡',
             icon: Icons.card_travel,
@@ -313,7 +312,9 @@ class _TodayListPageState extends State<TodayListPage> {
     );
   }
 
-  void _toggleView(bool showTaskView) {
+  void _toggleView(bool showTaskView) async {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    await userProvider.fetchUser();
     setState(() {
       showTasks = showTaskView;
     });

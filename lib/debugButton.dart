@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'user_preference.dart';
+import 'package:provider/provider.dart';
+import 'package:namer_app/Login/user_model.dart';
 
 /// A debug button to modify some config for dev stage
 /// NOTE: do not bring it to online env
@@ -35,8 +37,8 @@ class DebugButton extends StatelessWidget {
   }
 
   _onDebugButtonTap(BuildContext context) async {
-    // TODO: replace anonymous to actual UserName
-    final userPref = await Preferences.getInstance(namespace: 'anonymous');
+    var userProvider = Provider.of<UserProvider>(context, listen: false);
+    var userPref = await Preferences.getInstance(namespace: userProvider.uuid);
     await userPref.deleteAllKeys();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

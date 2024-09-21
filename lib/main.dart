@@ -17,33 +17,42 @@ import 'user_preference.dart';
 import 'debugButton.dart';
 import 'DailyDiet/daily_diet_page.dart';
 import 'package:intl/intl.dart';
+import 'package:namer_app/utils/api_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // TODO: replace anonymous to actual UserName
-  final userPref = await Preferences.getInstance(namespace: 'anonymous');
+  // Check if user is logged in
+  bool isLoggedIn = await checkLoginStatus();
 
-  // 假设你保存用户信息为字符串
-  final String? userId = userPref.getData('userId');
-  final String? username = userPref.getData('username');
-  final String? email = userPref.getData('email');
+  runApp(MyApp(isLoggedIn: isLoggedIn));
+}
 
-  // 检查是否存在保存的用户信息
-  bool isLoggedIn = userId != null && username != null && email != null;
+Future<bool> checkLoginStatus() async {
+  try {
+    final ApiService apiService = ApiService();
+    String? token = await apiService.getToken();
 
-  runApp(MyApp(
-      isLoggedIn: isLoggedIn,
-      userId: userId,
-      username: username,
-      email: email));
+    // If no token is stored, user is not logged in
+    if (token == null) {
+      print('No Token');
+      return false;
+    }
+
+    // Send request to check login status
+    User? user = await apiService.fetchUser();
+
+    return user != null;
+  } catch (e) {
+    // In case of error, treat user as not logged in
+    print('Error checking login status: $e');
+    return false;
+  }
 }
 
 class MyApp extends StatelessWidget {
   final bool isLoggedIn; // 添加一个字段来存储登录状态
-  final String? userId;
-  final String? username;
-  final String? email;
-  MyApp({required this.isLoggedIn, this.userId, this.username, this.email});
+
+  MyApp({required this.isLoggedIn});
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +66,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'CBT-E App',
         // home: isLoggedIn ? MainScreen() : MainScreen(), // 初始路由为登录页面
-        home: isLoggedIn ? LoginPage() : LoginPage(), // 初始路由为登录页面
+        home: isLoggedIn ? MainScreen() : LoginPage(), // 初始路由为登录页面
         initialRoute: '/',
         routes: {
           '/login': (context) => LoginPage(), // 登录页面
@@ -180,32 +189,13 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
-    _setUserIfLoggedIn();
+    _checkLoggedIn();
   }
 
-  void _setUserIfLoggedIn() async {
-    // TODO: replace anonymous to actual UserName
-    final userPref = await Preferences.getInstance(namespace: 'anonymous');
-    final isLoggedIn = userPref.getData('userId') != null;
-
-    if (isLoggedIn) {
-      final userId = userPref.getData('userId')!;
-      final username = userPref.getData('username')!;
-      final email = userPref.getData('email')!;
+  void _checkLoggedIn() async {
+    if (mounted) {
       final userProvider = Provider.of<UserProvider>(context, listen: false);
-      userProvider.setUserFromSavedData(userId, username, email);
+      userProvider.fetchUser();
     }
   }
-
-  // void _createRootUserIfNeeded() async {
-  //   print("debug!!");
-  //   var dbHelper = await DatabaseHelper.createInstance();
-  //   dbHelper.createUserTable();
-  //   // final List<Map<String, Object?>> users = await getUsers(db); // 使用 await 等待 Future 完成
-  //   // if (users.isEmpty) {
-  //   //   print("创建root");
-  //   //   // 如果没有用户，创建 root user
-  //   //   insertUser(db, "root", 0); // 假设 root 用户的 age 是 0
-  //   // }
-  // }
 }

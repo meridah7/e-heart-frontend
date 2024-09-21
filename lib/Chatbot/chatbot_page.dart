@@ -6,6 +6,8 @@ import 'chat_widgets.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:intl/intl.dart';
 import '../user_preference.dart';
+import 'package:provider/provider.dart';
+import 'package:namer_app/Login/user_model.dart';
 
 // ChatbotPage class是chatbot的主页面，负责显示聊天界面和处理用户输入。
 class ChatbotPage extends StatefulWidget {
@@ -88,8 +90,8 @@ class _ChatbotPageState extends State<ChatbotPage> {
   }
 
   Future<void> _initializePreferences() async {
-    // TODO: replace anonymous to actual UserName
-    _userPref = await Preferences.getInstance(namespace: 'anonymous');
+    var userProvider = Provider.of<UserProvider>(context, listen: false);
+    _userPref = await Preferences.getInstance(namespace: userProvider.uuid);
   }
 
   // _displayNextContent函数用于显示下一个聊天内容。

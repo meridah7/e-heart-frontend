@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:namer_app/user_preference.dart';
+import 'package:provider/provider.dart';
+import 'package:namer_app/Login/user_model.dart';
 
 class SurveySummaryPage extends StatefulWidget {
   final List<String> summary;
@@ -27,8 +29,8 @@ class _SurveySummaryPageState extends State<SurveySummaryPage> {
   }
 
   Future<void> _initializePreferences() async {
-    // TODO: replace anonymous to actual UserName
-    _userPref = await Preferences.getInstance(namespace: 'anonymous');
+    var userProvider = Provider.of<UserProvider>(context, listen: false);
+    _userPref = await Preferences.getInstance(namespace: userProvider.uuid);
   }
 
   @override

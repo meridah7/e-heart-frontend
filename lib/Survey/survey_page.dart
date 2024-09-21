@@ -1,6 +1,7 @@
 // 定义了survey界面，和创建不同类型问题的功能
 
 import 'package:flutter/material.dart';
+import 'package:namer_app/Login/user_model.dart';
 import 'package:namer_app/global_setting.dart';
 import 'survey_models.dart';
 import 'SurveySummaryPage.dart';
@@ -9,6 +10,7 @@ import 'impulsive_record_and_reflection_summary.dart';
 import 'package:namer_app/user_preference.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class SurveyPage extends StatefulWidget {
   final Survey survey;
@@ -51,8 +53,10 @@ class _SurveyPageState extends State<SurveyPage> {
   }
 
   Future<void> _initializePreferences() async {
-    // TODO: replace anonymous to actual UserName
-    _userPref = await Preferences.getInstance(namespace: 'anonymous');
+    if (mounted) {
+      var userProvider = Provider.of<UserProvider>(context, listen: false);
+      _userPref = await Preferences.getInstance(namespace: userProvider.uuid);
+    }
   }
 
   @override
