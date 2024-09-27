@@ -168,39 +168,46 @@ extension SurveyExtension on Survey {
         return;
       }
       for (var question in questions) {
-        summary.add(question.questionText);
-        if (question is SingleChoiceQuestion) {
-          summary.add('Answer: ${question.selectedOption}');
-          if (question.subQuestions.isNotEmpty &&
-              question.selectedOption != null &&
-              question.selectedOption!.isNotEmpty) {
-            summarizeQuestions(question.subQuestions[question.selectedOption]!);
-          }
-        } else if (question is MultipleChoiceQuestion) {
-          summary.add('Answers: ${question.selectedOptions.join(", ")}');
-          // 如果问题有子问题，递归调用
-          for (var subQuestion in question.selectedOptions) {
-            if (question.subQuestions.isNotEmpty &&
-                question.subQuestions[subQuestion] is List<Question>) {
-              summarizeQuestions(question.subQuestions[subQuestion]!);
+        try {
+          summary.add(question.questionText);
+          if (question is SingleChoiceQuestion) {
+            summary.add('Answer: ${question.selectedOption}');
+            if (question.selectedOption != null &&
+                question.subQuestions.isNotEmpty &&
+                question.selectedOption!.isNotEmpty &&
+                question.subQuestions[question.selectedOption] != null) {
+              summarizeQuestions(
+                  question.subQuestions[question.selectedOption]!);
             }
-          }
-        } else if (question is TextQuestion) {
-          summary.add('Answer: ${question.answers}');
-        } else if (question is TimeQuestion) {
-          summary.add('Answer: ${question.selectedTime}');
-        } else if (question is SliderQuestion) {
-          summary.add('Answer: ${question.sliderValue}');
-        } else if (question is MealQuestion) {
-          summary.add('Answer: ${question.meals}');
-          for (var subQuestion in question.meals) {
-            if (question.subQuestions.isNotEmpty &&
-                question.subQuestions[subQuestion] is List<Question>) {
-              summarizeQuestions(question.subQuestions[subQuestion]!);
+          } else if (question is MultipleChoiceQuestion) {
+            summary.add('Answers: ${question.selectedOptions.join(", ")}');
+            // 如果问题有子问题，递归调用
+            for (var subQuestion in question.selectedOptions) {
+              if (question.subQuestions.isNotEmpty &&
+                  question.subQuestions[subQuestion] is List<Question>) {
+                summarizeQuestions(question.subQuestions[subQuestion]!);
+              }
             }
+          } else if (question is TextQuestion) {
+            summary.add('Answer: ${question.answers[0]}');
+          } else if (question is TimeQuestion) {
+            summary.add('Answer: ${question.selectedTime}');
+          } else if (question is SliderQuestion) {
+            summary.add('Answer: ${question.sliderValue}');
+          } else if (question is MealQuestion) {
+            summary.add('Answer: ${question.meals}');
+            for (var subQuestion in question.meals) {
+              if (question.subQuestions.isNotEmpty &&
+                  question.subQuestions[subQuestion] is List<Question>) {
+                summarizeQuestions(question.subQuestions[subQuestion]!);
+              }
+            }
+          } else if (question is PriorityQuestion) {
+            summary.add('Answer: ${question.selectedOptions}');
           }
-        } else if (question is PriorityQuestion) {
-          summary.add('Answer: ${question.selectedOptions}');
+        } catch (e) {
+          print('Error in summarize question ${question.questionText} $e');
+          throw Exception(e);
         }
       }
     }
