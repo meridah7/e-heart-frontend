@@ -44,8 +44,9 @@ class _TodayListPageState extends State<TodayListPage> {
   Future<void> _initWidget() async {
     try {
       var userProvider = Provider.of<UserProvider>(context, listen: false);
+      print('TodayListPage init ${userProvider.uuid}');
       _userPref = await Preferences.getInstance(namespace: userProvider.uuid);
-      int userProgress = _userPref.getData('progress');
+      int userProgress = int.tryParse(_userPref.getData('progress')) ?? 0;
       String lastUpdatedDate = _userPref.getData('progressLastUpdatedDate');
       if (lastUpdatedDate != '') {
         String currentDate = DateFormat('yyyyMMdd').format(DateTime.now());
@@ -64,8 +65,9 @@ class _TodayListPageState extends State<TodayListPage> {
           _currentDay = 0;
         });
       }
-
+      print('${_userPref.getData('finishedTaskIds')}');
       List<String> taskIds = _userPref.getData('finishedTaskIds');
+
       setState(() {
         _finishedTaskIds = taskIds;
       });
