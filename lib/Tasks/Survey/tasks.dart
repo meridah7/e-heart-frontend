@@ -65,12 +65,21 @@ Task task3 = Task(
 );
 
 Task dietaryIntake = Task(
-  title: "饮食日志",
-  id: 'task4',
+  title: "饮食记录",
+  id: 'dietaryIntake',
   type: TaskType.SURVEY,
   isCompleted: false,
   day: 1, // Assuming this is for the second day
   survey: dietaryIntakeSurvey,
+);
+
+Task vomitRecord = Task(
+  title: "食物清除记录",
+  id: 'vomitRecord',
+  type: TaskType.SURVEY,
+  isCompleted: false,
+  day: 1, // Assuming this is for the second day
+  survey: vomitRecordSurvey,
 );
 
 Task impulseWave = Task(

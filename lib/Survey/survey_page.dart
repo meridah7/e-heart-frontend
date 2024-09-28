@@ -8,9 +8,10 @@ import 'SurveySummaryPage.dart';
 import 'survey_question_factory.dart';
 import 'impulsive_record_and_reflection_summary.dart';
 import 'package:namer_app/user_preference.dart';
-import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'utils.dart';
+import 'package:dio/dio.dart';
 
 class SurveyPage extends StatefulWidget {
   final Survey survey;
@@ -127,6 +128,12 @@ class _SurveyPageState extends State<SurveyPage> {
 
             await _userPref.setData('finishedTaskIds', taskIds);
           }
+
+          // upload user input
+          Response? res =
+              await uploadSurveyData(widget.taskId, summary).catchError((e) {
+            print('[uploadSurveyData] error $e');
+          });
 
           // 导航到问卷摘要页面
           if (widget.survey.navigateToSummary) {
