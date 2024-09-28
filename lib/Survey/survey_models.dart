@@ -189,7 +189,12 @@ extension SurveyExtension on Survey {
               }
             }
           } else if (question is TextQuestion) {
-            summary.add('Answer: ${question.answers[0]}');
+            // 数组形式
+            if (question.canAddMore) {
+              summary.add('Answer: ${question.answers}');
+            } else {
+              summary.add('Answer: ${question.answers[0]}');
+            }
           } else if (question is TimeQuestion) {
             summary.add('Answer: ${question.selectedTime}');
           } else if (question is SliderQuestion) {
