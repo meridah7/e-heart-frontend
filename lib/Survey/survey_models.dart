@@ -163,8 +163,8 @@ extension SurveyExtension on Survey {
   List<String> getSurveySummary() {
     List<String> summary = [];
     // 递归获取问题和回答
-    void summarizeQuestions(List<Question> questions) {
-      if (questions.isEmpty) {
+    void summarizeQuestions(List<Question>? questions) {
+      if (questions == null || questions.isEmpty) {
         return;
       }
       for (var question in questions) {
@@ -194,6 +194,15 @@ extension SurveyExtension on Survey {
             summary.add('Answer: ${question.selectedTime}');
           } else if (question is SliderQuestion) {
             summary.add('Answer: ${question.sliderValue}');
+            var subQuestions = question.subQuestions;
+            var value = question.sliderValue.toString();
+            if (subQuestions != null && question.sliderValue > 0) {
+              if (subQuestions[value] != null) {
+                summarizeQuestions(question.subQuestions?[value]);
+              } else if (subQuestions['default'] != null) {
+                summarizeQuestions(subQuestions['default']);
+              }
+            }
           } else if (question is MealQuestion) {
             summary.add('Answer: ${question.meals}');
             for (var subQuestion in question.meals) {
@@ -216,26 +225,6 @@ extension SurveyExtension on Survey {
     return summary;
   }
 }
-//   List<String> getSurveySummary() {
-//     List<String> summary = [];
-//     for (var question in questions) {
-//       print(question.questionText);
-//       summary.add(question.questionText);
-
-//       if (question is SingleChoiceQuestion) {
-//         print('Answer: ${question.selectedOption}');
-//         summary.add('Answer: ${question.selectedOption}');
-//       } else if (question is MultipleChoiceQuestion) {
-//         print('Answers: ${question.selectedOptions.join(", ")}');
-//         summary.add('Answers: ${question.selectedOptions.join(", ")}');
-//       } else if (question is TextQuestion) {
-//         print('Answer: ${question.answers}');
-//         summary.add('Answer: ${question.answers}');
-//       }
-//     }
-//     return summary;
-//   }
-// }
 
 class TimeQuestion extends Question {
   DateTime selectedTime;
