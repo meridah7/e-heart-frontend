@@ -119,7 +119,7 @@ class DioClient {
   Future<Response> postRequest(
       String endpoint, Map<String, dynamic> data) async {
     try {
-      print('dio request ${data}');
+      print('dio request $data');
       final response = await _dio.post(endpoint, data: data);
       print('dio POST response: $response');
       return response;

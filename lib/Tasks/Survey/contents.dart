@@ -64,8 +64,8 @@ String _moodSliderLabel(double value) {
   }
 }
 
-// 饮食日志 done 20240816
-var dietaryIntakeSurvey = Survey(title: '饮食日志', questions: [
+// 饮食记录
+var dietaryIntakeSurvey = Survey(title: '饮食记录', questions: [
   SingleChoiceQuestion(
     '首先呈现三个注意事项：\n'
     '1.请努力在吃完后尽快填写它！\n'
@@ -74,144 +74,141 @@ var dietaryIntakeSurvey = Survey(title: '饮食日志', questions: [
     ['好的！'],
     {},
   ),
-  MultipleChoiceQuestion(
-    '你本次要做的记录包括',
-    ['饮食记录', '食物清除记录'],
-    {
-      '食物清除记录': [
-        TimeQuestion('食物清除的时间', initialTime: DateTime.now()),
-        SliderQuestion('食物清除的时候感受到的情绪强度', {}, min: 1, max: 7, divisions: 6,
-            labelBuilder: (value) {
-          if (value == 1) {
-            return '很不开心';
-          } else if (value == 4)
-            return '一般';
-          else if (value == 7) return '超开心';
-          return value.toInt().toString();
-        }),
-        MultipleChoiceQuestion('食物清除的时候感受到的情绪种类', [
-          '伤心',
-          '疲惫',
-          '紧张',
-          '无聊',
-          '兴奋',
-          '羞愧',
-          '愤怒',
-          '恐惧',
-          '平静',
-          '开心',
-          '其他'
-        ], {
-          '其他': [
-            TextQuestion('请输入其他情绪种类', false),
-          ]
-        }),
-        TextQuestion('请努力识别这次食物清除的诱发因素并填写它！', false),
-      ],
-      '饮食记录': [
-        TimeQuestion('进食具体时间', initialTime: DateTime.now()),
-        TextQuestion('吃了什么&吃了多少', true,
-            description:
-                '填写你这次进食吃下、喝下的所有东西以及大概的量。千万不要具体记录摄入食物的重量和卡路里！正确示例：八包薯片，一个八寸披萨，一小碗酸奶。'),
-        SingleChoiceQuestion('属于哪一餐', [
-          '早餐',
-          '上午点心',
-          '午餐',
-          '下午点心',
-          '晚餐',
-          '夜宵',
-          '其他'
-        ], {
-          '其他': [
-            SingleChoiceQuestion('其他类型', ['零食', '饮料'], {})
-          ],
-        }),
-        SliderQuestion('进食的时候感受到的情绪强度', {}, min: 1, max: 7, divisions: 6,
-            labelBuilder: (value) {
-          if (value == 1) {
-            return '很不开心';
-          } else if (value == 4)
-            return '一般';
-          else if (value == 7) return '超开心';
-          return value.toInt().toString();
-        }),
-        MultipleChoiceQuestion('情绪种类', [
-          '伤心',
-          '疲惫',
-          '紧张',
-          '无聊',
-          '兴奋',
-          '羞愧',
-          '愤怒',
-          '恐惧',
-          '平静',
-          '开心',
-          '其他'
-        ], {
-          '其他': [
-            TextQuestion('请输入其他情绪种类', false),
-          ]
-        }),
-        SingleChoiceQuestion(
-            '在哪吃',
-            ['家里', '宿舍', '公司', '食堂', '饭店', '车上', '其他'],
-            {
-              '其他': [
-                TextQuestion('请输入其他地点', false),
-              ],
-              '家里': [
-                SingleChoiceQuestion('是在家里的', [
-                  '客厅',
-                  '卧室',
-                  '餐桌',
-                  '厨房',
-                  '洗手间',
-                  '其他'
-                ], {
-                  '其他': [
-                    TextQuestion('请输入其他地点', false),
-                  ],
-                })
-              ]
-            },
-            description: '选择你这次进食的所在之处。若没有对应选项，请于下方手动填写。'),
-        SingleChoiceQuestion('有没有节食', ['有', '没有'], {}),
-        SliderQuestion(
-            '是否暴食',
-            {
-              'default': [
-                SingleChoiceQuestion(
-                    '请努力识别这次暴食的诱发因素并填写它！',
-                    ['不知道', '点击填写'],
-                    {
-                      '点击填写': [TextQuestion('请填写诱因', false)]
-                    },
-                    description: '这一部分很重要！如果没有识别出来，请选择未知。\n\n'
-                        '常见的暴食诱因：\n\n'
-                        '1. 吃的太少，身体能量不足\n\n'
-                        '2. 过度地节食\n\n'
-                        '3. 情绪（比如抑郁、焦虑、无聊、兴奋等）\n\n'
-                        '4. 松散的时间安排\n\n'
-                        '5. 一个人呆着（一个人呆着常常“肆无忌惮”地吃很多）\n\n'
-                        '6. 感觉自己很胖或者体重增加，破罐子破摔\n\n'
-                        '7. 饮酒\n\n'
-                        '8. 月经期间的激素影响\n\n'
-                        '9.其他任何引起你暴食的东西')
-              ]
-            },
-            min: 0,
-            max: 10,
-            divisions: 10, labelBuilder: (value) {
-          if (value == 0) {
-            return '没有暴食';
-          } else if (value == 5)
-            return '中度暴食';
-          else if (value == 10) return '重度暴食';
-          return value.toInt().toString();
-        }),
-      ]
-    },
-  ),
+  TimeQuestion('进食具体时间', initialTime: DateTime.now()),
+  TextQuestion('吃了什么&吃了多少', true,
+      description:
+          '填写你这次进食吃下、喝下的所有东西以及大概的量。千万不要具体记录摄入食物的重量和卡路里！正确示例：八包薯片，一个八寸披萨，一小碗酸奶。'),
+  SingleChoiceQuestion('属于哪一餐', [
+    '早餐',
+    '上午点心',
+    '午餐',
+    '下午点心',
+    '晚餐',
+    '夜宵',
+    '其他'
+  ], {
+    '其他': [
+      SingleChoiceQuestion('其他类型', ['零食', '饮料'], {})
+    ],
+  }),
+  SliderQuestion('进食的时候感受到的情绪强度', {}, min: 1, max: 7, divisions: 6,
+      labelBuilder: (value) {
+    if (value == 1) {
+      return '很不开心';
+    } else if (value == 4)
+      return '一般';
+    else if (value == 7) return '超开心';
+    return value.toInt().toString();
+  }),
+  MultipleChoiceQuestion('情绪种类', [
+    '伤心',
+    '疲惫',
+    '紧张',
+    '无聊',
+    '兴奋',
+    '羞愧',
+    '愤怒',
+    '恐惧',
+    '平静',
+    '开心',
+    '其他'
+  ], {
+    '其他': [
+      TextQuestion('请输入其他情绪种类', false),
+    ]
+  }),
+  SingleChoiceQuestion(
+      '在哪吃',
+      ['家里', '宿舍', '公司', '食堂', '饭店', '车上', '其他'],
+      {
+        '其他': [
+          TextQuestion('请输入其他地点', false),
+        ],
+        '家里': [
+          SingleChoiceQuestion('是在家里的', [
+            '客厅',
+            '卧室',
+            '餐桌',
+            '厨房',
+            '洗手间',
+            '其他'
+          ], {
+            '其他': [
+              TextQuestion('请输入其他地点', false),
+            ],
+          })
+        ]
+      },
+      description: '选择你这次进食的所在之处。若没有对应选项，请于下方手动填写。'),
+  SingleChoiceQuestion('有没有节食', ['有', '没有'], {}),
+  SliderQuestion(
+      '是否暴食',
+      {
+        'default': [
+          SingleChoiceQuestion(
+              '请努力识别这次暴食的诱发因素并填写它！',
+              ['不知道', '点击填写'],
+              {
+                '点击填写': [TextQuestion('请填写诱因', false)]
+              },
+              description: '这一部分很重要！如果没有识别出来，请选择未知。\n\n'
+                  '常见的暴食诱因：\n\n'
+                  '1. 吃的太少，身体能量不足\n\n'
+                  '2. 过度地节食\n\n'
+                  '3. 情绪（比如抑郁、焦虑、无聊、兴奋等）\n\n'
+                  '4. 松散的时间安排\n\n'
+                  '5. 一个人呆着（一个人呆着常常“肆无忌惮”地吃很多）\n\n'
+                  '6. 感觉自己很胖或者体重增加，破罐子破摔\n\n'
+                  '7. 饮酒\n\n'
+                  '8. 月经期间的激素影响\n\n'
+                  '9.其他任何引起你暴食的东西')
+        ]
+      },
+      min: 0,
+      max: 10,
+      divisions: 10, labelBuilder: (value) {
+    if (value == 0) {
+      return '没有暴食';
+    } else if (value == 5)
+      return '中度暴食';
+    else if (value == 10) return '重度暴食';
+    return value.toInt().toString();
+  }),
+  TextQuestion('更多注释（想法，感受等等）', false,
+      description:
+          '记录任何可能会影响你这次饮食的东西，不管是你的纠结，想法还是情绪都可以。努力写一些！这一块的记录往往会在之后成为你改善暴食的奇招！'),
+]);
+
+// 食物清除记录
+var vomitRecordSurvey = Survey(title: '食物清除记录', questions: [
+  TimeQuestion('食物清除的时间', initialTime: DateTime.now()),
+  SliderQuestion('食物清除的时候感受到的情绪强度', {}, min: 1, max: 7, divisions: 6,
+      labelBuilder: (value) {
+    if (value == 1) {
+      return '很不开心';
+    } else if (value == 4)
+      return '一般';
+    else if (value == 7) return '超开心';
+    return value.toInt().toString();
+  }),
+  MultipleChoiceQuestion('食物清除的时候感受到的情绪种类', [
+    '伤心',
+    '疲惫',
+    '紧张',
+    '无聊',
+    '兴奋',
+    '羞愧',
+    '愤怒',
+    '恐惧',
+    '平静',
+    '开心',
+    '其他'
+  ], {
+    '其他': [
+      TextQuestion('请输入其他情绪种类', false),
+    ]
+  }),
+  TextQuestion('请努力识别这次食物清除的诱发因素并填写它！', false),
   TextQuestion('更多注释（想法，感受等等）', false,
       description:
           '记录任何可能会影响你这次饮食的东西，不管是你的纠结，想法还是情绪都可以。努力写一些！这一块的记录往往会在之后成为你改善暴食的奇招！'),
@@ -1108,9 +1105,9 @@ var impulseRecordingSurvey = Survey(title: '冲动记录', questions: [
 
   SliderQuestion('此冲动的强烈程度', {}, min: 1, max: 10, divisions: 9,
       labelBuilder: (value) {
-    if (value == 1)
+    if (value == 1) {
       return '轻度';
-    else if (value == 5)
+    } else if (value == 5)
       return '中度';
     else if (value == 10) return '重度';
     return value.toInt().toString();
