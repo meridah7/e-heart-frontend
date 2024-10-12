@@ -117,6 +117,7 @@ class _LoginPageState extends State<LoginPage> {
                         width: 228,
                         child: TextField(
                           controller: _phoneNumberController,
+                          keyboardType: TextInputType.number,
                           decoration: InputDecoration(
                             hintText: '请输入手机号',
                             border: InputBorder.none,
@@ -157,6 +158,7 @@ class _LoginPageState extends State<LoginPage> {
                     width: 284,
                     child: TextField(
                       controller: _verifyCodeController,
+                      keyboardType: TextInputType.number,
                       decoration: InputDecoration(
                         hintText: '请输入验证码',
                         border: InputBorder.none,

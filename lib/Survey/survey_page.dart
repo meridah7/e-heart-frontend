@@ -16,9 +16,13 @@ class SurveyPage extends StatefulWidget {
   final Survey survey;
   final String taskId;
   final bool isLastTask;
+  final Function? handleSubmit;
 
   SurveyPage(
-      {required this.survey, required this.taskId, required this.isLastTask});
+      {required this.survey,
+      required this.taskId,
+      required this.isLastTask,
+      this.handleSubmit});
 
   @override
   _SurveyPageState createState() => _SurveyPageState();
@@ -26,7 +30,6 @@ class SurveyPage extends StatefulWidget {
 
 class _SurveyPageState extends State<SurveyPage> {
   late Preferences _userPref;
-
   // init State for some survey task
   Future<void> _initWidget() async {
     await _initializePreferences();
@@ -34,15 +37,17 @@ class _SurveyPageState extends State<SurveyPage> {
     if (answers.containsKey(widget.taskId)) {
       List<String> summary = answers[widget.taskId]!.cast<String>();
       // 导航到问卷摘要页面
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => SurveySummaryPage(
-            taskId: widget.taskId,
-            summary: summary,
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SurveySummaryPage(
+              taskId: widget.taskId,
+              summary: summary,
+            ),
           ),
-        ),
-      );
+        );
+      }
     }
   }
 
@@ -57,6 +62,74 @@ class _SurveyPageState extends State<SurveyPage> {
       var userProvider = Provider.of<UserProvider>(context, listen: false);
       _userPref = await Preferences.getInstance(namespace: userProvider.uuid);
     }
+  }
+
+  Map<String, dynamic> extractAnswer(List<Question>? questions) {
+    Map<String, dynamic> answers = {};
+    // 递归获取问题和回答
+    void extractAnswerRecursive(List<Question>? questions) {
+      if (questions == null || questions.isEmpty) {
+        return;
+      }
+      for (var question in questions) {
+        try {
+          if (question.alias != null) {
+            answers[question.alias!] = question.getAnswer();
+          }
+          if (question is SingleChoiceQuestion) {
+            if (question.selectedOption != null &&
+                question.subQuestions.isNotEmpty &&
+                question.selectedOption!.isNotEmpty &&
+                question.subQuestions[question.selectedOption] != null) {
+              extractAnswerRecursive(
+                  question.subQuestions[question.selectedOption]!);
+            }
+          } else if (question is MultipleChoiceQuestion) {
+            // 如果问题有子问题，递归调用
+            for (var subQuestion in question.selectedOptions) {
+              if (question.subQuestions.isNotEmpty &&
+                  question.subQuestions[subQuestion] is List<Question>) {
+                extractAnswerRecursive(question.subQuestions[subQuestion]!);
+              }
+            }
+          } else if (question is TextQuestion) {
+            // 数组形式
+            // if (question.canAddMore) {
+            //   summary.add('Answer: ${question.answers}');
+            // } else {
+            //   summary.add('Answer: ${question.answers[0]}');
+            // }
+          } else if (question is TimeQuestion) {
+          } else if (question is SliderQuestion) {
+            var subQuestions = question.subQuestions;
+            var value = question.sliderValue.toString();
+            if (subQuestions != null && question.sliderValue > 0) {
+              if (subQuestions[value] != null) {
+                extractAnswerRecursive(question.subQuestions?[value]);
+              } else if (subQuestions['default'] != null) {
+                extractAnswerRecursive(subQuestions['default']);
+              }
+            }
+          } else if (question is MealQuestion) {
+            // summary.add('Answer: ${question.meals}');
+            for (var subQuestion in question.meals) {
+              if (question.subQuestions.isNotEmpty &&
+                  question.subQuestions[subQuestion] is List<Question>) {
+                extractAnswerRecursive(question.subQuestions[subQuestion]!);
+              }
+            }
+          } else if (question is PriorityQuestion) {
+            // summary.add('Answer: ${question.selectedOptions}');
+          }
+        } catch (e) {
+          print('Error in summarize question ${question.questionText} $e');
+          throw Exception(e);
+        }
+      }
+    }
+
+    extractAnswerRecursive(questions);
+    return answers;
   }
 
   @override
@@ -100,6 +173,13 @@ class _SurveyPageState extends State<SurveyPage> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.check),
         onPressed: () async {
+          if (!widget.survey.isSurveyComplete()) {
+            print('问卷未完成');
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text('问卷未完成')));
+            return;
+          }
+
           // 获取问卷摘要
           List<String> summary = widget.survey.getSurveySummary();
 
@@ -128,18 +208,29 @@ class _SurveyPageState extends State<SurveyPage> {
             await _userPref.setData('finishedTaskIds', taskIds);
           }
 
+          if (widget.handleSubmit != null) {
+            var answers = extractAnswer(widget.survey.questions);
+            widget.handleSubmit!(answers);
+          }
+
           // 导航到问卷摘要页面
           if (widget.survey.navigateToSummary) {
-            // 导航到问卷摘要页面
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => SurveySummaryPage(
-                  taskId: widget.taskId,
-                  summary: summary,
+            if (mounted) {
+              // 导航到问卷摘要页面
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SurveySummaryPage(
+                    taskId: widget.taskId,
+                    summary: summary,
+                  ),
                 ),
-              ),
-            );
+              );
+            }
+          } else {
+            if (mounted) {
+              Navigator.pushReplacementNamed(context, '/home');
+            }
           }
         },
       ),

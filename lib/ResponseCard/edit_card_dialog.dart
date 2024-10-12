@@ -88,6 +88,7 @@ class _EditCardDialogState extends State<EditCardDialog> {
                                                   _customActivityController
                                                       .text,
                                               details: _detailsController.text,
+                                              id: widget.card.id,
                                             ));
                                           }
                                         })
@@ -127,6 +128,7 @@ class _EditCardDialogState extends State<EditCardDialog> {
                                             custom_activity:
                                                 _customActivityController.text,
                                             details: _detailsController.text,
+                                            id: widget.card.id,
                                           ));
                                         },
                                       )
@@ -170,6 +172,7 @@ class _EditCardDialogState extends State<EditCardDialog> {
                                       custom_activity:
                                           _customActivityController.text,
                                       details: _detailsController.text,
+                                      id: widget.card.id,
                                     ));
                                   },
                                 )

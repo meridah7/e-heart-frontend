@@ -11,6 +11,7 @@ import 'DietaryAnalysis/dietary_analysis_page.dart';
 import 'Login/login_page.dart';
 import 'Login/register_page.dart';
 import 'Login/user_model.dart';
+import 'package:namer_app/ResponseCard/response_card_model.dart';
 import 'Login/register_info_page.dart';
 import 'package:provider/provider.dart';
 import 'user_preference.dart';
@@ -36,6 +37,8 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(
             create: (context) => UserProvider()), // 创建UserProvider实例
+        ChangeNotifierProvider(
+            create: (context) => ResponseCardModelProvider()),
       ],
 
       child: MaterialApp(

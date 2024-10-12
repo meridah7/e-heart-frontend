@@ -76,7 +76,8 @@ class DioClient {
       },
       onError: (error, handler) async {
         // 刷新token
-        if (error.response?.statusCode == 401) {
+        if (error.response?.statusCode == 401 ||
+            error.response?.statusMessage == 'invalid token') {
           // Token expired, attempt to refresh
           String? refreshToken = await getRefreshToken();
           if (refreshToken != null) {
