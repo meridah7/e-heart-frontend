@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:namer_app/ResponseCard/response_card_model.dart';
-import 'dart:math';
 
 // 定义了用于创建survey的class和相关功能。
 
@@ -9,13 +8,16 @@ abstract class Question {
   final String? description;
   final String? imageUrl;
   final List<String>? imageUrls;
+  final String? alias;
+  final bool required;
+  getAnswer();
 
-  Question(
-    this.questionText, {
-    this.description,
-    this.imageUrl,
-    this.imageUrls,
-  });
+  Question(this.questionText,
+      {this.description,
+      this.imageUrl,
+      this.imageUrls,
+      this.alias,
+      this.required = true});
 }
 
 class SingleChoiceQuestion extends Question {
@@ -24,8 +26,14 @@ class SingleChoiceQuestion extends Question {
   Map<String, List<Question>> subQuestions; // Change to a map of lists
 
   SingleChoiceQuestion(String questionText, this.options, this.subQuestions,
-      {String? description})
-      : super(questionText, description: description);
+      {String? description, String? alias, bool required = true})
+      : super(questionText,
+            description: description, alias: alias, required: required);
+
+  @override
+  String getAnswer() {
+    return selectedOption ?? '';
+  }
 
   void answer(String option) {
     if (options.contains(option)) {
@@ -56,6 +64,11 @@ class MultipleChoiceQuestion extends Question {
 
   bool isSelected(String option) => selectedOptions.contains(option);
 
+  @override
+  List<String> getAnswer() {
+    return selectedOptions;
+  }
+
   void selectAdditionalOption(String option, bool isSelected) {
     if (additionalOptions != null) {
       additionalOptions![option] = isSelected;
@@ -77,16 +90,28 @@ class TextQuestion extends Question {
   List<String> imageUrls; // 新增的图片 URL 列表
 
   TextQuestion(String questionText, this.canAddMore,
-      {String? description, List<String>? imageUrls})
+      {String? description,
+      List<String>? imageUrls,
+      String? alias,
+      bool required = false})
       : answers = [''], // Initialize with an empty string
         controllers = [TextEditingController()], // 初始化控制器列表
         imageUrls = imageUrls ?? [], // 初始化图片 URL 列表
-        super(questionText, description: description, imageUrls: imageUrls);
+        super(questionText,
+            description: description,
+            imageUrls: imageUrls,
+            alias: alias,
+            required: required);
 
   void addAnswer(String answer) {
     if (!canAddMore) return; // 如果 canAddMore 为 false,直接返回
     answers.add(answer);
     controllers.add(TextEditingController()); // 为新答案添加一个新控制器
+  }
+
+  @override
+  List<String> getAnswer() {
+    return answers;
   }
 
   void removeAnswer(int index) {
@@ -140,6 +165,9 @@ extension TextQuestionExtension on TextQuestion {
 extension SurveyExtension on Survey {
   bool isSurveyComplete() {
     for (var question in questions) {
+      if (!question.required) {
+        continue;
+      }
       if (question is SingleChoiceQuestion && question.selectedOption == null) {
         return false;
       } else if (question is MultipleChoiceQuestion &&
@@ -235,12 +263,17 @@ class TimeQuestion extends Question {
   DateTime selectedTime;
 
   TimeQuestion(String questionText,
-      {DateTime? initialTime, String? description})
+      {DateTime? initialTime, String? description, String? alias})
       : selectedTime = initialTime ?? DateTime.now(),
-        super(questionText, description: description);
+        super(questionText, description: description, alias: alias);
 
   void setTime(DateTime newTime) {
     selectedTime = newTime;
+  }
+
+  @override
+  int getAnswer() {
+    return selectedTime.millisecondsSinceEpoch;
   }
 }
 
@@ -261,8 +294,14 @@ class SliderQuestion extends Question {
     this.divisions = 6,
     required this.labelBuilder,
     String? description,
-  }) : super(questionText, description: description) {
+    String? alias,
+  }) : super(questionText, description: description, alias: alias) {
     subQuestions ??= {};
+  }
+
+  @override
+  double getAnswer() {
+    return sliderValue;
   }
 
   List<Question>? getSubQuestions(bool Function(double value)? condition) {
@@ -326,6 +365,10 @@ class ChartQuestion extends Question {
     }
     // 对于 QuestionType.None，不需要执行任何操作
   }
+
+  // TODO getAnswer
+  @override
+  void getAnswer() {}
 }
 
 enum ChartType { Bar, Pie, None, Bulleted, Line }
@@ -336,6 +379,9 @@ class ResponseCardQuestion extends Question {
   String? selectedOption;
   List<String> selectedOptions = [];
   String? answerText;
+
+  @override
+  void getAnswer() {}
 
   ResponseCardQuestion(
     String questionText,
@@ -357,6 +403,10 @@ class PriorityQuestion extends Question {
       selectedOptions.remove(option); // 如果已选中，则取消选中
     }
   }
+
+// TODO
+  @override
+  void getAnswer() {}
 
   // 获取用户选中的选项，按点击顺序
   List<String> getSelectedOptions() => selectedOptions;
@@ -385,5 +435,10 @@ class MealQuestion extends Question {
 
   void addSubQuestion(String meal, Question question) {
     subQuestions[meal]?.add(question);
+  }
+
+  @override
+  List<String> getAnswer() {
+    return meals;
   }
 }

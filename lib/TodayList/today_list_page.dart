@@ -16,6 +16,7 @@ import '../user_preference.dart';
 import 'package:namer_app/utils/dio_client.dart';
 import 'package:provider/provider.dart';
 import 'package:namer_app/Login/user_model.dart';
+import 'package:namer_app/utils/helper.dart';
 
 class TodayListPage extends StatefulWidget {
   @override
@@ -44,9 +45,9 @@ class _TodayListPageState extends State<TodayListPage> {
   Future<void> _initWidget() async {
     try {
       var userProvider = Provider.of<UserProvider>(context, listen: false);
-      print('TodayListPage init ${userProvider.uuid}');
       _userPref = await Preferences.getInstance(namespace: userProvider.uuid);
-      int userProgress = int.tryParse(_userPref.getData('progress')) ?? 0;
+      print('TodayListPage init ${userProvider.uuid}');
+      int userProgress = Helper.safeParseInt(_userPref.getData('progress')) ?? 0;
       String lastUpdatedDate = _userPref.getData('progressLastUpdatedDate');
       if (lastUpdatedDate != '') {
         String currentDate = DateFormat('yyyyMMdd').format(DateTime.now());

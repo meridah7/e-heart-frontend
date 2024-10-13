@@ -1095,16 +1095,18 @@ var impulseRecordingSurvey = Survey(title: '冲动记录', questions: [
       'A. 暴食冲动': [], // Optionally, add sub-questions for 'A. 暴食冲动' if needed
       'B. 清除食物的冲动': [],
     },
+    alias: 'impulse_type',
   ),
-  TimeQuestion('刚刚识别到此冲动的具体时间', initialTime: DateTime.now()),
+  TimeQuestion('刚刚识别到此冲动的具体时间',
+      initialTime: DateTime.now(), alias: 'timestamp'),
   // MultipleChoiceQuestion(
   //   '请选择你的暴食应对策略：',
   //   ['散步', '玩游戏', '听音乐', '找朋友'],
   //   {}, // No sub-questions for these options
   // ),
 
-  SliderQuestion('此冲动的强烈程度', {}, min: 1, max: 10, divisions: 9,
-      labelBuilder: (value) {
+  SliderQuestion('此冲动的强烈程度', {},
+      min: 1, max: 10, divisions: 9, alias: "intensity", labelBuilder: (value) {
     if (value == 1) {
       return '轻度';
     } else if (value == 5)
@@ -1112,7 +1114,7 @@ var impulseRecordingSurvey = Survey(title: '冲动记录', questions: [
     else if (value == 10) return '重度';
     return value.toInt().toString();
   }),
-  TextQuestion('此冲动的诱因是什么？', false),
+  TextQuestion('此冲动的诱因是什么？', false, alias: 'trigger'),
 
   // TextQuestion('结合你的替代策略，制定你对这次冲动的应对方案', false),
   SingleChoiceQuestion('结合你的替代策略，制定你对这次冲动的应对方案', [
@@ -1132,5 +1134,5 @@ var impulseRecordingSurvey = Survey(title: '冲动记录', questions: [
     ]
   }),
   // More questions can be added here
-  TextQuestion('请你制定一下针对这次冲动的应对策略吧！', false),
+  TextQuestion('请你制定一下针对这次冲动的应对策略吧！', false, alias: 'plan', required: true),
 ]);

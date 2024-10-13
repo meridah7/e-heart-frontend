@@ -7,6 +7,11 @@ import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
 import './edit_card_dialog.dart';
 import 'hero_dialog_route.dart';
+import 'package:namer_app/utils/dio_client.dart';
+import 'package:provider/provider.dart';
+import 'package:namer_app/Login/user_model.dart';
+import 'package:namer_app/utils/helper.dart';
+import 'package:dio/dio.dart';
 
 class BingeEatingResponseCard extends StatefulWidget {
   const BingeEatingResponseCard({Key? key}) : super(key: key);
@@ -18,6 +23,7 @@ class BingeEatingResponseCard extends StatefulWidget {
 class _BingeEatingResponseCardState extends State<BingeEatingResponseCard>
     with SingleTickerProviderStateMixin {
   final _scrollController = ScrollController();
+  final DioClient dioClient = DioClient();
   late AnimationController _controller;
   late List<ResponseCardModel> _cardList = [];
 
@@ -29,18 +35,63 @@ class _BingeEatingResponseCardState extends State<BingeEatingResponseCard>
 
   List<int> nonDraggableIndices = [];
 
-  Future<List<ResponseCardModel>> loadMockData() async {
-    String jsonString = await rootBundle.loadString('assets/mock_data.json');
-    List<dynamic> jsonList = json.decode(jsonString);
-    return jsonList.map((json) => ResponseCardModel.fromJson(json)).toList();
+  // 列表接口
+  Future<List<ResponseCardModel>> loadData() async {
+    try {
+      if (mounted) {
+        final responseCardModelProvider =
+            Provider.of<ResponseCardModelProvider>(context);
+        await responseCardModelProvider.loadData();
+        return responseCardModelProvider.responseCardList;
+      }
+      return [];
+    } catch (e) {
+      print('Error in fetching data $e');
+      throw Exception(e);
+    }
   }
 
-  Future<void> _initializeMockData() async {
-    _cardList = await loadMockData();
+  // 更新接口
+  Future<void> handleUpdateStrategy(ResponseCardModel updatedCard) async {
+    try {
+      Response response = await dioClient
+          .putRequest('/impulse/impulse-strategies/${updatedCard.id}', {
+        "custom_activity": updatedCard.custom_activity,
+        "details": updatedCard.details,
+        "activity_order": updatedCard.activity_order,
+      });
+      if (response.statusCode == 200) {
+        await _initializeData();
+      }
+    } catch (e) {
+      print('Error in editing card');
+    }
+  }
+
+  Future<void> _initializeData() async {
+    _cardList = await loadData();
+
     setState(() {
       lockedIndices = [_cardList.length];
       nonDraggableIndices = [_cardList.length];
     });
+  }
+
+  Future<void> handleAddImpulseStrategy(
+      {ResponseCardModel? card, int? activity_order}) async {
+    try {
+      Response response =
+          await dioClient.postRequest('/impulse/impulse-strategies', {
+        "custom_activity": card?.custom_activity,
+        "details": card?.details,
+        "activity_order": activity_order
+      });
+      print('res $response');
+      await _initializeData();
+    } catch (e) {
+      print('Error in Update');
+    }
+    return;
   }
 
   void toggleEditing() {
@@ -57,13 +108,24 @@ class _BingeEatingResponseCardState extends State<BingeEatingResponseCard>
   @override
   void initState() {
     super.initState();
-    _initializeMockData();
+    // _initializeData();
     _controller = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
     )..repeat(reverse: true);
     lockedIndices = [_cardList.length];
     nonDraggableIndices = [_cardList.length];
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _initializeData();
+
+    // // 在 didChangeDependencies 中调用 Provider.of
+    // final provider =
+    //     Provider.of<ResponseCardModelProvider>(context, listen: false);
+    // provider.loadData();
   }
 
   @override
@@ -117,12 +179,15 @@ class _BingeEatingResponseCardState extends State<BingeEatingResponseCard>
           // color: Theme.of(context).colorScheme.secondary,
           color: Colors.white60,
           child: IconButton(
-            onPressed: () {
+            onPressed: () async {
               setState(() {
                 _cardList.add(ResponseCardModel(
                     custom_activity: '请填写你的冲动应对策略',
                     details: "请填应对策略的详细执行方法",
                     activity_order: index + 1));
+                // handleAddImpulseStrategy(
+                //     card: _cardList[_cardList.length - 1],
+                //     activity_order: index + 1);
                 lockedIndices = [_cardList.length];
                 nonDraggableIndices = [_cardList.length];
                 _openEditDialog(
@@ -236,12 +301,17 @@ class _BingeEatingResponseCardState extends State<BingeEatingResponseCard>
     Navigator.of(context).push(HeroDialogRoute(builder: (context) {
       return EditCardDialog(
         card: card,
-        onSave: (updatedCard) {
+        // 编辑卡片回调
+        onSave: (saveCard) {
+          print('card ${saveCard.id}');
           setState(() {
-            int index = _cardList.indexWhere(
-                (item) => item.activity_order == updatedCard.activity_order);
-            if (index != -1) {
-              _cardList[index] = updatedCard;
+            // 编辑卡片
+            if (saveCard.id != null) {
+              handleUpdateStrategy(saveCard);
+            } else {
+              // 新增卡片
+              handleAddImpulseStrategy(
+                  card: saveCard, activity_order: _cardList.length);
             }
           });
         },
