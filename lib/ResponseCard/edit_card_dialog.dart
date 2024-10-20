@@ -121,16 +121,16 @@ class _EditCardDialogState extends State<EditCardDialog> {
                                           fontWeight: FontWeight.bold,
                                           fontSize: 18,
                                         ),
-                                        onEditingComplete: () {
-                                          widget.onSave(ResponseCardModel(
-                                            activity_order:
-                                                widget.card.activity_order,
-                                            custom_activity:
-                                                _customActivityController.text,
-                                            details: _detailsController.text,
-                                            id: widget.card.id,
-                                          ));
-                                        },
+                                        // onEditingComplete: () {
+                                        //   widget.onSave(ResponseCardModel(
+                                        //     activity_order:
+                                        //         widget.card.activity_order,
+                                        //     custom_activity:
+                                        //         _customActivityController.text,
+                                        //     details: _detailsController.text,
+                                        //     id: widget.card.id,
+                                        //   ));
+                                        // },
                                       )
                                     : Text(
                                         _customActivityController.text,
@@ -165,16 +165,16 @@ class _EditCardDialogState extends State<EditCardDialog> {
                                   ),
                                   maxLines: null,
                                   keyboardType: TextInputType.multiline,
-                                  onEditingComplete: () {
-                                    widget.onSave(ResponseCardModel(
-                                      activity_order:
-                                          widget.card.activity_order,
-                                      custom_activity:
-                                          _customActivityController.text,
-                                      details: _detailsController.text,
-                                      id: widget.card.id,
-                                    ));
-                                  },
+                                  // onEditingComplete: () {
+                                  //   widget.onSave(ResponseCardModel(
+                                  //     activity_order:
+                                  //         widget.card.activity_order,
+                                  //     custom_activity:
+                                  //         _customActivityController.text,
+                                  //     details: _detailsController.text,
+                                  //     id: widget.card.id,
+                                  //   ));
+                                  // },
                                 )
                               : Text(
                                   _detailsController.text,

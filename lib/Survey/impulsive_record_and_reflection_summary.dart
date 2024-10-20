@@ -2,6 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:carousel_indicator/carousel_indicator.dart';
+import 'package:namer_app/utils/dio_client.dart';
+import 'package:dio/dio.dart';
+import 'package:intl/intl.dart';
 
 class ImpulsiveRecordAndReflectionSummary extends StatefulWidget {
   @override
@@ -13,41 +16,36 @@ class _ImpulsiveRecordAndReflectionSummary
     extends State<ImpulsiveRecordAndReflectionSummary> {
   int _currentPage = 0;
   bool _isShowCharts = false;
+  final DioClient dioClient = DioClient();
+  List<dynamic> _impulseRecordList = [];
+  bool _isLoadingRecord = true;
 
-  // TODO: replace this to the new data
+  // TODO: replace this to the new data with chart data
   final List<Widget> _charts = [
     Center(child: Text('Chart 1 Placeholder')),
     Center(child: Text('Chart 2 Placeholder')),
     Center(child: Text('Chart 3 Placeholder')),
   ];
 
-  // TODO: replace this to the new data
-  final List<Map<String, String>> _textEntries = [
-    {
-      'type': '食物清除',
-      'time': '2024-5-5 19:02:48',
-      'strategy': '准备跟爸妈去打羽毛球；冲动冲浪10分钟',
-      'intensity': '7',
-      'review': '通过这次我发现了 ***********************',
-      'reason': '这次冲动是因为最近压力太大了'
-    },
-    {
-      'type': '购物冲动',
-      'time': '2024-6-10 14:23:12',
-      'strategy': '和朋友一起去逛街，避免独自购物',
-      'intensity': '6',
-      'review': '发现冲动购物可以通过计划性购物来减少',
-      'reason': '看到大减价的广告'
-    },
-    {
-      'type': '社交冲动',
-      'time': '2024-7-20 16:45:32',
-      'strategy': '参加了一个社交活动，尝试控制社交频率',
-      'intensity': '5',
-      'review': '学会了如何拒绝不必要的社交邀约',
-      'reason': '最近缺少社交活动'
+  @override
+  void initState() {
+    super.initState();
+    loadRecords();
+  }
+
+  Future<void> loadRecords() async {
+    // Future<void> loadRecords() async {
+    try {
+      Response response =
+          await dioClient.getRequest('/impulse/impulse-reflection-records/');
+      setState(() {
+        _impulseRecordList = response.data;
+        _isLoadingRecord = false;
+      });
+    } catch (e) {
+      print('Error in impulse review $e');
     }
-  ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -179,61 +177,68 @@ class _ImpulsiveRecordAndReflectionSummary
   }
 
   Widget _buildTextContent() {
-    return Column(
-      children: [
-        Expanded(
-          child: CarouselSlider.builder(
-            itemCount: _textEntries.length,
-            itemBuilder: (context, index, realIndex) {
-              final entry = _textEntries[index];
-              return Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('冲动种类：${entry['type']}',
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold)),
-                    SizedBox(height: 8),
-                    Text('时间：${entry['time']}'),
-                    SizedBox(height: 8),
-                    Text('应对策略：${entry['strategy']}'),
-                    SizedBox(height: 8),
-                    Text('冲动强度：${entry['intensity']}'),
-                    SizedBox(height: 8),
-                    Text('应对回顾：${entry['review']}'),
-                    SizedBox(height: 8),
-                    Text('诱因：${entry['reason']}'),
-                  ],
-                ),
+    return _isLoadingRecord
+        ? Center(child: CircularProgressIndicator()) // 加载时显示进度指示器
+        : _impulseRecordList.isEmpty
+            ? Center(child: Text('没有记录')) // 如果列表为空显示提示
+            : Column(
+                children: [
+                  Expanded(
+                    child: CarouselSlider.builder(
+                      itemCount: _impulseRecordList.length,
+                      itemBuilder: (context, index, realIndex) {
+                        final entry = _impulseRecordList[index];
+                        return Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('冲动种类：${entry['impulse_type']}',
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold)),
+                              SizedBox(height: 8),
+                              Text(
+                                  '时间：${DateFormat('yyyy-mm-dd HH:mm').format(DateTime.fromMillisecondsSinceEpoch(entry['timestamp']))}'),
+                              SizedBox(height: 8),
+                              Text('应对策略：${entry['plan']}'),
+                              SizedBox(height: 8),
+                              Text('冲动强度：${entry['intensity']}'),
+                              SizedBox(height: 8),
+                              Text(
+                                  '应对回顾：${entry['impulse_response_experience'] ?? ''}'),
+                              SizedBox(height: 8),
+                              Text('诱因：${entry['trigger']}'),
+                            ],
+                          ),
+                        );
+                      },
+                      options: CarouselOptions(
+                        height: double.infinity,
+                        enlargeCenterPage: true,
+                        viewportFraction: 1.0,
+                        onPageChanged: (index, reason) {
+                          setState(() {
+                            _currentPage = index;
+                          });
+                        },
+                        enableInfiniteScroll: true,
+                        autoPlay: false,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 5.0),
+                    child: CarouselIndicator(
+                      count: _impulseRecordList.length,
+                      index: _currentPage,
+                      color: Colors.grey,
+                      activeColor: Colors.black,
+                      width: 8,
+                      height: 8,
+                    ),
+                  ),
+                ],
               );
-            },
-            options: CarouselOptions(
-              height: double.infinity,
-              enlargeCenterPage: true,
-              viewportFraction: 1.0,
-              onPageChanged: (index, reason) {
-                setState(() {
-                  _currentPage = index;
-                });
-              },
-              enableInfiniteScroll: true,
-              autoPlay: false,
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 5.0),
-          child: CarouselIndicator(
-            count: _textEntries.length,
-            index: _currentPage,
-            color: Colors.grey,
-            activeColor: Colors.black,
-            width: 8,
-            height: 8,
-          ),
-        ),
-      ],
-    );
   }
 }

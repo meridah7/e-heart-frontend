@@ -53,14 +53,15 @@ class SingleChoiceQuestion extends Question {
 
 class MultipleChoiceQuestion extends Question {
   final List<String> options;
+
   List<String> selectedOptions = [];
   Map<String, List<Question>>
       subQuestions; // Map each option to a list of Questions
   Map<String, bool>? additionalOptions; // Optional additional options
 
   MultipleChoiceQuestion(String questionText, this.options, this.subQuestions,
-      {this.additionalOptions, String? description})
-      : super(questionText, description: description);
+      {this.additionalOptions, String? description, String? alias})
+      : super(questionText, description: description, alias: alias);
 
   bool isSelected(String option) => selectedOptions.contains(option);
 
@@ -128,12 +129,15 @@ class Survey {
   final List<Question> questions;
   final bool navigateToSummary;
   final bool isNeedTopArea;
+  // 问卷额外信息
+  final Map<String, dynamic>? extra;
 
   Survey(
       {required this.title,
       required this.questions,
       this.navigateToSummary = false,
-      this.isNeedTopArea = false});
+      this.isNeedTopArea = false,
+      this.extra});
 }
 
 extension SingleChoiceQuestionExtension on SingleChoiceQuestion {
@@ -373,8 +377,8 @@ class ChartQuestion extends Question {
 
 enum ChartType { Bar, Pie, None, Bulleted, Line }
 
+// FIXME
 class ResponseCardQuestion extends Question {
-  final List<ResponseCardModel> listData;
   final QuestionType questionType = QuestionType.None;
   String? selectedOption;
   List<String> selectedOptions = [];
@@ -385,7 +389,6 @@ class ResponseCardQuestion extends Question {
 
   ResponseCardQuestion(
     String questionText,
-    this.listData,
   ) : super(questionText);
 }
 

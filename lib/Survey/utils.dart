@@ -1,25 +1,116 @@
 import 'package:dio/dio.dart';
+import 'package:intl/intl.dart';
 import 'package:namer_app/utils/dio_client.dart';
+import 'package:namer_app/utils/helper.dart';
 
-Future<Response?> uploadSurveyData(String taskId, List<String> summary) async {
+Future<Response?> handleSubmitData(String taskId, Map<String, dynamic> answers,
+    {List<String>? summary}) async {
   final DioClient dioClient = DioClient();
-  Map<String, dynamic> data = getUserUploadData(taskId, summary) ?? {};
 
   switch (taskId) {
     case 'vomitRecord':
       // 食物清除记录
+      Map<String, dynamic> data =
+          getUserUploadData(taskId, summary ?? []) ?? {};
+
       return await dioClient.postRequest('/food_purge_logs', data);
     case 'dietaryIntake':
       // 食物清除记录
-      return await dioClient.postRequest('/diet_logs', data);
+      Map<String, dynamic> data =
+          getUserUploadData(taskId, summary ?? []) ?? {};
 
+      return await dioClient.postRequest('/diet_logs', data);
+    case 'task11':
+      Map<String, dynamic> refined = refineAnswers(taskId, answers);
+      return await dioClient.postRequest('/impulse/impulse-records/', refined);
+    case 'S1':
+      // 冲动记录回顾
+      Map<String, dynamic> refined = refineAnswers(taskId, answers);
+      return await dioClient.postRequest(
+          '/impulse/impulse-records-exp/', refined);
+    case 'S5':
+      Map<String, dynamic> refined = refineAnswers(taskId, answers);
+      return await dioClient.postRequest(
+          '/impulse/impulse-reflection/', refined);
     default:
       return null;
   }
 }
 
+// Future<Response?> uploadSurveyData(String taskId, List<String> summary) async {
+//   final DioClient dioClient = DioClient();
+//   Map<String, dynamic> data = getUserUploadData(taskId, summary) ?? {};
+
+//   switch (taskId) {
+//     case 'vomitRecord':
+//       // 食物清除记录
+//       return await dioClient.postRequest('/food_purge_logs', data);
+//     case 'dietaryIntake':
+//       // 食物清除记录
+//       return await dioClient.postRequest('/diet_logs', data);
+//     // case 's1':
+//     //   // 冲动记录回顾
+//     //   return await dioClient.postRequest('/impulse/impulse-records-exp/', data);
+//     default:
+//       return null;
+//   }
+// }
+
+Map<String, dynamic> refineAnswers(
+    String taskId, Map<String, dynamic> answers) {
+  Map<String, dynamic> refined = {};
+  switch (taskId) {
+    case 'task11':
+      for (var entry in answers.entries) {
+        if (entry.key == 'impulse_type') {
+          if (entry.value.contains('A')) {
+            refined[entry.key] = 'A';
+          } else if (entry.value.contains('B')) {
+            refined[entry.key] = 'B';
+          }
+        } else if (entry.key == 'plan' || entry.key == 'trigger') {
+          refined[entry.key] = entry.value[0];
+        } else {
+          refined[entry.key] = entry.value;
+        }
+      }
+      break;
+    case 'S1':
+      for (var entry in answers.entries) {
+        if (entry.key == 'impulse_duration_min') {
+          refined[entry.key] = Helper.safeParseInt(entry.value[0]);
+        } else if (entry.key == 'impulse_response_experience') {
+          refined[entry.key] = entry.value[0];
+        } else {
+          refined[entry.key] = entry.value;
+        }
+      }
+    case 'S5':
+      for (var entry in answers.entries) {
+        if (entry.key == 'record_impulses_immediately') {
+          refined[entry.key] = entry.value.contains('是的') ? true : false;
+        } else if (entry.key == 'use_alternatives') {
+          refined[entry.key] = entry.value.contains('是的') ? true : false;
+        } else if (entry.key == 'impulse_persistence_minutes') {
+          refined[entry.key] = Helper.safeParseInt(entry.value[0]);
+        } else {
+          refined[entry.key] = entry.value[0];
+        }
+      }
+      refined['reflection_date'] =
+          DateFormat('yyyy-MM-dd').format(DateTime.now());
+    default:
+      break;
+  }
+
+  return refined;
+}
+
 /// transform user input summary to interface params
-Map<String, dynamic>? getUserUploadData(String taskId, List<String> summary) {
+Map<String, dynamic>? getUserUploadData(
+  String taskId,
+  List<String> summary,
+) {
   switch (taskId) {
     // 食物清除记录上报
     case 'vomitRecord':
@@ -173,6 +264,7 @@ Map<String, dynamic>? getUserUploadData(String taskId, List<String> summary) {
         "trigger": "",
         "additional_info": additionalInfo
       };
+
     default:
       return null;
   }

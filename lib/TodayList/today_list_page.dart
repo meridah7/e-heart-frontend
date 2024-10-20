@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:namer_app/DailyDiet/diet_models.dart';
@@ -17,6 +18,9 @@ import 'package:namer_app/utils/dio_client.dart';
 import 'package:provider/provider.dart';
 import 'package:namer_app/Login/user_model.dart';
 import 'package:namer_app/utils/helper.dart';
+import 'package:namer_app/TodayList/task_models.dart';
+import 'package:namer_app/Survey/survey_models.dart';
+import 'package:intl/intl.dart';
 
 class TodayListPage extends StatefulWidget {
   @override
@@ -34,12 +38,15 @@ class _TodayListPageState extends State<TodayListPage> {
   // 3. start from day 0
   int? _currentDay;
   List<String>? _finishedTaskIds = [];
+  List<Task> _impulseRecordTaskLists = [];
+  List<Task> _dailyTaskList = [];
 
   //初始化的状态
   @override
   void initState() {
     super.initState();
     _initWidget();
+    fetchImpulseReflectionRecords();
   }
 
   Future<void> _initWidget() async {
@@ -47,7 +54,8 @@ class _TodayListPageState extends State<TodayListPage> {
       var userProvider = Provider.of<UserProvider>(context, listen: false);
       _userPref = await Preferences.getInstance(namespace: userProvider.uuid);
       print('TodayListPage init ${userProvider.uuid}');
-      int userProgress = Helper.safeParseInt(_userPref.getData('progress')) ?? 0;
+      int userProgress =
+          Helper.safeParseInt(_userPref.getData('progress')) ?? 0;
       String lastUpdatedDate = _userPref.getData('progressLastUpdatedDate');
       if (lastUpdatedDate != '') {
         String currentDate = DateFormat('yyyyMMdd').format(DateTime.now());
@@ -71,10 +79,58 @@ class _TodayListPageState extends State<TodayListPage> {
 
       setState(() {
         _finishedTaskIds = taskIds;
+        if (_currentDay != null) {
+          _dailyTaskList = DailyTask[_currentDay ?? 0];
+        }
       });
     } catch (e) {
       // FIXME: Sting 和int问题
       print('Error in _initWidget: $e');
+    }
+  }
+
+  Future<void> fetchImpulseReflectionRecords() async {
+    try {
+      Response response =
+          await dioClient.getRequest('/impulse/impulse-reflection-records/');
+      if (response.statusCode == 200) {
+        List<dynamic> data = response.data;
+        _impulseRecordTaskLists = data.map((val) {
+          DateTime dateTime = DateTime.parse(val['createdAt']);
+          return Task(
+              title: '冲动记录回顾 ${DateFormat('MM月dd日HH时mm分').format(dateTime)}',
+              id: 'S1',
+              type: TaskType.SURVEY,
+              isCompleted: false,
+              day: 0,
+              survey: Survey(
+                  title: '${DateFormat('MM月dd日').format(dateTime)}冲动记录回顾',
+                  extra: {
+                    'impulse_record_id': Helper.safeParseInt(val['id']),
+                  },
+                  questions: [
+                    TextQuestion('你感觉这次的应对策略怎么样？整个应对过程有什么可以改进的地方呢？', false,
+                        alias: 'impulse_response_experience',
+                        description:
+                            '你的冲动记录时间是：${DateFormat('yyyy年MM月dd日 HH时mm分').format(dateTime)}\n'
+                            '你记录的冲动种类是：${val['impulse_type']}\n'
+                            '你记录的冲动强度是：${val['intensity']}\n'
+                            '你记录的冲动诱因是：${val['trigger']}\n'
+                            '针对这次冲动，你制定的应对策略是:${val['plan']}\n'
+                            '针对这次冲动，你希望自己坚持冲动冲浪的时间：${val['impulse_duration_min'] ?? 0}分钟\n'),
+                    TextQuestion('你这次冲动大约持续了多少分钟？', false,
+                        alias: 'impulse_duration_min'),
+                  ]));
+        }).toList();
+        if (_currentDay != null) {
+          _dailyTaskList = DailyTask[_currentDay!];
+        }
+        setState(() {
+          _dailyTaskList.addAll(_impulseRecordTaskLists);
+        });
+      }
+    } catch (e) {
+      throw Exception('Error in fetch impulse record list $e');
     }
   }
 
@@ -101,7 +157,8 @@ class _TodayListPageState extends State<TodayListPage> {
               Expanded(
                 child: _currentDay != null
                     ? (showTasks
-                        ? _buildTaskListView(DailyTask[_currentDay!])
+                        // ? _buildTaskListView(DailyTask[_currentDay!])
+                        ? _buildTaskListView(_dailyTaskList)
                         : _buildDietListView(DietDay0))
                     : SizedBox.shrink(),
               ),

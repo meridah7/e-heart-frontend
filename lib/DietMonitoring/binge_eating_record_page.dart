@@ -13,40 +13,40 @@ class BingeEatingRecordPage extends StatefulWidget {
 class _BingeEatingRecordPageState extends State<BingeEatingRecordPage> {
   final DioClient dioClient = DioClient();
 
-  Map<String, dynamic> refineAnswers(Map<String, dynamic> answers) {
-    Map<String, dynamic> refined = {};
-    for (var entry in answers.entries) {
-      if (entry.key == 'impulse_type') {
-        if (entry.value.contains('A')) {
-          refined[entry.key] = 'A';
-        } else if (entry.value.contains('B')) {
-          refined[entry.key] = 'B';
-        }
-      } else if (entry.key == 'plan' || entry.key == 'trigger') {
-        refined[entry.key] = entry.value[0];
-      } else {
-        refined[entry.key] = entry.value;
-      }
-    }
-    return refined;
-  }
+  // Map<String, dynamic> refineAnswers(Map<String, dynamic> answers) {
+  //   Map<String, dynamic> refined = {};
+  //   for (var entry in answers.entries) {
+  //     if (entry.key == 'impulse_type') {
+  //       if (entry.value.contains('A')) {
+  //         refined[entry.key] = 'A';
+  //       } else if (entry.value.contains('B')) {
+  //         refined[entry.key] = 'B';
+  //       }
+  //     } else if (entry.key == 'plan' || entry.key == 'trigger') {
+  //       refined[entry.key] = entry.value[0];
+  //     } else {
+  //       refined[entry.key] = entry.value;
+  //     }
+  //   }
+  //   return refined;
+  // }
 
-  Future<void> handleSubmit(Map<String, dynamic> answers) async {
-    Map refined = refineAnswers(answers);
-    print('Survey ${answers} $refined');
-    try {
-      Response response =
-          await dioClient.postRequest('/impulse/impulse-records/', {
-        "impulse_type": refined['impulse_type'],
-        "timestamp": refined['timestamp'],
-        "intensity": refined['intensity'],
-        "trigger": refined['trigger'],
-        "plan": refined['plan']
-      });
-    } catch (e) {
-      throw Exception(e);
-    }
-  }
+  // Future<void> handleSubmit(Map<String, dynamic> answers) async {
+  //   Map refined = refineAnswers(answers);
+  //   print('Survey ${answers} $refined');
+  //   try {
+  //     Response response =
+  //         await dioClient.postRequest('/impulse/impulse-records/', {
+  //       "impulse_type": refined['impulse_type'],
+  //       "timestamp": refined['timestamp'],
+  //       "intensity": refined['intensity'],
+  //       "trigger": refined['trigger'],
+  //       "plan": refined['plan']
+  //     });
+  //   } catch (e) {
+  //     throw Exception(e);
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +56,7 @@ class _BingeEatingRecordPageState extends State<BingeEatingRecordPage> {
         survey: impulseRecording.survey!,
         taskId: impulseRecording.id,
         isLastTask: false,
-        handleSubmit: handleSubmit,
+        // handleSubmit: handleSubmit,
       ),
       // If you need to adapt the survey logic specifically for this page,
       // you might integrate it directly here instead of using SurveyPage.

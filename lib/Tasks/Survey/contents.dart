@@ -1,16 +1,16 @@
 import 'package:namer_app/user_preference.dart';
 import '../../Survey/survey_models.dart';
 
-var impulseRetrospectSurvey = Survey(title: 'x 月 x 日冲动记录回顾', questions: [
-  TextQuestion('你感觉这次的应对策略怎么样？整个应对过程有什么可以改进的地方呢？', false,
-      description: '你的冲动记录时间是：年，月，日，时，分\n'
-          '你记录的冲动种类是：暴食冲动  / 清除食物冲动\n'
-          '你记录的冲动强度是：0-10\n'
-          '你记录的冲动诱因是：YYYY\n'
-          '针对这次冲动，你制定的应对策略是:XXXXXX\n'
-          '针对这次冲动，你希望自己坚持冲动冲浪的时间：Z分钟\n'),
-  TextQuestion('你这次冲动大约持续了多少分钟？', false),
-]);
+// var impulseRetrospectSurvey = Survey(title: 'x 月 x 日冲动记录回顾', questions: [
+//   TextQuestion('你感觉这次的应对策略怎么样？整个应对过程有什么可以改进的地方呢？', false,
+//       description: '你的冲动记录时间是：年，月，日，时，分\n'
+//           '你记录的冲动种类是：暴食冲动  / 清除食物冲动\n'
+//           '你记录的冲动强度是：0-10\n'
+//           '你记录的冲动诱因是：YYYY\n'
+//           '针对这次冲动，你制定的应对策略是:XXXXXX\n'
+//           '针对这次冲动，你希望自己坚持冲动冲浪的时间：Z分钟\n'),
+//   TextQuestion('你这次冲动大约持续了多少分钟？', false),
+// ]);
 
 var sampleSurvey = Survey(title: '1111 Survey', questions: [
   TimeQuestion(
@@ -311,19 +311,21 @@ var bingeEatingReflectionSurvey = Survey(
           {},
           description: ''),
       SingleChoiceQuestion(
-        '您是否在每次识别到自己暴食、清除食物冲动的时候，都努力立即记录下来？',
-        ['是的', '比较难做到'],
-        {
-          '是的': [SingleChoiceQuestion('真棒，希望你继续坚持哦～', [], {})],
-          '比较难做到': [
-            TextQuestion(
-                '即使不制定应对策略而就简单记录一下冲动，都会让你感觉好不少！因此，如果你觉得太难，也可以先不填写策略的部分。\n\n'
-                '你觉得是什么阻碍了你对冲动的记录呢？',
-                false),
-            TextQuestion('你觉得有什么好方法克服它们？', false),
-          ],
-        },
-      ),
+          '您是否在每次识别到自己暴食、清除食物冲动的时候，都努力立即记录下来？',
+          ['是的', '比较难做到'],
+          {
+            '是的': [SingleChoiceQuestion('真棒，希望你继续坚持哦～', [], {})],
+            '比较难做到': [
+              TextQuestion(
+                  '即使不制定应对策略而就简单记录一下冲动，都会让你感觉好不少！因此，如果你觉得太难，也可以先不填写策略的部分。\n\n'
+                  '你觉得是什么阻碍了你对冲动的记录呢？',
+                  false,
+                  alias: 'reasons_not_record_impulses'),
+              TextQuestion('你觉得有什么好方法克服它们？', false,
+                  alias: 'strategies_not_record_impulses'),
+            ],
+          },
+          alias: 'record_impulses_immediately'),
       SingleChoiceQuestion(
         '您是否在每次识别到自己暴食、清除食物冲动的时候，都使用了先前制定好的替代方法？可以回到自己的每一次记录去看一看～',
         ['有', '没有'],
@@ -338,26 +340,34 @@ var bingeEatingReflectionSurvey = Survey(
                 '这很正常，每次只需要尽力坚持得比以前久一些就好～在这里，制定下一个想要坚持的时间吧。',
                 [],
                 {}),
-            TextQuestion('当我记录下我的冲动并制定相应策略后，我想在这个冲动下坚持  ____ 分钟。', false),
-            TextQuestion('为了完成这个目标，你觉得有哪些可能的困难和阻碍？', false),
-            TextQuestion('你觉得有什么好方法来克服这些困难呢？', false),
+            TextQuestion('当我记录下我的冲动并制定相应策略后，我想在这个冲动下坚持  ____ 分钟。', false,
+                alias: 'impulse_persistence_minutes'),
+            TextQuestion('为了完成这个目标，你觉得有哪些可能的困难和阻碍？', false,
+                alias: 'impulse_persistence_barriers'),
+            TextQuestion('你觉得有什么好方法来克服这些困难呢？', false,
+                alias: 'impulse_persistence_methods'),
           ],
         },
+        alias: 'use_alternatives',
       ),
       TextQuestion(
           '我使用应对策略应对冲动的效果怎样？具体的应对冲动过程是否有可以改进的空间？\n\n'
           'a.效果',
-          false),
-      TextQuestion('b.改进空间', false),
+          false,
+          alias: 'impulse_persistence_effects'),
+      TextQuestion('b.改进空间', false,
+          alias: 'impulse_persistence_improvement_areas'),
       // More questions or reflection points can be added here
 
       //TODO 此处需要呈现呈现总反思表
       //未完成
-      SingleChoiceQuestion('如果你需要对冲动应对卡进行修改，请点击这里。', [
-        '点击展示冲动应对策略'
-      ], {
-        '点击展示冲动应对策略': [ResponseCardQuestion('questionText', [])]
-      })
+      SingleChoiceQuestion(
+        '如果你需要对冲动应对卡进行修改，请点击这里。',
+        ['点击展示冲动应对策略'],
+        {
+          '点击展示冲动应对策略': [ResponseCardQuestion('questionText')]
+        },
+      )
     ],
     navigateToSummary: true);
 
@@ -1130,7 +1140,7 @@ var impulseRecordingSurvey = Survey(title: '冲动记录', questions: [
       TextQuestion('你这次的目标是，坚持冲动冲浪几分钟?', false),
     ],
     'B. 展示“冲动替代策略卡”': [
-      ResponseCardQuestion('questionText', []),
+      ResponseCardQuestion('questionText'),
     ]
   }),
   // More questions can be added here
