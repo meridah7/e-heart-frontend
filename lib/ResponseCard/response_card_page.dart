@@ -33,22 +33,6 @@ class _BingeEatingResponseCardState extends State<BingeEatingResponseCard>
 
   List<int> nonDraggableIndices = [];
 
-  // // 列表接口
-  // Future<List<ResponseCardModel>> loadData() async {
-  //   try {
-  //     if (mounted) {
-  //       final responseCardModelProvider =
-  //           Provider.of<ResponseCardModelProvider>(context);
-  //       await responseCardModelProvider.loadData();
-  //       return responseCardModelProvider.responseCardList;
-  //     }
-  //     return [];
-  //   } catch (e) {
-  //     print('Error in fetching data $e');
-  //     throw Exception(e);
-  //   }
-  // }
-
   Future<void> loadData() async {
     // 获取数据，调用你的 dio 请求逻辑
 
@@ -353,7 +337,6 @@ class _BingeEatingResponseCardState extends State<BingeEatingResponseCard>
         card: card,
         // 编辑卡片回调
         onSave: (saveCard) {
-          print('card ${saveCard.id}');
           setState(() {
             // 编辑卡片
             if (saveCard.id != null) {

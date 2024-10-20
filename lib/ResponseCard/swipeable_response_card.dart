@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:carousel_indicator/carousel_indicator.dart';
 import './response_card_model.dart';
@@ -8,6 +6,8 @@ import './response_card.dart';
 import './edit_card_dialog.dart';
 import 'hero_dialog_route.dart';
 import '../ResponseCard/response_card_page.dart';
+import 'package:namer_app/utils/dio_client.dart';
+import 'package:dio/dio.dart';
 
 // 问卷内部使用，卡片滑动展示组件
 
@@ -20,17 +20,22 @@ class _SwipeableResponseCardList extends State<SwipeableResponseCardList> {
   int _currentPage = 0;
   late List<ResponseCardModel> _cardList = [];
   bool _isInitialized = false;
+  final DioClient dioClient = DioClient();
 
-  // TODO 接口调用
-  Future<List<ResponseCardModel>> loadMockData() async {
-    String jsonString = await rootBundle.loadString('assets/mock_data.json');
-    List<dynamic> jsonList = json.decode(jsonString);
-    return jsonList.map((json) => ResponseCardModel.fromJson(json)).toList();
-  }
+  Future<void> loadData() async {
+    try {
+      Response response =
+          await dioClient.getRequest('/impulse/impulse-strategies');
+      List<dynamic> data = response.data;
 
-  // 初始化数据
-  Future<void> _initializeMockData() async {
-    _cardList = await loadMockData();
+      _cardList = data.map((val) => ResponseCardModel.fromJson(val)).toList();
+
+      // 按照 order 字段升序排序
+      _cardList.sort((a, b) => a.activity_order.compareTo(b.activity_order));
+    } catch (e) {
+      print('Error in fetching data $e');
+      throw Exception(e);
+    }
     setState(() {
       _isInitialized = true;
     });
@@ -39,7 +44,24 @@ class _SwipeableResponseCardList extends State<SwipeableResponseCardList> {
   @override
   void initState() {
     super.initState();
-    _initializeMockData();
+    loadData();
+  }
+
+  // 更新接口
+  Future<void> handleUpdateStrategy(ResponseCardModel updatedCard) async {
+    try {
+      Response response = await dioClient
+          .putRequest('/impulse/impulse-strategies/${updatedCard.id}', {
+        "custom_activity": updatedCard.custom_activity,
+        "details": updatedCard.details,
+        "activity_order": updatedCard.activity_order,
+      });
+      if (response.statusCode == 200) {
+        await loadData();
+      }
+    } catch (e) {
+      print('Error in editing card');
+    }
   }
 
   @override
@@ -85,12 +107,7 @@ class _SwipeableResponseCardList extends State<SwipeableResponseCardList> {
         card: card,
         onSave: (updatedCard) {
           setState(() {
-            // TODO: 接口更新应对卡状态
-            int index = _cardList.indexWhere(
-                (item) => item.activity_order == updatedCard.activity_order);
-            if (index != -1) {
-              _cardList[index] = updatedCard;
-            }
+            handleUpdateStrategy(updatedCard);
           });
         },
         scene: DetailScene.edit,

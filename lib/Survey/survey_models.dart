@@ -380,16 +380,15 @@ enum ChartType { Bar, Pie, None, Bulleted, Line }
 // FIXME
 class ResponseCardQuestion extends Question {
   final QuestionType questionType = QuestionType.None;
-  String? selectedOption;
-  List<String> selectedOptions = [];
-  String? answerText;
+  // String? selectedOption;
+  // List<String> selectedOptions = [];
+  // String? answerText;
 
   @override
   void getAnswer() {}
 
-  ResponseCardQuestion(
-    String questionText,
-  ) : super(questionText);
+  ResponseCardQuestion({String questionText = 'ResponseCard'})
+      : super(questionText);
 }
 
 class PriorityQuestion extends Question {

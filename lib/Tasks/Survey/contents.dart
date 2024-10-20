@@ -365,7 +365,7 @@ var bingeEatingReflectionSurvey = Survey(
         '如果你需要对冲动应对卡进行修改，请点击这里。',
         ['点击展示冲动应对策略'],
         {
-          '点击展示冲动应对策略': [ResponseCardQuestion('questionText')]
+          '点击展示冲动应对策略': [ResponseCardQuestion()]
         },
       )
     ],
@@ -1140,7 +1140,7 @@ var impulseRecordingSurvey = Survey(title: '冲动记录', questions: [
       TextQuestion('你这次的目标是，坚持冲动冲浪几分钟?', false),
     ],
     'B. 展示“冲动替代策略卡”': [
-      ResponseCardQuestion('questionText'),
+      ResponseCardQuestion(),
     ]
   }),
   // More questions can be added here
