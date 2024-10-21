@@ -1,14 +1,16 @@
 import '../../TodayList/task_models.dart';
 import 'contents.dart';
 
-Task impulseRetrospect = Task(
-  title: "x 月 x 日冲动记录回顾",
-  id: 'S1',
-  type: TaskType.SURVEY,
-  isCompleted: false,
-  day: 0,
-  survey: impulseRetrospectSurvey,
-);
+// 废弃
+// 添加冲动记录经验 Post /impulse-records-exp
+// Task impulseRetrospect = Task(
+//   title: "冲动记录回顾",
+//   id: 'S1',
+//   type: TaskType.SURVEY,
+//   isCompleted: false,
+//   day: 0,
+//   survey: impulseRetrospectSurvey,
+// );
 
 Task monitoringTeachingReflection = Task(
   title: "饮食日志反思",
@@ -93,7 +95,7 @@ Task impulseWave = Task(
 
 //impulseRecordingSurvey
 Task impulseRecording = Task(
-  title: "记录冲动",
+  title: "冲动记录",
   id: 'task11',
   type: TaskType.SURVEY,
   isCompleted: false,

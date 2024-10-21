@@ -3,13 +3,11 @@ import 'package:flutter_reorderable_grid_view/widgets/widgets.dart';
 import './response_card_model.dart';
 import './response_card.dart';
 import './editable_card.dart';
-import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
 import './edit_card_dialog.dart';
 import 'hero_dialog_route.dart';
 import 'package:namer_app/utils/dio_client.dart';
 import 'package:provider/provider.dart';
-import 'package:namer_app/Login/user_model.dart';
 import 'package:namer_app/utils/helper.dart';
 import 'package:dio/dio.dart';
 
@@ -35,16 +33,18 @@ class _BingeEatingResponseCardState extends State<BingeEatingResponseCard>
 
   List<int> nonDraggableIndices = [];
 
-  // 列表接口
-  Future<List<ResponseCardModel>> loadData() async {
+  Future<void> loadData() async {
+    // 获取数据，调用你的 dio 请求逻辑
+
     try {
-      if (mounted) {
-        final responseCardModelProvider =
-            Provider.of<ResponseCardModelProvider>(context);
-        await responseCardModelProvider.loadData();
-        return responseCardModelProvider.responseCardList;
-      }
-      return [];
+      Response response =
+          await dioClient.getRequest('/impulse/impulse-strategies');
+      List<dynamic> data = response.data;
+
+      _cardList = data.map((val) => ResponseCardModel.fromJson(val)).toList();
+
+      // 按照 order 字段升序排序
+      _cardList.sort((a, b) => a.activity_order.compareTo(b.activity_order));
     } catch (e) {
       print('Error in fetching data $e');
       throw Exception(e);
@@ -69,7 +69,7 @@ class _BingeEatingResponseCardState extends State<BingeEatingResponseCard>
   }
 
   Future<void> _initializeData() async {
-    _cardList = await loadData();
+    await loadData();
 
     setState(() {
       lockedIndices = [_cardList.length];
@@ -77,21 +77,38 @@ class _BingeEatingResponseCardState extends State<BingeEatingResponseCard>
     });
   }
 
+  // 添加卡片接口
   Future<void> handleAddImpulseStrategy(
-      {ResponseCardModel? card, int? activity_order}) async {
+      {ResponseCardModel? card, int? order}) async {
     try {
       Response response =
           await dioClient.postRequest('/impulse/impulse-strategies', {
         "custom_activity": card?.custom_activity,
         "details": card?.details,
-        "activity_order": activity_order
+        "activity_order": order
       });
-      print('res $response');
-      await _initializeData();
+      if (response.statusCode == 200) {
+        await _initializeData();
+      }
     } catch (e) {
       print('Error in Update');
     }
     return;
+  }
+
+  // 排序接口
+  Future<void> handleReorder(List<int> list) async {
+    try {
+      Response response =
+          await dioClient.postRequest('/impulse/strategy-order', {
+        "strategy_order": list,
+      });
+      if (response.statusCode == 200) {
+        await _initializeData();
+      }
+    } catch (e) {
+      throw Exception('Error in reorder $e');
+    }
   }
 
   void toggleEditing() {
@@ -108,7 +125,6 @@ class _BingeEatingResponseCardState extends State<BingeEatingResponseCard>
   @override
   void initState() {
     super.initState();
-    // _initializeData();
     _controller = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
@@ -142,7 +158,7 @@ class _BingeEatingResponseCardState extends State<BingeEatingResponseCard>
       onReorder: _handleReorder,
       // onUpdatedDraggedChild: _handleUpdatedDraggedChild,
       // onDragEnd: _handleDragEnd,
-      onDragStarted: _handleDragStarted,
+      // onDragStarted: _handleDragStarted,
       scrollController: _scrollController,
       enableLongPress: true,
       nonDraggableIndices: nonDraggableIndices,
@@ -185,9 +201,6 @@ class _BingeEatingResponseCardState extends State<BingeEatingResponseCard>
                     custom_activity: '请填写你的冲动应对策略',
                     details: "请填应对策略的详细执行方法",
                     activity_order: index + 1));
-                // handleAddImpulseStrategy(
-                //     card: _cardList[_cardList.length - 1],
-                //     activity_order: index + 1);
                 lockedIndices = [_cardList.length];
                 nonDraggableIndices = [_cardList.length];
                 _openEditDialog(
@@ -211,19 +224,18 @@ class _BingeEatingResponseCardState extends State<BingeEatingResponseCard>
     return EditableCard(
       isEditing: _isEditing, // 控制是否处于编辑状态的变量
       onDelete: () {
-        showDeleteConfirmationDialog(context, index);
+        showDeleteConfirmationDialog(context, card);
         // 处理删除逻辑
       },
-      key: Key(card.activity_order.toString()),
+      key: Key(card.id.toString()),
       child: CustomDraggable(
-        key: Key(card.activity_order.toString()),
+        key: Key(card.id.toString() + card.custom_activity),
         data: index,
         child: GestureDetector(
           onTap: () =>
               _openEditDialog(context, _cardList[index], DetailScene.check),
           child: Hero(
-            tag:
-                'card-${card.activity_order.toString() + card.custom_activity}',
+            tag: 'card-${card.id.toString() + card.custom_activity}',
             child: Material(
               color: Colors.transparent,
               child: ResponseCard(
@@ -243,9 +255,12 @@ class _BingeEatingResponseCardState extends State<BingeEatingResponseCard>
     }
   }
 
+  // 拖拽
+  // void _handleDragEnd(int index) {}
+
   // 确认删除弹窗
   Future<void> showDeleteConfirmationDialog(
-      BuildContext context, int index) async {
+      BuildContext context, ResponseCardModel card) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // 用户必须点击按钮才能关闭对话框
@@ -270,8 +285,7 @@ class _BingeEatingResponseCardState extends State<BingeEatingResponseCard>
             TextButton(
               child: Text('删除'),
               onPressed: () {
-                //TODO 在这里添加删除操作的接口
-                _handleDelete(index);
+                _handleDelete(card);
                 Navigator.of(context).pop(); // 关闭对话框
               },
             ),
@@ -281,17 +295,37 @@ class _BingeEatingResponseCardState extends State<BingeEatingResponseCard>
     );
   }
 
-  void _handleDelete(int index) {
-    setState(() {
-      _cardList.removeAt(index);
-    });
+  // 删除接口
+  void _handleDelete(ResponseCardModel card) async {
+    try {
+      if (card.id == null) return;
+      Response response = await dioClient
+          .deleteRequest('/impulse/impulse-strategies/${card.id}');
+      if (response.statusCode == 200) {
+        await loadData();
+      }
+    } catch (e) {
+      throw Exception('Error in Delete');
+    }
   }
 
   // 列表重新排序
-  void _handleReorder(ReorderedListFunction reorderedListFunction) {
+  void _handleReorder(ReorderedListFunction reorderedListFunction) async {
     setState(() {
       _cardList = reorderedListFunction(_cardList) as List<ResponseCardModel>;
     });
+    try {
+      List<int?> orderList = _cardList.map((v) => v.id).toList();
+      Response response =
+          await dioClient.putRequest('/impulse/strategy-order', {
+        "strategy_order": orderList,
+      });
+      if (response.statusCode == 200) {
+        await loadData();
+      }
+    } catch (e) {
+      throw Exception('Error in reorder $e');
+    }
   }
 
   // 详情弹窗
@@ -303,15 +337,13 @@ class _BingeEatingResponseCardState extends State<BingeEatingResponseCard>
         card: card,
         // 编辑卡片回调
         onSave: (saveCard) {
-          print('card ${saveCard.id}');
           setState(() {
             // 编辑卡片
             if (saveCard.id != null) {
               handleUpdateStrategy(saveCard);
             } else {
               // 新增卡片
-              handleAddImpulseStrategy(
-                  card: saveCard, activity_order: _cardList.length);
+              handleAddImpulseStrategy(card: saveCard, order: _cardList.length);
             }
           });
         },

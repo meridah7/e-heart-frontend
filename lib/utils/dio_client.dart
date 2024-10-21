@@ -140,4 +140,15 @@ class DioClient {
       throw Exception('PUT请求失败: $e');
     }
   }
+
+  // DELETE 请求方法
+  Future<Response> deleteRequest(String endpoint) async {
+    try {
+      final response = await _dio.delete(endpoint);
+      print('dio DELETE response: $response');
+      return response;
+    } catch (e) {
+      throw Exception('DELETE请求失败: $e');
+    }
+  }
 }

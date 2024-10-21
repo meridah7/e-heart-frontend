@@ -65,8 +65,9 @@ class _SurveyPageState extends State<SurveyPage> {
     }
   }
 
-  Map<String, dynamic> extractAnswer(List<Question>? questions) {
-    Map<String, dynamic> answers = {};
+  Map<String, dynamic> extractAnswer(Survey survey) {
+    List<Question>? questions = survey.questions;
+    Map<String, dynamic> answers = survey.extra != null ? survey.extra! : {};
     // 递归获取问题和回答
     void extractAnswerRecursive(List<Question>? questions) {
       if (questions == null || questions.isEmpty) {
@@ -143,33 +144,39 @@ class _SurveyPageState extends State<SurveyPage> {
         title: Text(widget.survey.title),
         backgroundColor: themeColor,
       ),
-      body: Padding(
-        padding: const EdgeInsets.only(bottom: 40.0),
-        child: Column(children: [
-          isNeedTopArea
-              ? SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.45,
-                  child: ImpulsiveRecordAndReflectionSummary(),
-                )
-              : Container(),
-          Expanded(
-              child: ListView.builder(
-            itemCount: widget.survey.questions.length,
-            itemBuilder: (context, index) {
-              final question = widget.survey.questions[index];
-              Widget questionWidget =
-                  questionWidgetFactory(context, question, setState);
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 40.0),
+          child: Column(
+            children: [
+              // 根据条件显示顶部区域
+              isNeedTopArea
+                  ? SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.45,
+                      child: ImpulsiveRecordAndReflectionSummary(),
+                    )
+                  : Container(),
 
-              return Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 5.0,
-                  horizontal: 16.0,
-                ),
-                child: questionWidget,
-              );
-            },
-          ))
-        ]),
+              // 渲染问卷的列表
+              Column(
+                children:
+                    List.generate(widget.survey.questions.length, (index) {
+                  final question = widget.survey.questions[index];
+                  Widget questionWidget =
+                      questionWidgetFactory(context, question, setState);
+
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 5.0,
+                      horizontal: 16.0,
+                    ),
+                    child: questionWidget,
+                  );
+                }),
+              ),
+            ],
+          ),
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.check),
@@ -209,14 +216,17 @@ class _SurveyPageState extends State<SurveyPage> {
             await _userPref.setData('finishedTaskIds', taskIds);
           }
 
-          if (widget.handleSubmit != null) {
-            var answers = extractAnswer(widget.survey.questions);
-            widget.handleSubmit!(answers);
-          }
+          // if (widget.handleSubmit != null) {
+          //   var answers = extractAnswer(widget.survey.questions);
+          //   handleSubmitData(widget.taskId, answers);
+          //   widget.handleSubmit!(answers);
+          // }
+          var answer = extractAnswer(widget.survey);
 
           // upload user input
           Response? res =
-              await uploadSurveyData(widget.taskId, summary).catchError((e) {
+              await handleSubmitData(widget.taskId, answer, summary: summary)
+                  .catchError((e) {
             print('[uploadSurveyData] error $e');
           });
 
@@ -236,7 +246,8 @@ class _SurveyPageState extends State<SurveyPage> {
             }
           } else {
             if (mounted) {
-              Navigator.pushReplacementNamed(context, '/home');
+              Navigator.pushNamedAndRemoveUntil(
+                  context, '/home', (Route<dynamic> route) => false);
             }
           }
         },
