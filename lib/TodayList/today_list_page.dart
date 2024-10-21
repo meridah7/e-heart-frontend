@@ -38,7 +38,6 @@ class _TodayListPageState extends State<TodayListPage> {
   // 3. start from day 0
   int? _currentDay;
   List<String>? _finishedTaskIds = [];
-  List<Task> _impulseRecordTaskLists = [];
   List<Task> _dailyTaskList = [];
 
   //初始化的状态
@@ -46,14 +45,17 @@ class _TodayListPageState extends State<TodayListPage> {
   void initState() {
     super.initState();
     _initWidget();
-    fetchImpulseReflectionRecords();
   }
 
   Future<void> _initWidget() async {
     try {
+      _dailyTaskList.clear();
+      print('init');
       var userProvider = Provider.of<UserProvider>(context, listen: false);
       _userPref = await Preferences.getInstance(namespace: userProvider.uuid);
       print('TodayListPage init ${userProvider.uuid}');
+      List<Task> impulseRecordTaskList = await fetchImpulseReflectionRecords();
+
       int userProgress =
           Helper.safeParseInt(_userPref.getData('progress')) ?? 0;
       String lastUpdatedDate = _userPref.getData('progressLastUpdatedDate');
@@ -75,28 +77,33 @@ class _TodayListPageState extends State<TodayListPage> {
         });
       }
       print('${_userPref.getData('finishedTaskIds')}');
-      List<String> taskIds = _userPref.getData('finishedTaskIds');
-
+      List<String> taskIds =
+          List<String>.from(_userPref.getData('finishedTaskIds'));
       setState(() {
         _finishedTaskIds = taskIds;
         if (_currentDay != null) {
-          _dailyTaskList = DailyTask[_currentDay ?? 0];
+          // 深拷贝
+          _dailyTaskList = List.from(DailyTask[_currentDay ?? 0]);
+          print('daily$_dailyTaskList');
+          // 如果没有重复的记录，则添加 impulseRecordTaskList
+          _dailyTaskList.addAll(impulseRecordTaskList);
+          print('add daily$_dailyTaskList');
         }
       });
     } catch (e) {
-      // FIXME: Sting 和int问题
       print('Error in _initWidget: $e');
     }
   }
 
-  Future<void> fetchImpulseReflectionRecords() async {
+  Future<List<Task>> fetchImpulseReflectionRecords() async {
+    List<Task> impulseRecordTaskList = [];
     try {
       Response response =
           await dioClient.getRequest('/impulse/impulse-reflection-records/');
       if (response.statusCode == 200) {
         List<dynamic> data = response.data;
-        _impulseRecordTaskLists = data.map((val) {
-          DateTime dateTime = DateTime.parse(val['createdAt']);
+        impulseRecordTaskList = data.map((val) {
+          DateTime dateTime = DateTime.parse(val['createdAt']).toUtc();
           return Task(
               title: '冲动记录回顾 ${DateFormat('MM月dd日HH时mm分').format(dateTime)}',
               id: 'S1',
@@ -122,16 +129,11 @@ class _TodayListPageState extends State<TodayListPage> {
                         alias: 'impulse_duration_min'),
                   ]));
         }).toList();
-        if (_currentDay != null) {
-          _dailyTaskList = DailyTask[_currentDay!];
-        }
-        setState(() {
-          _dailyTaskList.addAll(_impulseRecordTaskLists);
-        });
       }
     } catch (e) {
       throw Exception('Error in fetch impulse record list $e');
     }
+    return impulseRecordTaskList;
   }
 
   @override
@@ -264,6 +266,7 @@ class _TodayListPageState extends State<TodayListPage> {
       itemBuilder: (context, index) {
         final task = tasks[index];
         return Container(
+          key: ValueKey(task.title + task.id),
           decoration: BoxDecoration(
             color: Colors.white.withOpacity(0.7), // 半透明背景
             borderRadius: BorderRadius.circular(10), // 可选的圆角
