@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:namer_app/ResponseCard/response_card_model.dart';
 
 // 定义了用于创建survey的class和相关功能。
 

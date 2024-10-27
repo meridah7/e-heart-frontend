@@ -20,8 +20,11 @@ import 'DailyDiet/daily_diet_page.dart';
 import 'package:intl/intl.dart';
 import 'package:namer_app/utils/api_service.dart';
 import 'package:dio/dio.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
+  // 初始化中文 Locale 数据
+  initializeDateFormatting('zh_CN', null);
   WidgetsFlutterBinding.ensureInitialized();
 
   runApp(MyApp());
