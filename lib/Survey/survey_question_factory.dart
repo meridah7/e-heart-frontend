@@ -5,6 +5,7 @@ import 'package:namer_app/Survey/survey_widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:namer_app/ResponseCard/swipeable_response_card.dart';
+import 'utils.dart';
 
 Widget questionWidgetFactory(BuildContext context, Question question,
     void Function(void Function()) setState) {
@@ -355,6 +356,7 @@ Widget buildTimeQuestion(BuildContext context, TimeQuestion question,
   );
 }
 
+// TODO: replace this with the same function below
 Widget buildChartQuestion(
     ChartQuestion question, void Function(void Function()) setState) {
   List<Widget> children = [
@@ -449,6 +451,93 @@ Widget buildChartQuestion(
     ),
   );
 }
+
+// Widget buildChartQuestion(
+//     ChartQuestion question, void Function(void Function()) setState) {
+//   return FutureBuilder<List<ChartData>>(
+//     future: getDietLogReflationData(question),
+//     builder: (context, snapshot) {
+//       if (snapshot.connectionState == ConnectionState.waiting) {
+//         return Center(child: CircularProgressIndicator());
+//       } else if (snapshot.hasError) {
+//         return Center(child: Text('Error: ${snapshot.error}'));
+//       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+//         return Center(child: Text('No data available'));
+//       }
+
+//       List<ChartData> chartData = snapshot.data!;
+//       List<Widget> children = [
+//         Padding(
+//           padding: const EdgeInsets.all(8.0),
+//           child: TitleText(question.questionText),
+//         ),
+//       ];
+
+//       if (question.chartType == ChartType.Bar) {
+//         List<charts.Series<ChartData, String>> seriesList = [
+//           charts.Series<ChartData, String>(
+//             id: 'ChartData',
+//             domainFn: (ChartData data, _) => data.category,
+//             measureFn: (ChartData data, _) => data.value,
+//             data: chartData,
+//             labelAccessorFn: (ChartData data, _) =>
+//                 '${data.category}: ${data.value}',
+//           ),
+//         ];
+
+//         children.add(
+//           SizedBox(
+//             height: 200.0,
+//             child: question.orientation == ChartOrientation.vertical
+//                 ? charts.BarChart(seriesList, animate: true)
+//                 : charts.BarChart(
+//                     seriesList,
+//                     animate: true,
+//                     vertical: false,
+//                   ),
+//           ),
+//         );
+//       } else if (question.chartType == ChartType.Bulleted) {
+//         children.add(
+//           SizedBox(
+//             height: 120.0,
+//             child: ListView.builder(
+//               itemCount: chartData.length,
+//               itemBuilder: (context, index) {
+//                 final data = chartData[index];
+//                 return Text(
+//                   ' - ${data.category}',
+//                   style: TextStyle(
+//                     fontSize: 18,
+//                     fontWeight: FontWeight.bold,
+//                   ),
+//                 );
+//               },
+//             ),
+//           ),
+//         );
+//       } else if (question.chartType == ChartType.Line) {
+//         // Add Line chart implementation here if needed.
+//       }
+
+//       children.addAll([
+//         if (question.questionType != QuestionType.None)
+//           if (question.questionType == QuestionType.SingleChoice ||
+//               question.questionType == QuestionType.MultipleChoice)
+//             ...buildChoiceOptions(question, setState),
+//         if (question.questionType == QuestionType.Text)
+//           buildTextOption(question, setState),
+//       ]);
+
+//       return Card(
+//         child: Column(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: children,
+//         ),
+//       );
+//     },
+//   );
+// }
 
 Widget buildResponseCardQuestion(BuildContext context,
     ResponseCardQuestion question, void Function(void Function()) setState) {

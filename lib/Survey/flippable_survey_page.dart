@@ -3,6 +3,8 @@ import 'survey_models.dart';
 import 'package:namer_app/global_setting.dart';
 import 'survey_question_factory.dart';
 import 'SurveySummaryPage.dart';
+import 'utils.dart';
+import 'package:dio/dio.dart';
 
 /// @desc 可翻页的问券
 ///
@@ -23,10 +25,8 @@ class _FlippableSurveyPageState extends State<FlippableSurveyPage> {
   int _curStep = 0;
 
   void nextStep() {
-    setState(() {
-      print('bbb i am here');
+    setState(() async {
       if (_curStep < widget.survey.questions.length - 1) {
-        print('aaa i am here');
         _curStep = _curStep + 1;
       } else {
         if (widget.survey.navigateToSummary) {
@@ -37,6 +37,12 @@ class _FlippableSurveyPageState extends State<FlippableSurveyPage> {
           for (String line in summary) {
             print(line);
           }
+
+          // upload user input
+          Response? res =
+              await uploadSurveyData(widget.taskId, summary).catchError((e) {
+            print('[uploadSurveyData] error $e');
+          });
 
 // 导航到问卷摘要页面
           if (widget.survey.navigateToSummary) {

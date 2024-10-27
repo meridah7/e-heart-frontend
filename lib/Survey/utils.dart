@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:namer_app/utils/dio_client.dart';
+import 'survey_models.dart';
 
 Future<Response?> uploadSurveyData(String taskId, List<String> summary) async {
   final DioClient dioClient = DioClient();
@@ -12,7 +13,9 @@ Future<Response?> uploadSurveyData(String taskId, List<String> summary) async {
     case 'dietaryIntake':
       // 食物清除记录
       return await dioClient.postRequest('/diet_logs', data);
-
+    case 'S2':
+      // 饮食日志反思
+      return await dioClient.postRequest('/diet_log_reflections', data);
     default:
       return null;
   }
@@ -173,9 +176,35 @@ Map<String, dynamic>? getUserUploadData(String taskId, List<String> summary) {
         "trigger": "",
         "additional_info": additionalInfo
       };
-    default:
-      return null;
+    // 饮食日志反思
+    case 'S2':
+      int meetGoalIdx = summary.indexOf('我完成的饮食日志有多少天？');
+      String? meetGoalAns = meetGoalIdx >= 0
+          ? summary[meetGoalIdx + 1].replaceFirst("Answer: ", "").trim()
+          : null;
+      bool isMeetGoal = meetGoalAns == '5-7天';
+
+      int notMeetGoalReasonIdx = summary.indexOf('请先思考一下没有完整记录的原因');
+      String? notMeetGoalReason = notMeetGoalReasonIdx >= 0
+          ? summary[notMeetGoalReasonIdx + 1]
+              .replaceFirst("Answer: ", "")
+              .trim()
+          : null;
+
+      int notMeetGoalStrategyIdx = summary.indexOf('然后在这里写下你的应对策略');
+      String? notMeetGoalStrategy = notMeetGoalStrategyIdx >= 0
+          ? summary[notMeetGoalStrategyIdx + 1]
+              .replaceFirst("Answer: ", "")
+              .trim()
+          : null;
+
+      return {
+        "goal_met": isMeetGoal,
+        "reason_for_not_meeting_goal": notMeetGoalReason,
+        "strategy_for_not_meeting_goal": notMeetGoalStrategy
+      };
   }
+  return null;
 }
 
 int? parseToInt(String input) {
@@ -193,4 +222,98 @@ int? parseToInt(String input) {
 
   // Return null if neither int nor double could be parsed
   return null;
+}
+
+Future<List<ChartData>> getDietLogReflationData(ChartQuestion question) async {
+  String questionTitle = question.questionText;
+  final DioClient dioClient = DioClient();
+
+  switch (questionTitle) {
+    case "能识别诱因和不能识别诱因的暴食比例":
+    // TODO: finish this request
+// await dioClient.getRequest(
+//           '/api/diet_log_reflections/:id/binge/trigger-identification-success');
+
+    case "暴食诱因频率表":
+    // TODO: finish this request
+    // await dioClient
+    //     .getRequest('/api/diet_log_reflections/:id/binge/specific-trigger');
+
+    case "每天暴食次数在一周内变化":
+    // TODO: finish this request
+    // await dioClient.getRequest(
+    //     '/api/diet_log_reflections/:id/binge/day-of-week');
+    case "暴食次数与一天中的时间段":
+      // TODO: finish this request
+      // await dioClient
+      //     .getRequest('/api/diet_log_reflections/:id/binge/time-of-day');
+      break;
+    case "暴食次数与对应的地点":
+      // TODO: finish this request
+      // await dioClient
+      //     .getRequest('/api/diet_log_reflections/:id/binge/location');
+      break;
+    case "暴食次数与情绪强度":
+      // TODO: finish this request
+      // await dioClient
+      //     .getRequest('/api/diet_log_reflections/:id/binge/emotion-intensity');
+      break;
+    case "暴食次数与情绪类型":
+      // TODO: finish this request
+      // await dioClient
+      //     .getRequest('/api/diet_log_reflections/:id/binge/emotion-type');
+      break;
+    case "暴食次数与食物类型":
+      // TODO: finish this request
+      // await dioClient
+      //     .getRequest('/api/diet_log_reflections/:id/binge/food-details');
+      break;
+    case "每天节食次数在一周内变化":
+      // TODO: finish this request
+      // await dioClient
+      //     .getRequest('/api/diet_log_reflections/:id/dieting/day-of-week');
+      break;
+    case "节食行为与一周内吃饭的地点的关系":
+      // TODO: finish this request
+      // await dioClient
+      //     .getRequest('/api/diet_log_reflections/:id/dieting/location');
+      break;
+    case "节食次数与情绪强度的关系":
+      // TODO: finish this request
+      // await dioClient
+      //     .getRequest('/api/diet_log_reflections/:id/dieting/emotion-intensity');
+      break;
+    case "节食次数和情绪种类的关系":
+      // TODO: finish this request
+      // await dioClient
+      //     .getRequest('/api/diet_log_reflections/:id/dieting/emotion-type');
+      break;
+    case "节食时选择的食物种类":
+      // TODO: finish this request
+      // await dioClient
+      //     .getRequest('/api/diet_log_reflections/:id/dieting/food-details');
+      break;
+    case "每天食物清除次数在一周内变化":
+      // TODO: finish this request
+      // await dioClient
+      //     .getRequest('api/food_purge_logs/purge-per-time-slot/:startDate/:endDate');
+      break;
+    case "食物清除行为与一周内一天中的时间段的关系":
+      // TODO: finish this request
+      // await dioClient
+      //     .getRequest('/api/diet_log_reflections/:id/binge/location');
+      break;
+    case "食物清除次数与情绪强度的关系":
+      // TODO: finish this request
+      // await dioClient
+      //     .getRequest('api/food_purge_logs/emotion-intensity/:startDate/:endDate');
+      break;
+    case "食物清除诱因频率表":
+      // TODO: finish this request
+      // await dioClient
+      //     .getRequest('api/food_purge_logs/triggers/:startDate/:endDate');
+      break;
+    default:
+  }
+  return [];
 }
