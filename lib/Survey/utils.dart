@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
 import 'package:namer_app/utils/dio_client.dart';
@@ -56,6 +57,14 @@ Future<Response?> handleSubmitData(String taskId, Map<String, dynamic> answers,
 //   }
 // }
 
+String removeFirstTwoCharacters(String input) {
+  if (input.length > 2) {
+    return input.substring(2);
+  } else {
+    return ""; // 或者根据需要返回其他值
+  }
+}
+
 Map<String, dynamic> refineAnswers(
     String taskId, Map<String, dynamic> answers) {
   Map<String, dynamic> refined = {};
@@ -63,11 +72,7 @@ Map<String, dynamic> refineAnswers(
     case 'task11':
       for (var entry in answers.entries) {
         if (entry.key == 'impulse_type') {
-          if (entry.value.contains('A')) {
-            refined[entry.key] = 'A';
-          } else if (entry.value.contains('B')) {
-            refined[entry.key] = 'B';
-          }
+          refined[entry.key] = removeFirstTwoCharacters(entry.value);
         } else if (entry.key == 'plan' || entry.key == 'trigger') {
           refined[entry.key] = entry.value[0];
         } else {
@@ -285,4 +290,152 @@ int? parseToInt(String input) {
 
   // Return null if neither int nor double could be parsed
   return null;
+}
+
+// 图表数据清理方法
+
+List<Map<String, dynamic>> processImpulseTypeData(
+    List<Map<String, dynamic>> data) {
+  final Map<String, int> impulseTypeCounts = {};
+
+  for (var item in data) {
+    final impulseType = item['impulse_type'];
+    impulseTypeCounts[impulseType] = (impulseTypeCounts[impulseType] ?? 0) + 1;
+  }
+
+  return impulseTypeCounts.entries.map((entry) {
+    return {
+      'category': entry.key,
+      'value': entry.value,
+      'color': Colors.blue, // 可自定义颜色
+    };
+  }).toList();
+}
+
+List<Map<String, dynamic>> processDayOfWeekData(
+    List<Map<String, dynamic>> data) {
+  final Map<String, int> dayOfWeekCounts = {};
+  final DateFormat dayFormat = DateFormat.E('zh_CN');
+
+  for (var item in data) {
+    final timestamp = DateTime.fromMillisecondsSinceEpoch(item['timestamp']);
+    final dayOfWeek = dayFormat.format(timestamp);
+    dayOfWeekCounts[dayOfWeek] = (dayOfWeekCounts[dayOfWeek] ?? 0) + 1;
+  }
+
+  return dayOfWeekCounts.entries.map((entry) {
+    return {
+      'label': entry.key,
+      'value': entry.value,
+      'color': Colors.green, // 可自定义颜色
+    };
+  }).toList();
+}
+
+List<Map<String, dynamic>> processTimeOfDayData(
+    List<Map<String, dynamic>> data) {
+  final Map<String, int> timeOfDayCounts = {};
+
+  for (var item in data) {
+    final timestamp = DateTime.fromMillisecondsSinceEpoch(item['timestamp']);
+    final hour = timestamp.hour;
+
+    String timeOfDay;
+    if (hour < 3) {
+      timeOfDay = '0-3';
+    } else if (hour < 6) {
+      timeOfDay = '3-6';
+    } else if (hour < 9) {
+      timeOfDay = '6-9';
+    } else if (hour < 12) {
+      timeOfDay = '9-12';
+    } else if (hour < 16) {
+      timeOfDay = '12-16';
+    } else if (hour < 19) {
+      timeOfDay = '16-19';
+    } else if (hour < 21) {
+      timeOfDay = '19-21';
+    } else {
+      timeOfDay = '21-24';
+    }
+
+    timeOfDayCounts[timeOfDay] = (timeOfDayCounts[timeOfDay] ?? 0) + 1;
+  }
+
+  return timeOfDayCounts.entries.map((entry) {
+    return {
+      'label': entry.key,
+      'value': entry.value,
+      'color': Colors.orange, // 可自定义颜色
+    };
+  }).toList();
+}
+
+// 情绪强度一星期的分布
+List<Map<String, dynamic>> processIntensityWeekData(
+    List<Map<String, dynamic>> data) {
+  final Map<String, int> dayOfWeekCounts = {};
+  final Map<String, int> dayOfWeekValue = {};
+  final DateFormat dayFormat = DateFormat.E('zh_CN');
+
+  for (var item in data) {
+    final timestamp = DateTime.fromMillisecondsSinceEpoch(item['timestamp']);
+    final dayOfWeek = dayFormat.format(timestamp);
+    // 取均值
+    dayOfWeekCounts[dayOfWeek] = (dayOfWeekCounts[dayOfWeek] ?? 0) + 1;
+    dayOfWeekValue[dayOfWeek] = (dayOfWeekValue[dayOfWeek] ?? 0) +
+        Helper.safeParseInt(item['intensity'])!;
+  }
+
+  return dayOfWeekCounts.entries.map((entry) {
+    return {
+      'label': '${entry.key}',
+      'value': (dayOfWeekValue[entry.key]! / entry.value).round(),
+      'color': Colors.red, // 可自定义颜色
+    };
+  }).toList();
+}
+
+// 情绪强度一天内的分布
+List<Map<String, dynamic>> processIntensityDayData(
+    List<Map<String, dynamic>> data) {
+  final Map<String, int> timeOfDayCounts = {};
+  final Map<String, int> timeOfDayValue = {};
+
+  for (var item in data) {
+    final timestamp = DateTime.fromMillisecondsSinceEpoch(item['timestamp']);
+    final hour = timestamp.hour;
+
+    String timeOfDay;
+    if (hour < 3) {
+      timeOfDay = '0-3';
+    } else if (hour < 6) {
+      timeOfDay = '3-6';
+    } else if (hour < 9) {
+      timeOfDay = '6-9';
+    } else if (hour < 12) {
+      timeOfDay = '9-12';
+    } else if (hour < 16) {
+      timeOfDay = '12-16';
+    } else if (hour < 19) {
+      timeOfDay = '16-19';
+    } else if (hour < 21) {
+      timeOfDay = '19-21';
+    } else {
+      timeOfDay = '21-24';
+    }
+
+    timeOfDayCounts[timeOfDay] = (timeOfDayCounts[timeOfDay] ?? 0) + 1;
+    // 取均值
+    timeOfDayValue[timeOfDay] = (timeOfDayValue[timeOfDay] ?? 0) +
+        Helper.safeParseInt(item['intensity'])!;
+  }
+
+  return timeOfDayCounts.entries.map((entry) {
+    return {
+      'label': entry.key,
+      'value': (timeOfDayValue[entry.key]! / entry.value).round(),
+      'color': Colors.orange, // 可自定义颜色
+    };
+  }).toList();
 }

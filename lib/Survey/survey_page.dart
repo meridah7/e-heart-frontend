@@ -216,11 +216,6 @@ class _SurveyPageState extends State<SurveyPage> {
             await _userPref.setData('finishedTaskIds', taskIds);
           }
 
-          // if (widget.handleSubmit != null) {
-          //   var answers = extractAnswer(widget.survey.questions);
-          //   handleSubmitData(widget.taskId, answers);
-          //   widget.handleSubmit!(answers);
-          // }
           var answer = extractAnswer(widget.survey);
 
           // upload user input
