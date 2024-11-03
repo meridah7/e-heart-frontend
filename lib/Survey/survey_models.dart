@@ -379,9 +379,6 @@ enum ChartType { Bar, Pie, None, Bulleted, Line }
 // FIXME
 class ResponseCardQuestion extends Question {
   final QuestionType questionType = QuestionType.None;
-  // String? selectedOption;
-  // List<String> selectedOptions = [];
-  // String? answerText;
 
   @override
   void getAnswer() {}
@@ -394,8 +391,9 @@ class PriorityQuestion extends Question {
   final List<String> options;
   List<String> selectedOptions = []; // 用户选中的选项，按点击顺序排序
 
-  PriorityQuestion(String questionText, this.options, {String? description})
-      : super(questionText, description: description);
+  PriorityQuestion(String questionText, this.options,
+      {String? description, String? alias})
+      : super(questionText, description: description, alias: alias);
 
   void selectOption(String option) {
     if (!selectedOptions.contains(option)) {
@@ -405,9 +403,10 @@ class PriorityQuestion extends Question {
     }
   }
 
-// TODO
   @override
-  void getAnswer() {}
+  List<String> getAnswer() {
+    return options;
+  }
 
   // 获取用户选中的选项，按点击顺序
   List<String> getSelectedOptions() => selectedOptions;

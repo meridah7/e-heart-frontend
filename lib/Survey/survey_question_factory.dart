@@ -507,6 +507,53 @@ Widget buildTextOption(
   );
 }
 
+// Widget buildPriorityQuestion(
+//     PriorityQuestion question, void Function(void Function()) setState) {
+//   return Card(
+//     child: Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         Padding(
+//           padding: const EdgeInsets.all(8.0),
+//           child: TitleText(question.questionText),
+//         ),
+//         ...question.options.map((option) {
+//           return ListTile(
+//             title: Text(option),
+//             trailing: question.selectedOptions.contains(option)
+//                 ? Icon(Icons.check_box)
+//                 : Icon(Icons.check_box_outline_blank),
+//             onTap: () {
+//               setState(() {
+//                 question.selectOption(option);
+//               });
+//             },
+//           );
+//         }).toList(),
+// // 在这里添加显示已选择选项的顺序
+//         Padding(
+//           padding: const EdgeInsets.all(8.0),
+//           child: Text(
+//             "已选择的顺序：",
+//             style: TextStyle(
+//               fontSize: 16,
+//               fontWeight: FontWeight.bold,
+//             ),
+//           ),
+//         ),
+// // 显示已选择选项的列表，包括顺序号
+//         ...question.selectedOptions.asMap().entries.map((entry) {
+//           int idx = entry.key + 1; // 顺序号（从1开始）
+//           String option = entry.value;
+//           return Padding(
+//             padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+//             child: Text("$idx. $option"),
+//           );
+//         }).toList(),
+//       ],
+//     ),
+//   );
+// }
 Widget buildPriorityQuestion(
     PriorityQuestion question, void Function(void Function()) setState) {
   return Card(
@@ -515,41 +562,32 @@ Widget buildPriorityQuestion(
       children: [
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: TitleText(question.questionText),
-        ),
-        ...question.options.map((option) {
-          return ListTile(
-            title: Text(option),
-            trailing: question.selectedOptions.contains(option)
-                ? Icon(Icons.check_box)
-                : Icon(Icons.check_box_outline_blank),
-            onTap: () {
-              setState(() {
-                question.selectOption(option);
-              });
-            },
-          );
-        }).toList(),
-// 在这里添加显示已选择选项的顺序
-        Padding(
-          padding: const EdgeInsets.all(8.0),
           child: Text(
-            "已选择的顺序：",
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
+            question.questionText,
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ),
-// 显示已选择选项的列表，包括顺序号
-        ...question.selectedOptions.asMap().entries.map((entry) {
-          int idx = entry.key + 1; // 顺序号（从1开始）
-          String option = entry.value;
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-            child: Text("$idx. $option"),
-          );
-        }).toList(),
+        // 拖拽排序列表
+        ReorderableListView(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          onReorder: (int oldIndex, int newIndex) {
+            setState(() {
+              if (newIndex > oldIndex) newIndex -= 1;
+              final item = question.options.removeAt(oldIndex);
+              question.options.insert(newIndex, item);
+              question.selectedOptions = question.options;
+            });
+          },
+          children: [
+            for (int index = 0; index < question.options.length; index++)
+              ListTile(
+                key: ValueKey(question.options[index]),
+                title: Text('${index + 1}. ${question.options[index]}'),
+                leading: Icon(Icons.drag_handle),
+              ),
+          ],
+        ),
       ],
     ),
   );
