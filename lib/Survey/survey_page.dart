@@ -56,6 +56,15 @@ class _SurveyPageState extends State<SurveyPage> {
   void initState() {
     super.initState();
     _initWidget();
+    _initializeQuestions();
+  }
+
+  Future<void> _initializeQuestions() async {
+    if (widget.taskId == 'S4') {
+      setState(() async {
+        widget.survey.questions = await generateDietPlanReview();
+      });
+    }
   }
 
   Future<void> _initializePreferences() async {

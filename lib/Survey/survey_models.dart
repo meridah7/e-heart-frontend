@@ -125,7 +125,7 @@ class TextQuestion extends Question {
 
 class Survey {
   final String title;
-  final List<Question> questions;
+  List<Question> questions;
   final bool navigateToSummary;
   final bool isNeedTopArea;
   // 问卷额外信息

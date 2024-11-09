@@ -141,16 +141,12 @@ class _TodayListPageState extends State<TodayListPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Day $_currentDay', style: TextStyle(color: Colors.black)),
-        backgroundColor: Color.fromARGB(255, 223, 221, 240),
+        // backgroundColor: Color.fromARGB(255, 223, 221, 240),
+        backgroundColor: Color.fromRGBO(240, 229, 231, 1),
         elevation: 0,
       ),
       body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/images/background1.jpg'), // 替换为您的图片路径
-            fit: BoxFit.cover,
-          ),
-        ),
+        decoration: BoxDecoration(color: Color.fromRGBO(240, 229, 231, 1)),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(

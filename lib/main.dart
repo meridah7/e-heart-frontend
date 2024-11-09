@@ -16,7 +16,7 @@ import 'Login/register_info_page.dart';
 import 'package:provider/provider.dart';
 import 'user_preference.dart';
 import 'debugButton.dart';
-import 'DailyDiet/daily_diet_page.dart';
+import 'DailyDiet/event_log_page.dart';
 import 'package:intl/intl.dart';
 import 'package:namer_app/utils/api_service.dart';
 import 'package:dio/dio.dart';
@@ -46,7 +46,6 @@ class MyApp extends StatelessWidget {
 
       child: MaterialApp(
         title: 'CBT-E App',
-        // home: isLoggedIn ? MainScreen() : LoginPage(), // 初始路由为登录页面
         home: MainScreen(),
         initialRoute: '/',
         routes: {
@@ -69,7 +68,7 @@ class _MainScreenState extends State<MainScreen> {
   final ApiService apiService = ApiService();
   static List<Widget> _widgetOptions = <Widget>[
     TodayListPage(),
-    DailyDietPage(),
+    EventLogPage(),
     ReviewAnalysisPage(),
     MyPage(),
   ];
@@ -104,8 +103,8 @@ class _MainScreenState extends State<MainScreen> {
             label: ('每日任务'),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.ramen_dining_sharp),
-            label: ('今日饮食'),
+            icon: Icon(Icons.event_note),
+            label: ('行为记录'),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.analytics_outlined),

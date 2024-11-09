@@ -9,6 +9,8 @@ enum DietType {
   NonFormalMeal,
 }
 
+enum DietStatus { checked, pending, modified }
+
 class Diet {
   final String food;
   final String id;
@@ -17,6 +19,10 @@ class Diet {
   final int createTime;
   final List<Content>? mealContent;
   final Survey? survey;
+  List<Diet>? dietLog;
+  DietStatus status = DietStatus.pending;
+  int? guzzleLevel;
+  int? dietTime;
 
   Diet({
     required this.food,
@@ -24,7 +30,10 @@ class Diet {
     required this.type,
     required this.day,
     required this.createTime,
+    required this.status,
+    this.dietLog,
     this.mealContent,
     this.survey,
+    this.guzzleLevel,
   });
 }

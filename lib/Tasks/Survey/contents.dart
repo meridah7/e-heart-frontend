@@ -1,5 +1,8 @@
+import 'package:dio/dio.dart';
 import 'package:namer_app/user_preference.dart';
 import '../../Survey/survey_models.dart';
+import 'package:namer_app/utils/dio_client.dart';
+import 'package:intl/intl.dart';
 
 // var impulseRetrospectSurvey = Survey(title: 'x 月 x 日冲动记录回顾', questions: [
 //   TextQuestion('你感觉这次的应对策略怎么样？整个应对过程有什么可以改进的地方呢？', false,
@@ -359,7 +362,6 @@ var bingeEatingReflectionSurvey = Survey(
           alias: 'impulse_persistence_improvement_areas'),
       // More questions or reflection points can be added here
 
-      //TODO 此处需要呈现呈现总反思表
       //未完成
       SingleChoiceQuestion(
         '如果你需要对冲动应对卡进行修改，请点击这里。',
@@ -1141,3 +1143,171 @@ var impulseRecordingSurvey = Survey(title: '冲动记录', questions: [
   // More questions can be added here
   TextQuestion('请你制定一下针对这次冲动的应对策略吧！', false, alias: 'plan', required: true),
 ]);
+
+Future<Survey> generateRegularDietReflectionSurvey() async {
+  // endDate 为今天 startDate 为一周前
+  final DioClient dioClient = DioClient();
+  DateFormat dateFormat = DateFormat('yyyy-MM-dd');
+  DateTime endDateTime = DateTime.now();
+  DateTime startDateTime = endDateTime.subtract(Duration(days: 7));
+  String endDate = dateFormat.format(endDateTime);
+  String startDate = dateFormat.format(startDateTime);
+  try {
+    // 饮食计划不合理间隔次数
+    Response missingPlanDaysRes = await dioClient
+        .getRequest('/missing-planning-days/$startDate/$endDate');
+    // 饮食计划不合理间隔次数
+    Response unreasonableIntervalCountRes = await dioClient
+        .getRequest('/unreasonable-interval-counts/$startDate/$endDate');
+    if (missingPlanDaysRes.statusCode == 200 &&
+        unreasonableIntervalCountRes.statusCode == 200) {}
+  } catch (e) {
+    throw Exception('Error in fetch Diet Reflection data');
+  }
+
+  return Survey(
+      title: "饮食计划反思",
+      questions: [
+        SingleChoiceQuestion(
+            "刚刚，小E对您的饮食计划进行了整理，并将帮助你以专业的视角反思自己的饮食计划。\n\n"
+            "饮食计划和对应的反思是方案中被证明最有效的内容，因此要认真填写～\n\n"
+            "没有想法的空可以不填，你只要分析对自己有启发的部分。您的回答绝对保密，放心填写就好啦。",
+            ["好的！"],
+            {}),
+        ChartQuestion(
+            "我有提前做好每天的饮食计划吗？",
+            [
+              ChartData("做了计划的天数", 3), // 假设这里的数字0会根据用户实际情况动态改变
+              ChartData("没做计划的天数", 4),
+            ],
+            QuestionType.None,
+            [],
+            ChartType.Bar,
+            description: "展示您在过去一周内提前做好饮食计划的天数以及未提前做好计划的天数。"),
+        SingleChoiceQuestion(
+            "我每天有提前做好饮食计划吗？",
+            [
+              "0-5天",
+              "6-7天",
+            ],
+            {
+              "0-5天": [
+                TextQuestion(
+                    '小E知道坚持完成这个任务是个不容易的事情，因此没有每天进行饮食计划也完全没关系～\n\n您只需要想想干扰自己进行饮食日志记录的原因，并提出一些可能的改善策略就好啦。\n\n'
+                    '有什么困难阻碍着我',
+                    false),
+                TextQuestion('想想办法，怎样才能做的更好呢', false)
+              ],
+              "6-7天": [
+                SingleChoiceQuestion('能坚持这么久，真的好厉害！努力保持哟～', ['好的'], {})
+              ]
+            },
+            description: '小E看到您已经做了x天的计划'),
+        ChartQuestion(
+            "我的饮食计划中的每餐间隔时间",
+            [
+              ChartData("间隔在3-4小时的饮食计划次数", 3), // 假设这里的数字0会根据用户实际情况动态改变
+              ChartData("间隔在3-4小时以外的饮食计划次数", 5),
+            ],
+            QuestionType.None,
+            [],
+            ChartType.Bar,
+            description: ""),
+        SingleChoiceQuestion(
+            "我是否按照要求，将饮食计划的每餐间隔时间控制在3- 4 小时之间？",
+            ["是", "否"],
+            {
+              "是": [
+                SingleChoiceQuestion(
+                    "很棒！看来你已经完全理解我们饮食计划的核心原则啦！相信我们，这一定对缓解暴食有所帮助～", [], {})
+              ],
+              "否": [
+                SingleChoiceQuestion("为什么在计划的时候要把每一次进食的间隔控制在3-4小时呢？", [
+                  '点击查看原因'
+                ], {
+                  '点击查看原因': [
+                    SingleChoiceQuestion(
+                        '四小时就能让你之前吃的东西消化的差不多，因此超过四小时还不吃东西就会让你的身体感到饥饿。\n\n'
+                        '此外，太久不吃东西会让你一直挂念着食物；这种生理饥饿和心理压力会同时发挥作用，就会有极大的可能引发暴食！\n\n'
+                        '饮食计划的核心原则是让您一天计划的每一次进食都间隔在3-4小时之间，其实就能够让你同时避免身体和心理的这两方面的影响，从而达到减少暴食的目的。',
+                        ['好的！'],
+                        {})
+                  ]
+                })
+              ],
+            },
+            // TODO 补齐状态
+            description: "小E看到您本周有y天仅仅计划了3餐或3餐以下"),
+        // description: "您计划进食的时间共有x次不在3- 4 小时之间"),
+        SingleChoiceQuestion(
+            "我有努力按照自己的计划内容进食吗（在第二天进食时，和前一天的计划内容有一些差别很正常，不用和计划内容完全一致，只要尽量按照计划执行就好～）",
+            ["我努力了～", "还没有那么努力～"],
+            {
+              "我努力了～": [SingleChoiceQuestion("你真的非常棒！努力继续坚持吧～", [], {})],
+              "还没有那么努力～": [
+                TextQuestion(
+                    '按照计划进食真的是一件不容易的事情，需要我们一起慢慢努力。那么，你可以想想干扰自己按照饮食计划进食的原因，并提出一些可能的改善策略就好啦。\n\n'
+                    '干扰原因',
+                    false),
+                TextQuestion('对策', false)
+              ]
+            },
+            description: ""),
+        SingleChoiceQuestion(
+            "如果我没有遵循饮食计划，我会努力重新专注于下一次计划吗？",
+            [
+              "即使我出于某些原因没有遵循某一餐的计划，我也能努力去完成接下来的饮食计划",
+              "如果某一次进食我没按照计划完成，我可能就会彻底放弃今天的所有计划"
+            ],
+            {
+              "即使我出于某些原因没有遵循某一餐的计划，我也能努力去完成接下来的饮食计划": [
+                SingleChoiceQuestion("非常好，你的想法很棒！", ['好的！'], {})
+              ],
+              "如果某一次进食我没按照计划完成，我可能就会彻底放弃今天的所有计划": [
+                SingleChoiceQuestion(
+                    "如果你的一次进食没按计划做好，你可能非常沮丧，认为一整天的饮食都毁了。但其实不是的！你不需要将饮食计划做到完美，追求完美只会成为暴食最好的帮凶。\n\n"
+                    "因此，不管之前发生了什么，只需要重新专注于完成下一次的进食计划就好啦！",
+                    ['好的！'],
+                    {})
+              ]
+            },
+            description: ""),
+        SingleChoiceQuestion(
+            "我每天的饮食计划是否可以完全不一样？",
+            ["可以", "不可以"],
+            {
+              "可以": [
+                SingleChoiceQuestion("非常好，你的想法很棒！", ['好的！'], {})
+              ],
+              "不可以": [
+                SingleChoiceQuestion(
+                    "请记住，每一天的计划都可以是不一样的！我们不需要您保持非常规律的饮食模式，您完全可以根据下一天的安排来个性化地计划自己的饮食！当然，要遵循我们每餐间隔3-4小时的核心原则哦。",
+                    ['好的！'],
+                    {})
+              ]
+            },
+            description: ""),
+        SingleChoiceQuestion(
+            "我做的饮食计划还有什么可以调整改善的地方吗？",
+            ["暂时没有，我已经很棒啦", "有一些可以调整的地方"],
+            {
+              "暂时没有，我已经很棒啦": [
+                SingleChoiceQuestion("真棒！继续努力哦～", ['好的！'], {})
+              ],
+              "有一些可以调整的地方": [
+                TextQuestion(
+                  "请写下您认为可以调整的地方，您可以在明天的计划中努力做到~",
+                  false,
+                )
+              ]
+            },
+            description: ""),
+        SingleChoiceQuestion(
+            '真棒，你已经完成今天全部的反思内容啦，您可以再整体回顾一下您的成果，是不是有不一样的收获呢', [], {}),
+        SingleChoiceQuestion(
+            '今天你成功完成了一次对自己的饮食计划的反思分析！饮食计划反思要常常做，您可以以反思报告为依据，将之后的饮食计划做得更好！',
+            [],
+            {})
+      ],
+      navigateToSummary: true);
+}

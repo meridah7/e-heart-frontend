@@ -11,13 +11,13 @@ List<Diet> DietDay0 = [
 ];
 
 Diet diet1 = Diet(
-  food: "一份肠粉",
-  id: '早餐',
-  type: "早餐",
-  day: 0,
-  createTime: 1717497403030,
-  mealContent: mealContent1,
-);
+    food: "肠粉",
+    id: '早餐',
+    type: "早餐",
+    day: 0,
+    createTime: 1717497403030,
+    mealContent: mealContent1,
+    status: DietStatus.checked);
 
 // Day 0
 List<Content> mealContent1 = [
