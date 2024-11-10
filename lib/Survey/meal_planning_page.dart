@@ -18,6 +18,15 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
   String? food;
   TextEditingController _timeController = TextEditingController();
 
+  String getMealPlanningDate() {
+    DateTime now = DateTime.now();
+    if (now.hour >= 12) {
+      return DateFormat('yyyy年MM月dd日').format(now.add(Duration(days: 1)));
+    } else {
+      return DateFormat('yyyy年MM月dd日').format(now);
+    }
+  }
+
   void _addCard() {
     _timeController.clear(); // Clear the controller before showing the dialog
     showDialog(
@@ -95,6 +104,7 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
                             'food': food!,
                           });
                         });
+                        // TODO: send this info to backend
                         mealName = null;
                         food = null;
                         _timeController.clear();
@@ -166,6 +176,8 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
 
   @override
   Widget build(BuildContext context) {
+    String planningDate = getMealPlanningDate();
+
     return Scaffold(
       backgroundColor: Color(0xfffaeef0), // Custom background color
       appBar: AppBar(
@@ -174,7 +186,7 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         backgroundColor:
-            Color(0xfff8dede), // Slightly darker shade for contrast
+            Color(0xfef8dede), // Slightly darker shade for contrast
         actions: [
           IconButton(
             icon: Icon(Icons.help_outline),
@@ -182,21 +194,55 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
           ),
         ],
       ),
-      body: cards.isEmpty
-          ? Center(
-              child: Text(
-                '点击底部的 + 按钮开始添加你的饮食计划！',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
-              ),
-            )
-          : Column(
+      body: Column(
+        children: [
+          // Light and Positive Date Section with Subtle Shadow
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+            alignment: Alignment.centerLeft,
+            decoration: BoxDecoration(
+              color: Color.fromARGB(
+                  255, 242, 225, 228), // Light blue with positive energy
+              borderRadius: BorderRadius.circular(12.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 4.0,
+                  offset: Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: ListView.builder(
+                Text(
+                  '当前做的是：',
+                  style: TextStyle(fontSize: 14, color: Colors.black54),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  '$planningDate的饮食计划',
+                  style: TextStyle(fontSize: 16, color: Colors.black87),
+                ),
+              ],
+            ),
+          ),
+          // List of Cards Section
+          Expanded(
+            child: cards.isEmpty
+                ? Center(
+                    child: Text(
+                      '点击底部的 + 按钮开始添加你的饮食计划！',
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                    ),
+                  )
+                : ListView.builder(
                     itemCount: cards.length,
                     itemBuilder: (context, index) {
                       final card = cards[index];
                       return Card(
+                        color: Color(0xffffffff),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12.0),
                         ),
@@ -240,12 +286,12 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
                       );
                     },
                   ),
-                ),
-              ],
-            ),
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: _addCard,
-        backgroundColor: Color(0xffb388ff),
+        backgroundColor: Color.fromARGB(255, 213, 114, 113),
         child: Icon(Icons.add, color: Colors.white),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
