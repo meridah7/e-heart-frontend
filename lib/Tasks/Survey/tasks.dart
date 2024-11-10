@@ -25,7 +25,7 @@ Task monitoringTeachingReflection = Task(
 Task task5 = Task(
   title: "每日饮食计划",
   id: 'S3',
-  type: TaskType.SURVEY,
+  type: TaskType.MEAL_PLANNING,
   isCompleted: false,
   day: 1, // Assuming this is for the second day
   survey: mealPlanningSurvey,
