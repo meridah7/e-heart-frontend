@@ -233,7 +233,6 @@ class _FlippableSurveyPageState extends State<FlippableSurveyPage> {
     return Scaffold(
         appBar: AppBar(
           title: Text(widget.survey.title),
-          backgroundColor: themeColor,
         ),
         body: ListView.builder(
             itemCount: 1,

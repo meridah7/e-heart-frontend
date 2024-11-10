@@ -141,7 +141,6 @@ class _EventLogPageState extends State<EventLogPage>
     return Scaffold(
       appBar: AppBar(
         title: Text('今日饮食', style: TextStyle(color: Colors.black)),
-        backgroundColor: Color.fromRGBO(240, 229, 231, 1),
         elevation: 0,
         actions: [
           IconButton(

@@ -5,15 +5,13 @@ import 'package:charts_flutter/flutter.dart' as charts;
 import 'daily.dart' as daily;
 import 'models.dart';
 
-
-
-
 class DietaryAnalysisPage extends StatefulWidget {
   @override
   _DietaryAnalysisPageState createState() => _DietaryAnalysisPageState();
 }
 
-class _DietaryAnalysisPageState extends State<DietaryAnalysisPage> with SingleTickerProviderStateMixin {
+class _DietaryAnalysisPageState extends State<DietaryAnalysisPage>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
@@ -32,8 +30,7 @@ class _DietaryAnalysisPageState extends State<DietaryAnalysisPage> with SingleTi
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Diet Analysis ', style:TextStyle(color: Colors.black)),
-        backgroundColor: themeColor,
+        title: Text('Diet Analysis ', style: TextStyle(color: Colors.black)),
         bottom: TabBar(
           controller: _tabController,
           labelColor: Colors.white, // 选中的标签字体颜色
@@ -74,8 +71,6 @@ class _MonthlyViewState extends State<MonthlyView> {
       BingeEatingEvent('08:00 AM', '早餐后感到不舒服'),
       BingeEatingEvent('12:30 PM', '午餐后因为作业压力暴食'),
       BingeEatingEvent('07:00 PM', '晚饭后暴食'),
-
-
     ];
 
     // List<EatingEmotionData> eatingEmotions = [
@@ -109,10 +104,9 @@ class _MonthlyViewState extends State<MonthlyView> {
             );
           }).toList(),
         ),
-        Expanded(
-          child: BingeEatingList(bingeEatingEvents)
-           // 需要实现
-        ),
+        Expanded(child: BingeEatingList(bingeEatingEvents)
+            // 需要实现
+            ),
       ],
     );
   }
@@ -154,11 +148,6 @@ class _WeeklyViewState extends State<WeeklyView> {
       EatingEmotionData("周三", {"开心": 1, "伤心": 3, "难过": 1}),
     ];
 
-
-
-
-
-   
     return Column(
       children: <Widget>[
         DropdownButton<String>(
@@ -169,8 +158,8 @@ class _WeeklyViewState extends State<WeeklyView> {
             });
           },
           items: <String>[
-            'Binge Eating', 
-            'Food Clearance', 
+            'Binge Eating',
+            'Food Clearance',
             // ... 更多选项
           ].map<DropdownMenuItem<String>>((String value) {
             return DropdownMenuItem<String>(
@@ -186,7 +175,8 @@ class _WeeklyViewState extends State<WeeklyView> {
     );
   }
 
-  Widget _buildChart(String chartType, List<BingeEatingWeeklyData> bingeData, List<WeeklyData> clearanceData) {
+  Widget _buildChart(String chartType, List<BingeEatingWeeklyData> bingeData,
+      List<WeeklyData> clearanceData) {
     switch (chartType) {
       case 'Binge Eating':
         return WeeklyBingeEatingChart(data: bingeData);
@@ -201,8 +191,6 @@ class _WeeklyViewState extends State<WeeklyView> {
   }
 }
 
-
-
 class BingeEatingEventList extends StatelessWidget {
   final List<BingeEatingEvent> events;
 
@@ -211,15 +199,15 @@ class BingeEatingEventList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: events.map((event) => ListTile(
-        title: Text(event.time), // 暴食的时间
-        subtitle: Text(event.description), // 描述
-      )).toList(),
+      children: events
+          .map((event) => ListTile(
+                title: Text(event.time), // 暴食的时间
+                subtitle: Text(event.description), // 描述
+              ))
+          .toList(),
     );
   }
 }
-
-
 
 class WeeklyBingeEatingChart extends StatelessWidget {
   final List<BingeEatingWeeklyData> data;
@@ -247,7 +235,6 @@ class BingeEatingWeeklyData {
 
   BingeEatingWeeklyData(this.dayOfWeek, this.count);
 }
-
 
 class WeeklyFoodClearanceChart extends StatelessWidget {
   final List<WeeklyData> data;

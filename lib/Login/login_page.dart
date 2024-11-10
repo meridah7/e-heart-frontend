@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:namer_app/Login/user_model.dart';
 import 'package:namer_app/utils/dio_client.dart';
 import 'package:provider/provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -82,17 +83,15 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // title: Text('登录'),
-        backgroundColor: Color.fromRGBO(160, 158, 235, 1),
-      ),
-      backgroundColor: Color.fromRGBO(160, 158, 235, 1),
+          // title: Text('登录'),
+          ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Column(
           children: <Widget>[
             Text(
               '手机号注册/登录',
-              style: TextStyle(color: Colors.white, fontSize: 28.0),
+              style: TextStyle(color: Colors.black, fontSize: 28.0),
             ),
             SizedBox(
               height: 16,
@@ -104,7 +103,7 @@ class _LoginPageState extends State<LoginPage> {
                   padding: EdgeInsets.symmetric(horizontal: 12),
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: Color.fromRGBO(255, 255, 255, 0.29),
+                    // color: Color.fromRGBO(255, 255, 255, 0.29),
                     borderRadius: BorderRadius.circular(32),
                   ),
                   child: Row(

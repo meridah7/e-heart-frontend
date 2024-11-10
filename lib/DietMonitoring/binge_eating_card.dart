@@ -7,7 +7,6 @@ class BingeEatingCard extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('冲动应对卡片', style: TextStyle(color: Colors.black)),
-        backgroundColor: Color.fromARGB(255, 223, 221, 240),
         elevation: 0,
       ),
       body: SwipeableCardsSection(
@@ -65,7 +64,8 @@ class _SwipeableCardsSectionState extends State<SwipeableCardsSection> {
             itemCount: widget.cardTexts.length,
             controller: _pageController,
             itemBuilder: (context, index) {
-              return buildSwipeableCard(widget.cardTexts[index], widget.imageUrls[index]);
+              return buildSwipeableCard(
+                  widget.cardTexts[index], widget.imageUrls[index]);
             },
           ),
         ),
@@ -85,39 +85,38 @@ class _SwipeableCardsSectionState extends State<SwipeableCardsSection> {
   }
 
   Widget buildSwipeableCard(String text, String imageUrl) {
-  return Card(
-    margin: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-    child: Column(
-      children: <Widget>[
-        Expanded(
-          flex: 3, // 图片占据3份空间
-          child: ClipRRect(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-            child: Image.asset(
-              imageUrl, // 这里的imageUrl应该是资源路径
-              fit: BoxFit.cover,
+    return Card(
+      margin: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Column(
+        children: <Widget>[
+          Expanded(
+            flex: 3, // 图片占据3份空间
+            child: ClipRRect(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+              child: Image.asset(
+                imageUrl, // 这里的imageUrl应该是资源路径
+                fit: BoxFit.cover,
+                width: double.infinity,
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 1, // 文字占据1份空间
+            child: Container(
               width: double.infinity,
+              padding: EdgeInsets.all(16),
+              child: Text(
+                text,
+                style: TextStyle(fontSize: 16),
+                textAlign: TextAlign.center,
+              ),
             ),
           ),
-        ),
-        Expanded(
-          flex: 1, // 文字占据1份空间
-          child: Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(16),
-            child: Text(
-              text,
-              style: TextStyle(fontSize: 16),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ),
-      ],
-    ),
-  );
-}
-
+        ],
+      ),
+    );
+  }
 
   Widget buildDot(int index, BuildContext context) {
     return Container(

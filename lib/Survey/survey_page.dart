@@ -151,7 +151,6 @@ class _SurveyPageState extends State<SurveyPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.survey.title),
-        backgroundColor: themeColor,
       ),
       body: SingleChildScrollView(
         child: Padding(
