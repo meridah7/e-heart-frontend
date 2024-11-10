@@ -150,9 +150,7 @@ class _FlippableSurveyPageState extends State<FlippableSurveyPage> {
   Future<void> handleSubmitImpulseStrategies() async {
     var answerOrders = extractAnswer(widget.survey, 2);
     List<String> orders = answerOrders['q5'];
-    print('orders $orders');
     var answerStrategies = extractAnswer(widget.survey, 1, showText: true);
-    print('strategies $answerStrategies');
     var methods = {};
     answerStrategies.forEach((key, value) {
       if (key.contains('具体执行方法')) {
@@ -162,17 +160,23 @@ class _FlippableSurveyPageState extends State<FlippableSurveyPage> {
     });
     print('method $methods');
     List<Map<String, String>> strategies = [];
-    orders.forEach((element) {
+    for (var element in orders) {
       strategies.add({
         'custom_activity': element,
         'details': methods[element] ?? '',
       });
-    });
+    }
     try {
       Response response =
           await dioClient.postRequest('/impulse/develop-coping-strategies/', {
         'strategies': strategies,
       });
+      if (response.statusCode == 200) {
+        if (mounted) {
+          Navigator.pushNamedAndRemoveUntil(
+              context, '/home', (Route<dynamic> route) => false);
+        }
+      }
     } catch (e) {
       throw Exception(e);
     }
@@ -195,6 +199,7 @@ class _FlippableSurveyPageState extends State<FlippableSurveyPage> {
         for (String line in summary) {
           print(line);
         }
+        // 冲动策略应对制定
         if (widget.taskId == 'D1') {
           handleSubmitImpulseStrategies();
         }

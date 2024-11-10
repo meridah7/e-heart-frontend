@@ -371,8 +371,6 @@ var bingeEatingReflectionSurvey = Survey(
     ],
     navigateToSummary: true);
 
-// TODO 冲动应对策略制定 还需要check
-// TODO 这个问卷需要存储第一步的状态
 var reflectiveActivitySurvey = Survey(
   title: '冲动应对策略制定',
   questions: [
