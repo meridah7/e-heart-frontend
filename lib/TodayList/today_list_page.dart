@@ -1,8 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:namer_app/DailyDiet/diet_models.dart';
-import 'package:namer_app/DietMonitoring/binge_eating_options.dart';
 import '../Tasks/daily_tasks.dart';
 import 'task_models.dart';
 import '../Chatbot/diet_contents.dart';
@@ -141,12 +139,9 @@ class _TodayListPageState extends State<TodayListPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Day $_currentDay', style: TextStyle(color: Colors.black)),
-        // backgroundColor: Color.fromARGB(255, 223, 221, 240),
-        backgroundColor: Color.fromRGBO(240, 229, 231, 1),
         elevation: 0,
       ),
       body: Container(
-        decoration: BoxDecoration(color: Color.fromRGBO(240, 229, 231, 1)),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(

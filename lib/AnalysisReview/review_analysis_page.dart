@@ -22,7 +22,7 @@ class _ReviewAnalysisPageState extends State<ReviewAnalysisPage> {
         title: Text('分析反思',
             style:
                 TextStyle(color: Colors.black)), // Text color changed to black
-        backgroundColor: themeColor, // AppBar color changed as specified
+        // backgroundColor: themeColor, // AppBar color changed as specified
       ),
       body: SingleChildScrollView(
         child: Column(

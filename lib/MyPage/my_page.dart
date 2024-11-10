@@ -12,7 +12,7 @@ class MyPage extends StatelessWidget {
         title: Text('我的页面',
             style:
                 TextStyle(color: Colors.black)), // Text color changed to black
-        backgroundColor: themeColor,
+        // backgroundColor: themeColor,
       ),
       body: Consumer<UserProvider>(builder: (context, user, child) {
         return Padding(

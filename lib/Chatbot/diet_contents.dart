@@ -8,6 +8,10 @@ import '../Survey/survey_models.dart';
 
 List<Diet> DietDay0 = [
   diet1,
+  diet1,
+  diet2,
+  diet1,
+  diet1,
 ];
 
 Diet diet1 = Diet(
@@ -17,6 +21,25 @@ Diet diet1 = Diet(
     day: 0,
     createTime: 1717497403030,
     mealContent: mealContent1,
+    planedDiet: null,
+    status: DietStatus.checked);
+Diet diet2 = Diet(
+    food: "韭菜猪肉水饺",
+    id: '早餐',
+    type: "早餐",
+    day: 0,
+    createTime: 1717497403030,
+    mealContent: mealContent1,
+    guzzleLevel: 8,
+    planedDiet: Diet(
+        food: "葱油拌面",
+        id: '早餐',
+        type: "早餐",
+        day: 0,
+        createTime: 1717497403030,
+        mealContent: mealContent1,
+        planedDiet: null,
+        status: DietStatus.pending),
     status: DietStatus.checked);
 
 // Day 0

@@ -19,7 +19,7 @@ class Diet {
   final int createTime;
   final List<Content>? mealContent;
   final Survey? survey;
-  List<Diet>? dietLog;
+  Diet? planedDiet;
   DietStatus status = DietStatus.pending;
   int? guzzleLevel;
   int? dietTime;
@@ -31,9 +31,22 @@ class Diet {
     required this.day,
     required this.createTime,
     required this.status,
-    this.dietLog,
+    this.planedDiet,
     this.mealContent,
     this.survey,
     this.guzzleLevel,
   });
+
+  String getStatusText() {
+    switch (status) {
+      case DietStatus.checked:
+        return '已完成';
+      case DietStatus.pending:
+        return '';
+      case DietStatus.modified:
+        return '已变更';
+      default:
+        return '';
+    }
+  }
 }
