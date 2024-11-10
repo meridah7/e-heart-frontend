@@ -76,10 +76,11 @@ List<Task> ChatbotTest = [
 
 // NOTE: only for survey test
 List<Task> SurveyTest = [
+  task5,
+  monitoringTeachingReflection,
   vomitRecord,
   // impulseRetrospect,
   dietaryIntake,
-  task5,
   task6,
   reflectiveActivity,
   impulseWave,

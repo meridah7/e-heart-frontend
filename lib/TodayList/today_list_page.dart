@@ -9,6 +9,7 @@ import '../Chatbot/diet_contents.dart';
 import '../Chatbot/chatbot_page.dart';
 import '../Survey/survey_page.dart';
 import '../Survey/flippable_survey_page.dart';
+import '../Survey/meal_planning_page.dart';
 import '../DietMonitoring/binge_eating_record_page.dart';
 import '../DietMonitoring/diet_monitoring_page.dart';
 import 'package:intl/intl.dart';
@@ -319,6 +320,13 @@ class _TodayListPageState extends State<TodayListPage> {
                               taskId: task.id,
                               isLastTask: DailyTask[_currentDay!].length ==
                                   _finishedTaskIds!.length + 1)));
+                  break;
+                case TaskType.MEAL_PLANNING:
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              MealPlanningPage(taskId: task.id)));
                   break;
                 default:
                   // do nothing

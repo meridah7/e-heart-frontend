@@ -11,6 +11,8 @@ enum TaskType {
   SURVEY,
   // 可翻页的问卷
   SURVEY_FLIPPABLE,
+  // 每日饮食计划页面
+  MEAL_PLANNING
 }
 
 class Task {
