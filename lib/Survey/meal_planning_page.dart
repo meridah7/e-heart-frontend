@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:namer_app/utils/dio_client.dart';
+import 'package:dio/dio.dart';
 
 class MealPlanningPage extends StatefulWidget {
   final String taskId;
@@ -12,18 +14,20 @@ class MealPlanningPage extends StatefulWidget {
 }
 
 class _MealPlanningPageState extends State<MealPlanningPage> {
+  final DioClient dioClient = DioClient();
+
   List<Map<String, String>> cards = []; // List to store card data
 
   String? mealName;
   String? food;
   TextEditingController _timeController = TextEditingController();
 
-  String getMealPlanningDate() {
+  String getMealPlanningDate(String formatType) {
     DateTime now = DateTime.now();
     if (now.hour >= 12) {
-      return DateFormat('yyyy年MM月dd日').format(now.add(Duration(days: 1)));
+      return DateFormat(formatType).format(now.add(Duration(days: 1)));
     } else {
-      return DateFormat('yyyy年MM月dd日').format(now);
+      return DateFormat(formatType).format(now);
     }
   }
 
@@ -72,7 +76,16 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
                     );
                     if (pickedTime != null) {
                       setState(() {
-                        final formattedTime = pickedTime.format(context);
+                        final DateTime now = DateTime.now();
+                        final DateTime dateTime = DateTime(
+                          now.year,
+                          now.month,
+                          now.day,
+                          pickedTime.hour,
+                          pickedTime.minute,
+                        );
+                        final String formattedTime =
+                            DateFormat('HH:mm').format(dateTime);
                         _timeController.text =
                             formattedTime; // Update the controller
                       });
@@ -93,7 +106,7 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
                 Align(
                   alignment: Alignment.centerRight,
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       if (mealName != null &&
                           _timeController.text.isNotEmpty &&
                           food != null) {
@@ -105,6 +118,23 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
                           });
                         });
                         // TODO: send this info to backend
+
+                        String planningDate = getMealPlanningDate('yyyy-MM-dd');
+
+                        try {
+                          await dioClient.postRequest('/meal_plans', {
+                            // "user_id": 1,
+                            "type": mealName,
+                            "food_details": food,
+                            "time": "${_timeController.text}:00",
+                            "date":
+                                DateFormat('yyyy-MM-dd').format(DateTime.now()),
+                            "target_date": planningDate
+                          });
+                        } catch (e) {
+                          print('request meal_plans err: $e');
+                        }
+
                         mealName = null;
                         food = null;
                         _timeController.clear();
@@ -176,7 +206,7 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
 
   @override
   Widget build(BuildContext context) {
-    String planningDate = getMealPlanningDate();
+    String planningDate = getMealPlanningDate('yyyy年MM月dd日');
 
     return Scaffold(
       backgroundColor: Color(0xfffaeef0), // Custom background color
