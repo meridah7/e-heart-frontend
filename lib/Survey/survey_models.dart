@@ -172,11 +172,14 @@ extension SurveyExtension on Survey {
         continue;
       }
       if (question is SingleChoiceQuestion && question.selectedOption == null) {
+        print('SingleChoice ${question.questionText}');
         return false;
       } else if (question is MultipleChoiceQuestion &&
           question.selectedOptions.isEmpty) {
+        print('MultipleChoiceQuestion ${question.questionText}');
         return false;
       } else if (question is TextQuestion && question.answers.isEmpty) {
+        print('TextQuestion ${question.questionText}');
         return false;
       }
     }
