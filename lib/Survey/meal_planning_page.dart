@@ -14,6 +14,22 @@ class MealPlanningPage extends StatefulWidget {
 }
 
 class _MealPlanningPageState extends State<MealPlanningPage> {
+  @override
+  void initState() {
+    super.initState();
+    _initWidget();
+  }
+
+  Future<void> _initWidget() async {
+    try {
+      // Response<dynamic> currentPlans =
+      //     await dioClient.getRequest('/meal_plans/get-all');
+      // TODO: add currentPlans to cards
+    } catch (e) {
+      print('get all meal_plans err: $e');
+    }
+  }
+
   final DioClient dioClient = DioClient();
 
   List<Map<String, String>> cards = []; // List to store card data
@@ -117,13 +133,12 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
                             'food': food!,
                           });
                         });
-                        // TODO: send this info to backend
 
                         String planningDate = getMealPlanningDate('yyyy-MM-dd');
 
                         try {
+                          // TODO: check interface response
                           await dioClient.postRequest('/meal_plans', {
-                            // "user_id": 1,
                             "type": mealName,
                             "food_details": food,
                             "time": "${_timeController.text}:00",
@@ -160,7 +175,13 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
   }
 
   void _removeCard(int index) {
-    setState(() {
+    setState(() async {
+      // TODO: ask background for remove here
+      // try {
+      //   await dioClient.deleteRequest('/meal_plans/$PLAN_ID');
+      // } catch (e) {
+      //   print('delete meal_plans err: $e');
+      // }
       cards.removeAt(index);
     });
   }
