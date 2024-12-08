@@ -20,23 +20,31 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
     _initWidget();
   }
 
+  final DioClient dioClient = DioClient();
+
+  List<Map> cards = []; // List to store card data
+
   Future<void> _initWidget() async {
+    getAllMealPlans();
+  }
+
+  getAllMealPlans() async {
     try {
-      // Response<dynamic> currentPlans =
-      //     await dioClient.getRequest('/meal_plans/get-all');
-      // TODO: add currentPlans to cards
+      Response response = await dioClient.getRequest('/meal_plans/get-all');
+      if (response.statusCode == 200) {
+        List<dynamic> data = response.data;
+        setState(() {
+          cards = [...data];
+        });
+      }
     } catch (e) {
       print('get all meal_plans err: $e');
     }
   }
 
-  final DioClient dioClient = DioClient();
-
-  List<Map<String, String>> cards = []; // List to store card data
-
   String? mealName;
   String? food;
-  TextEditingController _timeController = TextEditingController();
+  TextEditingController timeController = TextEditingController();
 
   String getMealPlanningDate(String formatType) {
     DateTime now = DateTime.now();
@@ -47,8 +55,8 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
     }
   }
 
-  void _addCard() {
-    _timeController.clear(); // Clear the controller before showing the dialog
+  void addCard() {
+    timeController.clear(); // Clear the controller before showing the dialog
     showDialog(
       context: context,
       builder: (context) {
@@ -78,7 +86,7 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
                 ),
                 SizedBox(height: 16),
                 TextFormField(
-                  controller: _timeController,
+                  controller: timeController,
                   decoration: InputDecoration(
                     labelText: '计划吃的时间',
                     hintText: '填写时间',
@@ -102,7 +110,7 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
                         );
                         final String formattedTime =
                             DateFormat('HH:mm').format(dateTime);
-                        _timeController.text =
+                        timeController.text =
                             formattedTime; // Update the controller
                       });
                     }
@@ -124,35 +132,28 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
                   child: ElevatedButton(
                     onPressed: () async {
                       if (mealName != null &&
-                          _timeController.text.isNotEmpty &&
+                          timeController.text.isNotEmpty &&
                           food != null) {
-                        setState(() {
-                          cards.add({
-                            'mealName': mealName!,
-                            'mealTime': _timeController.text,
-                            'food': food!,
-                          });
-                        });
-
                         String planningDate = getMealPlanningDate('yyyy-MM-dd');
 
                         try {
-                          // TODO: check interface response
-                          await dioClient.postRequest('/meal_plans', {
+                          await dioClient.postRequest('/meal_plans/create', {
                             "type": mealName,
                             "food_details": food,
-                            "time": "${_timeController.text}:00",
-                            "date":
-                                DateFormat('yyyy-MM-dd').format(DateTime.now()),
-                            "target_date": planningDate
+                            "time": "${timeController.text}:00",
+                            "date": DateTime.now().millisecondsSinceEpoch,
+                            "target_date": DateTime.now()
+                                .add(Duration(days: 1))
+                                .millisecondsSinceEpoch
                           });
+                          await getAllMealPlans();
                         } catch (e) {
                           print('request meal_plans err: $e');
                         }
 
                         mealName = null;
                         food = null;
-                        _timeController.clear();
+                        timeController.clear();
                         Navigator.of(context).pop();
                       } else {
                         // Show a snack bar if some fields are missing
@@ -174,19 +175,16 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
     );
   }
 
-  void _removeCard(int index) {
-    setState(() async {
-      // TODO: ask background for remove here
-      // try {
-      //   await dioClient.deleteRequest('/meal_plans/$PLAN_ID');
-      // } catch (e) {
-      //   print('delete meal_plans err: $e');
-      // }
-      cards.removeAt(index);
-    });
+  void removeCard(int id) async {
+    try {
+      await dioClient.deleteRequest('/meal_plans/$id');
+      await getAllMealPlans();
+    } catch (e) {
+      print('delete meal_plans err: $e');
+    }
   }
 
-  void _showHelpDialog() {
+  void showHelpDialog() {
     showDialog(
       context: context,
       builder: (context) {
@@ -241,7 +239,7 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
         actions: [
           IconButton(
             icon: Icon(Icons.help_outline),
-            onPressed: _showHelpDialog,
+            onPressed: showHelpDialog,
           ),
         ],
       ),
@@ -310,25 +308,25 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    card['mealName'] ?? '餐次',
+                                    card['type'] ?? '餐次',
                                     style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold),
                                   ),
                                   IconButton(
                                     icon: Icon(Icons.delete, color: Colors.red),
-                                    onPressed: () => _removeCard(index),
+                                    onPressed: () => removeCard(card['id']),
                                   ),
                                 ],
                               ),
                               SizedBox(height: 8),
                               Text(
-                                '计划吃的时间： ${card['mealTime'] ?? ''}',
+                                '计划吃的时间： ${card['time'] ?? ''}',
                                 style: TextStyle(fontSize: 14),
                               ),
                               SizedBox(height: 4),
                               Text(
-                                '食物： ${card['food'] ?? ''}',
+                                '食物： ${card['food_details'] ?? ''}',
                                 style: TextStyle(fontSize: 14),
                               ),
                             ],
@@ -341,7 +339,7 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _addCard,
+        onPressed: addCard,
         backgroundColor: Color.fromARGB(255, 213, 114, 113),
         child: Icon(Icons.add, color: Colors.white),
       ),
