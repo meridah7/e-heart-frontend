@@ -27,7 +27,7 @@ class _ProfilePageState extends State<ProfilePage> {
         color: Color.fromARGB(255, 255, 255, 255),
         child: Column(
           children: [
-            Container(
+            SizedBox(
               height: 180,
               child: CupertinoDatePicker(
                 mode: CupertinoDatePickerMode.date,
@@ -62,7 +62,7 @@ class _ProfilePageState extends State<ProfilePage> {
         color: Color.fromARGB(255, 255, 255, 255),
         child: Column(
           children: [
-            Container(
+            SizedBox(
               height: 180,
               child: CupertinoPicker(
                 itemExtent: 32.0,
@@ -100,7 +100,7 @@ class _ProfilePageState extends State<ProfilePage> {
         color: Color.fromARGB(255, 255, 255, 255),
         child: Column(
           children: [
-            Container(
+            SizedBox(
               height: 180,
               child: CupertinoPicker(
                 itemExtent: 32.0,
@@ -131,7 +131,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   // 更新文本内容
   void _editTextField(String fieldName, dynamic currentValue) {
-    TextEditingController _controller =
+    TextEditingController controller =
         TextEditingController(text: currentValue.toString());
 
     print('Editing $fieldName');
@@ -142,7 +142,7 @@ class _ProfilePageState extends State<ProfilePage> {
         return AlertDialog(
           title: Text('Edit $fieldName'),
           content: TextField(
-            controller: _controller,
+            controller: controller,
             decoration: InputDecoration(
               labelText: 'Enter new $fieldName',
             ),
@@ -157,7 +157,7 @@ class _ProfilePageState extends State<ProfilePage> {
             TextButton(
               onPressed: () {
                 // Update user information with the new value
-                _updateUser(fieldName, _controller.text);
+                _updateUser(fieldName, controller.text);
                 Navigator.pop(context); // Close dialog after saving
               },
               child: Text('Save'),

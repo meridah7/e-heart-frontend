@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:namer_app/Login/user_model.dart';
-import 'package:namer_app/global_setting.dart';
 import 'survey_models.dart';
 import 'SurveySummaryPage.dart';
 import 'survey_question_factory.dart';
@@ -35,7 +34,8 @@ class _SurveyPageState extends State<SurveyPage> {
   Future<void> _initWidget() async {
     await _initializePreferences();
     Map answers = _userPref.getData('completedTaskAnswers');
-    if (answers.containsKey(widget.taskId)) {
+    if (SummaryTaskIds.contains(widget.taskId) &&
+        answers.containsKey(widget.taskId)) {
       List<String> summary = answers[widget.taskId]!.cast<String>();
       // 导航到问卷摘要页面
       if (mounted) {

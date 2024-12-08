@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:intl/intl.dart';
 import 'login_page.dart';
 
 class RegisterInfoPage extends StatelessWidget {
@@ -31,7 +30,7 @@ class _StepInputScreenState extends State<StepInputScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    DateTime _birthDate = DateTime.now();
+    DateTime birthDate = DateTime.now();
   }
 
   void _enter() async {
@@ -87,7 +86,7 @@ class _StepInputScreenState extends State<StepInputScreen> {
                   ),
                 ),
                 Text(
-                  '${_birthDate}',
+                  '$_birthDate',
                   style: TextStyle(fontSize: 18),
                   textAlign: TextAlign.center,
                 ),
@@ -154,7 +153,7 @@ class _StepInputScreenState extends State<StepInputScreen> {
           ),
           Text('选择出生日期', style: TextStyle(fontSize: 24)),
           SizedBox(height: 20),
-          Container(
+          SizedBox(
             height: 200, // Set a fixed height for the date picker
             child: CupertinoDatePicker(
               mode: CupertinoDatePickerMode.date,
@@ -267,8 +266,8 @@ class _StepInputScreenState extends State<StepInputScreen> {
               );
             }
           },
-          child: Text('确定'),
           style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+          child: Text('确定'),
         ),
       ],
     );

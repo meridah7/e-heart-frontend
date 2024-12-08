@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:namer_app/global_setting.dart';
 import 'package:provider/provider.dart';
 import '../Login/user_model.dart';
 import './profile_page.dart';

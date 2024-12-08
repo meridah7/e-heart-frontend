@@ -82,7 +82,7 @@ class Preferences {
     } else if (value is List || value is Map) {
       fullKey = 'JSON_${namespace}_$key';
       await _prefs!.setString(fullKey, jsonEncode(value));
-    } else if (value == null || value is Null) {
+    } else if (value == null || value == null) {
       return;
     } else {
       throw ArgumentError('Unsupported value type');

@@ -16,9 +16,7 @@ import 'package:namer_app/utils/dio_client.dart';
 import 'package:provider/provider.dart';
 import 'package:namer_app/Login/user_model.dart';
 import 'package:namer_app/utils/helper.dart';
-import 'package:namer_app/TodayList/task_models.dart';
 import 'package:namer_app/Survey/survey_models.dart';
-import 'package:intl/intl.dart';
 
 class TodayListPage extends StatefulWidget {
   @override

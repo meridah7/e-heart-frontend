@@ -5,6 +5,42 @@ import 'package:namer_app/Survey/survey_models.dart';
 import 'package:namer_app/utils/dio_client.dart';
 import 'package:namer_app/utils/helper.dart';
 
+// 需要展示总结页面的任务id
+List<String> SummaryTaskIds = ['S3', 'S2', 'S4', 'S5', 'D1'];
+
+// 维护餐食类型枚举
+enum MealType {
+  breakfast('早餐', 'Breakfast'),
+  morningSnack('上午点心', 'Morning Snack'),
+  lunch('午餐', 'Lunch'),
+  afternoonSnack('下午点心', 'Afternoon Snack'),
+  dinner('晚餐', 'Dinner'),
+  nightSnack('夜宵', 'Night Snacks'),
+  other('其他', 'Other'),
+  beverages('饮料', 'Beverages');
+
+  final String chinese;
+  final String english;
+  const MealType(this.chinese, this.english);
+
+  static MealType? fromChinese(String chinese) {
+    return MealType.values.firstWhere(
+      (type) => type.chinese == chinese,
+      orElse: () => MealType.other,
+    );
+  }
+
+  static MealType? fromEnglish(String english) {
+    return MealType.values.firstWhere(
+      (type) => type.english == english,
+      orElse: () => MealType.other,
+    );
+  }
+
+  String get name => english;
+  String get displayName => chinese;
+}
+
 Future<Response?> handleSubmitData(String taskId, Map<String, dynamic> answers,
     {List<String>? summary}) async {
   final DioClient dioClient = DioClient();
@@ -17,7 +53,7 @@ Future<Response?> handleSubmitData(String taskId, Map<String, dynamic> answers,
 
       return await dioClient.postRequest('/food_purge_logs', data);
     case 'dietaryIntake':
-      // 食物清除记录
+      // 饮食记录
       Map<String, dynamic> data =
           getUserUploadData(taskId, summary ?? []) ?? {};
 
@@ -184,10 +220,16 @@ Map<String, dynamic>? getUserUploadData(
           ? summary[foodDetailsIdx + 1].replaceFirst("Answer: ", "").trim()
           : null;
 
-      // TODO: wait for BE support
-      //     int mealsTypeIdx = summary.indexOf('属于哪一餐');
-      // String? mealsType =
-      //     mealsTypeIdx >= 0 ? summary[mealsType + 1].replaceFirst("Answer: ", "").trim() : null;
+      int mealsTypeIdx = summary.indexOf('属于哪一餐');
+      String? selectedMealType = mealsTypeIdx >= 0
+          ? summary[mealsTypeIdx + 1].replaceFirst("Answer: ", "").trim()
+          : null;
+      String mealType = selectedMealType != null
+          ? MealType.fromChinese(selectedMealType)!.name
+          : '';
+
+      print(
+          'mealtype: $mealType , selectedMealType: $selectedMealType, mealsTypeIdx: $mealsTypeIdx');
 
       int emotionIntensityIdx = summary.indexOf('进食的时候感受到的情绪强度');
       int? emotionIntensity = emotionIntensityIdx >= 0
@@ -267,8 +309,9 @@ Map<String, dynamic>? getUserUploadData(
         "specific_location": specificLocation,
         "dieting": dieting,
         "binge_eating": bingeEating,
-        "trigger": "",
-        "additional_info": additionalInfo
+        "trigger": "诱因",
+        "additional_info": additionalInfo,
+        "meal_type": mealType,
       };
 
     default:
@@ -390,7 +433,7 @@ List<Map<String, dynamic>> processIntensityWeekData(
 
   return dayOfWeekCounts.entries.map((entry) {
     return {
-      'label': '${entry.key}',
+      'label': entry.key,
       'value': (dayOfWeekValue[entry.key]! / entry.value).round(),
       'color': Colors.red, // 可自定义颜色
     };

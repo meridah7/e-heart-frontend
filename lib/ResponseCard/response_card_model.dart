@@ -1,4 +1,3 @@
-import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:namer_app/utils/dio_client.dart';
 import 'package:dio/dio.dart';

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:namer_app/DietaryAnalysis/daily.dart';
-import 'package:namer_app/global_setting.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
-import 'daily.dart' as daily;
 import 'models.dart';
 
 class DietaryAnalysisPage extends StatefulWidget {

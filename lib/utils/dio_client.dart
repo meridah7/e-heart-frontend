@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -35,6 +34,11 @@ class DioClient {
           baseUrl: baseUrl, // 设置基本URL
           connectTimeout: Duration(seconds: 5), // 连接超时
           receiveTimeout: Duration(seconds: 5), // 接收超时
+          sendTimeout: Duration(seconds: 15), // Added send timeout
+          validateStatus: (status) {
+            return status != null &&
+                status < 500; // Accept all status codes less than 500
+          },
         )) {
     // 拦截器
     _dio.interceptors.add(InterceptorsWrapper(
