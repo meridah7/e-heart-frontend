@@ -148,10 +148,10 @@ class _TodayListPageState extends State<TodayListPage> {
               _buildSegmentedControl(),
               Expanded(
                 child: _currentDay != null
-                    ? (showTasks
-                        // ? _buildTaskListView(DailyTask[_currentDay!])
-                        ? _buildTaskListView(_dailyTaskList)
-                        : _buildDietListView(DietDay0))
+                    ?
+                    // ? _buildTaskListView(DailyTask[_currentDay!])
+                    _buildTaskListView(_dailyTaskList)
+                    // : _buildDietListView(DietDay0))
                     : SizedBox.shrink(),
               ),
             ],
@@ -328,49 +328,49 @@ class _TodayListPageState extends State<TodayListPage> {
     );
   }
 
-  Widget _buildDietListView(List<Diet> diets) {
-    return ListView.builder(
-      padding: EdgeInsets.only(bottom: 64),
-      itemCount: diets.length,
-      itemBuilder: (context, index) {
-        final diet = diets[index];
-        return Container(
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.7), // 半透明背景
-              borderRadius: BorderRadius.circular(10), // 可选的圆角
-            ),
-            margin:
-                EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0), // 添加一些边距
-            child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(diet.food, style: TextStyle(fontSize: 16.0)),
-                          Text(diet.type),
-                        ],
-                      ),
-                      Text(DateFormat('kk:mm').format(
-                          DateTime.fromMillisecondsSinceEpoch(
-                              diet.createTime))),
-                    ])));
-        // ListTile(
-        //   title: Text(diet.food),
-        //   subtitle: Text(diet.type),
-        //   onTap: () {
-        //     Navigator.push(
-        //         context,
-        //         MaterialPageRoute(
-        //             builder: (context) =>
-        //                 ChatbotPage(contents: diet.mealContent!)));
-        //   },
-      },
-    );
-  }
+  // Widget _buildDietListView(List<Diet> diets) {
+  //   return ListView.builder(
+  //     padding: EdgeInsets.only(bottom: 64),
+  //     itemCount: diets.length,
+  //     itemBuilder: (context, index) {
+  //       final diet = diets[index];
+  //       return Container(
+  //           decoration: BoxDecoration(
+  //             color: Colors.white.withOpacity(0.7), // 半透明背景
+  //             borderRadius: BorderRadius.circular(10), // 可选的圆角
+  //           ),
+  //           margin:
+  //               EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0), // 添加一些边距
+  //           child: Padding(
+  //               padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+  //               child: Row(
+  //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                   children: [
+  //                     Column(
+  //                       crossAxisAlignment: CrossAxisAlignment.start,
+  //                       mainAxisAlignment: MainAxisAlignment.center,
+  //                       children: [
+  //                         Text(diet.food, style: TextStyle(fontSize: 16.0)),
+  //                         Text(diet.type),
+  //                       ],
+  //                     ),
+  //                     Text(DateFormat('kk:mm').format(
+  //                         DateTime.fromMillisecondsSinceEpoch(
+  //                             diet.createTime))),
+  //                   ])));
+  //       // ListTile(
+  //       //   title: Text(diet.food),
+  //       //   subtitle: Text(diet.type),
+  //       //   onTap: () {
+  //       //     Navigator.push(
+  //       //         context,
+  //       //         MaterialPageRoute(
+  //       //             builder: (context) =>
+  //       //                 ChatbotPage(contents: diet.mealContent!)));
+  //       //   },
+  //     },
+  //   );
+  // }
 
   void _toggleView(bool showTaskView) async {
     final userProvider = Provider.of<UserProvider>(context, listen: false);

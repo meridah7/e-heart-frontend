@@ -24,97 +24,26 @@ class _EventLogPageState extends State<EventLogPage>
 
   Future<void> _loadDiet() async {
     try {
-      print('loadDiet');
-      // final now = DateTime.now();
-      // int startTime =
-      //     DateTime(now.year, now.month, now.day).millisecondsSinceEpoch;
-      // int endTime = DateTime.now().millisecondsSinceEpoch;
-      // FIXME:
-      int startTime = 1732032000000;
-      int endTime = 1732118400000;
+      final now = DateTime.now();
+      int startTime =
+          DateTime(now.year, now.month, now.day).millisecondsSinceEpoch;
+      int endTime = DateTime.now().millisecondsSinceEpoch;
       Response response = await dioClient
           .getRequest('/diet_logs/todayDiet/$startTime/$endTime');
-      var mockJson = {
-        "mealPlans": [
-          {
-            "id": 1,
-            "user_id": 1,
-            "type": "早餐",
-            "food_details": "燕麦片 1碗，牛奶 200ml，香蕉 1个",
-            "time": "08:00",
-            "date": 1732032000000,
-            "target_date": 1732118400000,
-            "state": true,
-            "createdAt": "2024-12-07T14:00:52Z",
-            "updatedAt": "2024-12-07T14:00:52Z"
-          },
-          {
-            "id": 2,
-            "user_id": 1,
-            "type": "午餐",
-            "food_details": "糙米饭 1碗，清炒西兰花 1份，煎鸡胸肉 150g",
-            "time": "12:30",
-            "date": 1732032000000,
-            "target_date": 1732118400000,
-            "state": true,
-            "createdAt": "2024-12-07T14:00:52Z",
-            "updatedAt": "2024-12-07T14:00:52Z"
-          },
-          {
-            "id": 3,
-            "user_id": 1,
-            "type": "晚餐",
-            "food_details": "全麦面包 2片，沙拉 1份，水煮蛋 2个",
-            "time": "18:00",
-            "date": 1732032000000,
-            "target_date": 1732118400000,
-            "state": false,
-            "createdAt": "2024-12-07T14:00:52Z",
-            "updatedAt": "2024-12-07T14:00:52Z"
-          }
-        ],
-        "dietLogs": [
-          {
-            "food": "燕麦片 1碗，牛奶 200ml，香蕉 1个",
-            "id": "breakfast",
-            "type": "早餐",
-            "day": 0,
-            "createTime": 1732043700000,
-            "status": "checked",
-            "guzzleLevel": 3
-          },
-          {
-            "food": "糙米饭 1碗，清炒西兰花 1份，煎鸡胸肉 150g",
-            "id": "lunch",
-            "type": "午餐",
-            "day": 0,
-            "createTime": 1732060800000,
-            "status": "checked",
-            "guzzleLevel": 2
-          },
-          {
-            "food": "全麦面包 2片，沙拉 1份，水煮蛋 2个",
-            "id": "dinner",
-            "type": "晚餐",
-            "day": 0,
-            "createTime": 1732078800000,
-            "status": "checked",
-            "guzzleLevel": 1
-          }
-        ]
-      };
       if (response.statusCode == 200) {
         setState(() {
-          mealPlans = (mockJson['mealPlans'] as List)
+          mealPlans = (response.data['mealPlans'] as List)
               .map((item) => MealPlan.fromJson(item))
               .toList();
-          // dietLogs = (mockJson['dietLogs'] as List)
-          //     .map((item) => MealPlan.fromJson(item))
-          //     .toList();
+          dietLogs = (response.data['dietLogs'] as List)
+              .map((item) => Diet.fromJson(item))
+              .toList();
+          print(dietLogs);
         });
       }
     } catch (e) {
-      print(e);
+      print('Error in load diet');
+      throw Exception(e);
     }
   }
 
@@ -322,7 +251,7 @@ class _EventLogPageState extends State<EventLogPage>
                   ),
                 ),
                 // 当日饮食列表
-                _buildDietListView(DietDay0, isPlan: false),
+                _buildDietListView(dietLogs),
               ],
             ),
           ),
@@ -381,8 +310,7 @@ class _EventLogPageState extends State<EventLogPage>
     return Color.fromRGBO(r, g, b, 1);
   }
 
-  Widget _buildDietListView(List<Diet> diets,
-      {bool shrinkWrap = true, bool isPlan = false}) {
+  Widget _buildDietListView(List<Diet> diets, {bool shrinkWrap = true}) {
     return ListView.builder(
         shrinkWrap: shrinkWrap, // 根据内容自适应高度
         physics: NeverScrollableScrollPhysics(), // 禁用列表自身的滚动
@@ -390,7 +318,7 @@ class _EventLogPageState extends State<EventLogPage>
         itemCount: diets.length,
         itemBuilder: (context, index) {
           final diet = diets[index];
-          return _buildDietTail(diet, isPlan: isPlan);
+          return _buildDietTail(diet);
         });
   }
 
@@ -418,21 +346,21 @@ class _EventLogPageState extends State<EventLogPage>
             color: Colors.transparent, // 圆圈背景色
             shape: BoxShape.circle,
             border: Border.all(
-                color: getColorFromInt(diet.guzzleLevel ?? 1),
+                color: getColorFromInt(diet.emotionIntensity),
                 width: 1), // 圆圈边框
           ),
           alignment: Alignment.center,
           child: Text(
             '暴',
             style: TextStyle(
-                color: getColorFromInt(diet.guzzleLevel ?? 1), fontSize: 16),
+                color: getColorFromInt(diet.emotionIntensity), fontSize: 16),
           ),
         ),
         Text(
-          ':${(diet.guzzleLevel ?? 1).toString()}',
+          ':${(diet.emotionIntensity).toString()}',
           style: GoogleFonts.aBeeZee(
               fontStyle: FontStyle.italic,
-              color: getColorFromInt(diet.guzzleLevel ?? 1)),
+              color: getColorFromInt(diet.emotionIntensity)),
         )
       ],
     );
@@ -566,7 +494,9 @@ class _EventLogPageState extends State<EventLogPage>
     );
   }
 
-  Widget _buildDietTail(Diet diet, {bool isPlan = false}) {
+  Widget _buildDietTail(
+    Diet diet,
+  ) {
     return Card(
       color: Colors.white70,
       margin: EdgeInsets.all(12),
@@ -594,7 +524,8 @@ class _EventLogPageState extends State<EventLogPage>
                         children: [
                           Text(
                             // diet.food,
-                            '第一餐',
+                            // FIXME: 添加序列
+                            diet.mealType?.displayName ?? '早餐',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -627,7 +558,7 @@ class _EventLogPageState extends State<EventLogPage>
                               Text(
                                 DateFormat('HH:mm').format(
                                     DateTime.fromMillisecondsSinceEpoch(
-                                        diet.createTime)),
+                                        diet.eatingTime)),
                                 style: GoogleFonts.aBeeZee(
                                     fontSize: 16,
                                     color: Colors.black,
@@ -641,7 +572,7 @@ class _EventLogPageState extends State<EventLogPage>
                           ),
                           //  暴食指数
                           Text(
-                            diet.food,
+                            diet.foodDetails,
                             style: GoogleFonts.aBeeZee(
                               fontSize: 16,
                               color: Colors.black,

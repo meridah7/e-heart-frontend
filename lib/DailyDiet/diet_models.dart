@@ -1,7 +1,7 @@
 //定义了饮食的class
 
 import 'package:namer_app/Survey/survey_models.dart';
-
+import 'package:namer_app/Survey/utils.dart';
 import '../Chatbot/chat_models.dart';
 
 enum DietType {
@@ -10,28 +10,52 @@ enum DietType {
 }
 
 class Diet {
-  final String food;
-  final String id;
-  final String type;
-  final int day;
-  final int createTime;
-  final List<Content>? mealContent;
+  final int id;
+  final int eatingTime;
+  final String foodDetails;
   final Survey? survey;
+  MealType? mealType;
   Diet? planedDiet;
-  int? guzzleLevel;
-  int? dietTime;
+  int emotionIntensity;
+  bool? isDieting;
+  bool? isBingeEating;
 
   Diet({
-    required this.food,
     required this.id,
-    required this.type,
-    required this.day,
-    required this.createTime,
+    required this.eatingTime,
+    required this.emotionIntensity,
+    this.mealType,
     this.planedDiet,
-    this.mealContent,
+    required this.foodDetails,
     this.survey,
-    this.guzzleLevel,
   });
+
+  factory Diet.fromJson(Map<String, dynamic> json) {
+    try {
+      return Diet(
+        id: json['id'] as int,
+        eatingTime: json['eating_time'] as int,
+        emotionIntensity: json['emotion_intensity'] as int,
+        foodDetails: json['food_details'] != null
+            ? (json['food_details'] as String)
+                .trim()
+                .replaceAll('[', '')
+                .replaceAll(']', '')
+            : '未填写',
+        planedDiet: json['planed_diet'] != null
+            ? Diet.fromJson(json['planed_diet'])
+            : null,
+      )
+        ..isDieting = json['is_dieting'] as bool?
+        ..isBingeEating = json['is_binge_eating'] as bool?
+        ..mealType = json['meal_type'] != null
+            ? MealType.fromEnglish(json['meal_type'])
+            : null;
+    } catch (e) {
+      print('Error in Diet.fromJson: $e');
+      throw Exception(e);
+    }
+  }
 
   // String getStatusText() {
   //   switch (status) {
@@ -49,7 +73,6 @@ class Diet {
 
 class MealPlan {
   final int id;
-  final int userId;
   final String type;
   final String foodDetails;
   final String time;
@@ -61,7 +84,6 @@ class MealPlan {
 
   MealPlan({
     required this.id,
-    required this.userId,
     required this.type,
     required this.foodDetails,
     required this.time,
@@ -75,7 +97,6 @@ class MealPlan {
   factory MealPlan.fromJson(Map<String, dynamic> json) {
     return MealPlan(
       id: json['id'] as int,
-      userId: json['user_id'] as int,
       type: json['type'] as String,
       foodDetails: json['food_details'] as String,
       time: json['time'] as String,
