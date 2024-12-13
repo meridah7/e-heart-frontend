@@ -28,7 +28,11 @@ class _LoginPageState extends State<LoginPage> {
         _loginStep = 2;
       });
     } catch (err) {
-      print('err in sending sms ${err.toString()}');
+      print('Error in sending sms ${err.toString()}');
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('短信发送失败 ${err.toString()}')));
+      }
       throw Exception(err);
     }
   }
