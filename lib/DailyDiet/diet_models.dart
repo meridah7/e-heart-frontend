@@ -82,6 +82,7 @@ class MealPlan {
   final DateTime createdAt;
   final DateTime updatedAt;
   final List<String>? foodList;
+  MealType mealType;
 
   MealPlan({
     required this.id,
@@ -93,30 +94,42 @@ class MealPlan {
     required this.state,
     required this.createdAt,
     required this.updatedAt,
+    required this.mealType,
     this.foodList,
   });
 
   factory MealPlan.fromJson(Map<String, dynamic> json) {
-    return MealPlan(
-      id: json['id'] as int,
-      type: json['type'] as String,
-      foodDetails: json['food_details'] as String,
-      time: json['time'] as String,
-      date: json['date'] as int,
-      targetDate: json['target_date'] as int,
-      state: json['state'] as bool,
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
-      foodList: json['food_details'] != null
-          ? json['food_details'] is String
-              ? ([json['food_details']] as String)
-                  .trim()
-                  .replaceAll('[', '')
-                  .replaceAll(']', '')
-                  .split(',')
-                  .toList()
-              : null
-          : null,
-    );
+    try {
+      return MealPlan(
+          id: json['id'] as int,
+          type: json['type'] as String,
+          foodDetails: json['food_details'] as String,
+          time: json['time'] as String,
+          date: json['date'] as int,
+          targetDate: json['target_date'] as int,
+          state: json['state'] as bool,
+          createdAt: DateTime.parse(json['createdAt'] as String),
+          updatedAt: DateTime.parse(json['updatedAt'] as String),
+          foodList: json['food_details'] != null
+              ? json['food_details'] is String
+                  ? (json['food_details'] as String)
+                      .replaceAll('[', '')
+                      .replaceAll(']', '')
+                      .split(',')
+                      .map((item) => item.trim())
+                      .toList()
+                  : json['food_details'] is List
+                      ? (json['food_details'] as List)
+                          .map((item) => item.toString())
+                          .toList()
+                      : null
+              : null,
+          mealType: json['type'] != null
+              ? MealType.fromEnglish(json['type'])
+              : MealType.fromEnglish('Other'));
+    } catch (e) {
+      print('Error in build meal plan: $e');
+      throw Exception(e);
+    }
   }
 }

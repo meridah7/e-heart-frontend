@@ -23,8 +23,8 @@ class _EventLogPageState extends State<EventLogPage>
 
   Future<void> _loadDiet() async {
     try {
-      // final now = DateTime.now();
-      final now = DateTime.fromMillisecondsSinceEpoch(1733702400000);
+      final now = DateTime.now();
+      // final now = DateTime.fromMillisecondsSinceEpoch(1733702400000);
       int startTime =
           DateTime(now.year, now.month, now.day).millisecondsSinceEpoch;
       // 当天 23:59:59 的时间戳
@@ -44,7 +44,21 @@ class _EventLogPageState extends State<EventLogPage>
         });
       }
     } catch (e) {
-      print('Error in load diet');
+      print('Error in load diet $e');
+      throw Exception(e);
+    }
+  }
+
+  Future<void> _updatePlanStatus(int id, bool status) async {
+    try {
+      Response response =
+          await dioClient.putRequest('/meal_plans/$id', {'state': !status});
+      if (response.statusCode == 200) {
+        _handleGoSurvey(dietaryIntake);
+        await _loadDiet();
+      }
+    } catch (e) {
+      print('Error in setting plan status $e');
       throw Exception(e);
     }
   }
@@ -142,8 +156,7 @@ class _EventLogPageState extends State<EventLogPage>
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('您有按照“${plan.foodDetails}”计划进食吗？',
-                  style: TextStyle(fontSize: 20)),
+              Text('您有按照“${plan.type}”计划进食吗？', style: TextStyle(fontSize: 20)),
               SizedBox(height: 20),
               SizedBox(
                 width: double.infinity,
@@ -156,9 +169,10 @@ class _EventLogPageState extends State<EventLogPage>
                     // 跳转到问卷，带上预设答案
                     Map<String, dynamic> presetAnswers = {
                       'attention': '好的！',
-                      'time': DateTime.fromMillisecondsSinceEpoch(plan.date),
-                      'foodList': plan.foodDetails,
-                      'mealType': plan.type,
+                      'time':
+                          DateTime.fromMillisecondsSinceEpoch(plan.targetDate),
+                      'foodList': plan.foodList,
+                      'mealType': plan.mealType.displayName,
                     };
                     _handleGoSurvey(dietaryIntake,
                         presetAnswers: presetAnswers);
@@ -176,7 +190,9 @@ class _EventLogPageState extends State<EventLogPage>
                   ),
                   onPressed: () {
                     Navigator.of(context).pop();
-                    _loadDiet();
+                    // if (!plan.state) {
+                    _updatePlanStatus(plan.id, plan.state);
+                    // }
                   },
                   child: Text('没有'),
                 ),
@@ -188,7 +204,8 @@ class _EventLogPageState extends State<EventLogPage>
     );
   }
 
-  void _handleGoSurvey(Task task, {presetAnswers = const {}}) {
+  void _handleGoSurvey(Task task,
+      {Map<String, dynamic> presetAnswers = const {}}) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -339,11 +356,10 @@ class _EventLogPageState extends State<EventLogPage>
     return ListView.builder(
         shrinkWrap: shrinkWrap, // 根据内容自适应高度
         physics: NeverScrollableScrollPhysics(), // 禁用列表自身的滚动
-        // padding: EdgeInsets.only(bottom: 64),
         itemCount: diets.length,
         itemBuilder: (context, index) {
           final diet = diets[index];
-          return _buildMealPlanTail(diet, index);
+          return _buildMealPlanTail(diet);
         });
   }
 
@@ -378,15 +394,13 @@ class _EventLogPageState extends State<EventLogPage>
     );
   }
 
-  Widget _buildMealPlanTail(MealPlan diet, int index) {
+  Widget _buildMealPlanTail(MealPlan plan) {
     return Card(
-      color: (!diet.state) ? Colors.grey : Colors.white70,
       margin: EdgeInsets.all(12),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Container(
         clipBehavior: Clip.hardEdge,
         decoration: BoxDecoration(
-          color: Color.fromRGBO(255, 255, 255, 0.5),
+          color: plan.state ? Colors.grey : Colors.white70,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
@@ -395,7 +409,7 @@ class _EventLogPageState extends State<EventLogPage>
               padding: EdgeInsets.all(12.0),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-                color: Colors.white,
+                // color: Colors.white,
               ),
               child: Column(
                 children: [
@@ -406,7 +420,7 @@ class _EventLogPageState extends State<EventLogPage>
                         children: [
                           Text(
                             // diet.food,
-                            '第 ${index + 1} 餐',
+                            plan.type,
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -437,7 +451,7 @@ class _EventLogPageState extends State<EventLogPage>
                               Text(
                                 DateFormat('HH:mm').format(
                                     DateTime.fromMillisecondsSinceEpoch(
-                                        diet.targetDate)),
+                                        plan.targetDate)),
                                 style: GoogleFonts.aBeeZee(
                                     fontSize: 16,
                                     color: Colors.black,
@@ -453,7 +467,7 @@ class _EventLogPageState extends State<EventLogPage>
                           Container(
                             width: 200, // Fixed width for the text container
                             child: Text(
-                              diet.foodDetails,
+                              plan.foodDetails,
                               style: GoogleFonts.aBeeZee(
                                 fontSize: 16,
                                 color: Colors.black,
@@ -465,21 +479,22 @@ class _EventLogPageState extends State<EventLogPage>
                           SizedBox(width: 4),
                         ],
                       ),
-                      SizedBox(
-                        width: 32,
-                        height: 32,
-                        child: IconButton(
-                          icon: Icon(
-                            Icons.edit,
-                            color: Colors.black,
-                            size: 16,
+                      if (!plan.state)
+                        SizedBox(
+                          width: 32,
+                          height: 32,
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.edit,
+                              color: Colors.black,
+                              size: 16,
+                            ),
+                            onPressed: () {
+                              // 处理编辑操作
+                              _showConfirmationDialog(context, plan);
+                            },
                           ),
-                          onPressed: () {
-                            // 处理编辑操作
-                            _showConfirmationDialog(context, diet);
-                          },
-                        ),
-                      )
+                        )
                     ],
                   ),
                 ],

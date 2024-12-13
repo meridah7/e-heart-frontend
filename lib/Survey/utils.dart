@@ -30,7 +30,7 @@ enum MealType {
     );
   }
 
-  static MealType? fromEnglish(String english) {
+  static MealType fromEnglish(String english) {
     return MealType.values.firstWhere(
       (type) => type.english == english,
       orElse: () => MealType.other,
