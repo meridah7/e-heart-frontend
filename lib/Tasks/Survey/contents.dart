@@ -75,24 +75,22 @@ var dietaryIntakeSurvey = Survey(title: '饮食记录', questions: [
     '3.请记录下一天内的所有饮食，而不只是正餐。',
     ['好的！'],
     {},
+    alias: 'attention',
   ),
-  TimeQuestion('进食具体时间', initialTime: DateTime.now()),
+  TimeQuestion('进食具体时间', initialTime: DateTime.now(), alias: 'time'),
   TextQuestion('吃了什么&吃了多少', true,
       description:
-          '填写你这次进食吃下、喝下的所有东西以及大概的量。千万不要具体记录摄入食物的重量和卡路里！正确示例：八包薯片，一个八寸披萨，一小碗酸奶。'),
-  SingleChoiceQuestion('属于哪一餐', [
-    '早餐',
-    '上午点心',
-    '午餐',
-    '下午点心',
-    '晚餐',
-    '夜宵',
-    '其他'
-  ], {
-    '其他': [
-      SingleChoiceQuestion('其他类型', ['零食', '饮料'], {})
-    ],
-  }),
+          '填写你这次进食吃下、喝下的所有东西以及大概的量。千万不要具体记录摄入食物的重量和卡路里！正确示例：八包薯片，一个八寸披萨，一小碗酸奶。',
+      alias: 'foodList'),
+  SingleChoiceQuestion(
+      '属于哪一餐',
+      ['早餐', '上午点心', '午餐', '下午点心', '晚餐', '夜宵', '其他'],
+      {
+        '其他': [
+          SingleChoiceQuestion('其他类型', ['零食', '饮料'], {})
+        ],
+      },
+      alias: 'mealType'),
   SliderQuestion('进食的时候感受到的情绪强度', {}, min: 1, max: 7, divisions: 6,
       labelBuilder: (value) {
     if (value == 1) {

@@ -17,12 +17,14 @@ class SurveyPage extends StatefulWidget {
   final String taskId;
   final bool isLastTask;
   final Function? handleSubmit;
+  Map<String, dynamic>? presetAnswers = {};
 
   SurveyPage(
       {required this.survey,
       required this.taskId,
       required this.isLastTask,
-      this.handleSubmit});
+      this.handleSubmit,
+      this.presetAnswers});
 
   @override
   _SurveyPageState createState() => _SurveyPageState();

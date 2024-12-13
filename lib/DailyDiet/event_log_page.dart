@@ -7,7 +7,6 @@ import 'package:namer_app/Survey/survey_page.dart';
 import 'package:namer_app/Tasks/Survey/tasks.dart';
 import 'package:namer_app/TodayList/task_models.dart';
 import 'package:namer_app/utils/dio_client.dart';
-import '../Chatbot/diet_contents.dart';
 
 class EventLogPage extends StatefulWidget {
   @override
@@ -24,10 +23,13 @@ class _EventLogPageState extends State<EventLogPage>
 
   Future<void> _loadDiet() async {
     try {
-      final now = DateTime.now();
+      // final now = DateTime.now();
+      final now = DateTime.fromMillisecondsSinceEpoch(1733702400000);
       int startTime =
           DateTime(now.year, now.month, now.day).millisecondsSinceEpoch;
-      int endTime = DateTime.now().millisecondsSinceEpoch;
+      // 当天 23:59:59 的时间戳
+      int endTime = DateTime(now.year, now.month, now.day, 23, 59, 59, 999)
+          .millisecondsSinceEpoch;
       Response response = await dioClient
           .getRequest('/diet_logs/todayDiet/$startTime/$endTime');
       if (response.statusCode == 200) {
@@ -147,8 +149,19 @@ class _EventLogPageState extends State<EventLogPage>
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    // 取消操作
                     Navigator.of(context).pop();
+                    // 执行确认操作
+                    print("操作已确认");
+                    _loadDiet();
+                    // 跳转到问卷，带上预设答案
+                    Map<String, dynamic> presetAnswers = {
+                      'attention': '好的！',
+                      'time': DateTime.fromMillisecondsSinceEpoch(plan.date),
+                      'foodList': plan.foodDetails,
+                      'mealType': plan.type,
+                    };
+                    _handleGoSurvey(dietaryIntake,
+                        presetAnswers: presetAnswers);
                   },
                   child: Text('有'),
                 ),
@@ -162,10 +175,8 @@ class _EventLogPageState extends State<EventLogPage>
                     foregroundColor: Theme.of(context).colorScheme.onSecondary,
                   ),
                   onPressed: () {
-                    // 确认操作
                     Navigator.of(context).pop();
-                    // 执行确认操作
-                    print("操作已确认");
+                    _loadDiet();
                   },
                   child: Text('没有'),
                 ),
@@ -177,7 +188,7 @@ class _EventLogPageState extends State<EventLogPage>
     );
   }
 
-  void _handleGoSurvey(Task task) {
+  void _handleGoSurvey(Task task, {presetAnswers = const {}}) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -185,6 +196,7 @@ class _EventLogPageState extends State<EventLogPage>
           survey: task.survey!,
           taskId: task.id,
           isLastTask: false,
+          presetAnswers: presetAnswers,
         ),
       ),
     );
@@ -331,7 +343,7 @@ class _EventLogPageState extends State<EventLogPage>
         itemCount: diets.length,
         itemBuilder: (context, index) {
           final diet = diets[index];
-          return _buildMealPlanTail(diet);
+          return _buildMealPlanTail(diet, index);
         });
   }
 
@@ -366,7 +378,7 @@ class _EventLogPageState extends State<EventLogPage>
     );
   }
 
-  Widget _buildMealPlanTail(MealPlan diet) {
+  Widget _buildMealPlanTail(MealPlan diet, int index) {
     return Card(
       color: (!diet.state) ? Colors.grey : Colors.white70,
       margin: EdgeInsets.all(12),
@@ -394,7 +406,7 @@ class _EventLogPageState extends State<EventLogPage>
                         children: [
                           Text(
                             // diet.food,
-                            '第一餐',
+                            '第 ${index + 1} 餐',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -405,21 +417,6 @@ class _EventLogPageState extends State<EventLogPage>
                           ),
                         ],
                       ),
-                      // if (showEdit)
-                      //   Container(
-                      //     width: 48,
-                      //     decoration: BoxDecoration(
-                      //         color: Colors.transparent,
-                      //         border:
-                      //             Border.all(color: Colors.black, width: 1)),
-                      //     child: Center(
-                      //       child: Text(diet.getStatusText(),
-                      //           style: TextStyle(
-                      //               fontSize: 12,
-                      //               color: Colors.black,
-                      //               fontWeight: FontWeight.normal)),
-                      //     ),
-                      //   ),
                     ],
                   ),
                   SizedBox(
@@ -479,7 +476,7 @@ class _EventLogPageState extends State<EventLogPage>
                           ),
                           onPressed: () {
                             // 处理编辑操作
-                            // _showConfirmationDialog(context, diet);
+                            _showConfirmationDialog(context, diet);
                           },
                         ),
                       )

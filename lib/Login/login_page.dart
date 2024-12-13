@@ -19,6 +19,12 @@ class _LoginPageState extends State<LoginPage> {
   // 登录步骤
   var _loginStep = 1;
 
+  @override
+  void dispose() {
+    FocusManager.instance.primaryFocus?.unfocus();
+    super.dispose();
+  }
+
   // TODO 验证码重发功能
   void _sendSMS() async {
     try {

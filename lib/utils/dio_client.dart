@@ -41,6 +41,7 @@ class DioClient {
           },
         )) {
     // 拦截器
+    _dio.interceptors.add(LogInterceptor(responseBody: true));
     _dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
         // 请求头添加token

@@ -81,6 +81,7 @@ class MealPlan {
   final bool state;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final List<String>? foodList;
 
   MealPlan({
     required this.id,
@@ -92,6 +93,7 @@ class MealPlan {
     required this.state,
     required this.createdAt,
     required this.updatedAt,
+    this.foodList,
   });
 
   factory MealPlan.fromJson(Map<String, dynamic> json) {
@@ -105,6 +107,16 @@ class MealPlan {
       state: json['state'] as bool,
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
+      foodList: json['food_details'] != null
+          ? json['food_details'] is String
+              ? ([json['food_details']] as String)
+                  .trim()
+                  .replaceAll('[', '')
+                  .replaceAll(']', '')
+                  .split(',')
+                  .toList()
+              : null
+          : null,
     );
   }
 }
