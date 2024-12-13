@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:namer_app/Survey/survey_models.dart'; // Import the location of your Survey models
+// Import the location of your Survey models
 import 'package:namer_app/Survey/survey_page.dart'; // Import your SurveyPage widget
 import '../../TodayList/task_models.dart';
 import 'package:namer_app/Tasks/Survey/tasks.dart'; // Import tasks related to surveys
@@ -22,7 +22,7 @@ class _DietMonitoringPageState extends State<DietMonitoringPage> {
           ? null
           : AppBar(
               title: Text('饮食日志'),
-              backgroundColor: themeColor,
+              // backgroundColor: themeColor,
             ),
       body: currentSurvey != null
           ? SurveyPage(
@@ -59,8 +59,8 @@ class _DietMonitoringPageState extends State<DietMonitoringPage> {
                     height: 60, // Ensures both buttons have the same height
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors
-                            .lightBlueAccent.shade100, // Soft, comforting color
+                        // backgroundColor: Colors
+                        //     .lightBlueAccent.shade100, // Soft, comforting color
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
@@ -72,7 +72,7 @@ class _DietMonitoringPageState extends State<DietMonitoringPage> {
                       },
                       child: Text(
                         '饮食记录',
-                        style: TextStyle(fontSize: 18, color: Colors.black),
+                        style: TextStyle(fontSize: 18, color: Colors.white),
                       ),
                     ),
                   ),
@@ -89,8 +89,8 @@ class _DietMonitoringPageState extends State<DietMonitoringPage> {
                     height: 60, // Ensures both buttons have the same height
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            Colors.amberAccent.shade200, // Soft warning color
+                        // backgroundColor:
+                        //     Colors.amberAccent.shade200, // Soft warning color
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
@@ -102,7 +102,7 @@ class _DietMonitoringPageState extends State<DietMonitoringPage> {
                       },
                       child: Text(
                         '食物清除记录',
-                        style: TextStyle(fontSize: 18, color: Colors.black),
+                        style: TextStyle(fontSize: 18, color: Colors.white),
                       ),
                     ),
                   ),

@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:namer_app/Survey/survey_models.dart';
 import 'package:namer_app/Survey/survey_page.dart'; // Assuming SurveyPage can be reused or adapted
 import 'package:namer_app/Tasks/Survey/tasks.dart';
 import 'package:namer_app/utils/dio_client.dart';
-import 'package:dio/dio.dart';
 
 class BingeEatingRecordPage extends StatefulWidget {
   @override

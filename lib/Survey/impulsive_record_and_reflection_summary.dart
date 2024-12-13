@@ -1,7 +1,6 @@
 /// 用于冲动记录反思问卷上方的历史总结回顾
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:carousel_indicator/carousel_indicator.dart';
 import 'package:namer_app/utils/dio_client.dart';
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';

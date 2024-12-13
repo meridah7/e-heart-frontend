@@ -3,12 +3,9 @@ import 'package:flutter_reorderable_grid_view/widgets/widgets.dart';
 import './response_card_model.dart';
 import './response_card.dart';
 import './editable_card.dart';
-import 'package:flutter/services.dart' show rootBundle;
 import './edit_card_dialog.dart';
 import 'hero_dialog_route.dart';
 import 'package:namer_app/utils/dio_client.dart';
-import 'package:provider/provider.dart';
-import 'package:namer_app/utils/helper.dart';
 import 'package:dio/dio.dart';
 
 class BingeEatingResponseCard extends StatefulWidget {
@@ -372,7 +369,6 @@ class _BingeEatingResponseCardState extends State<BingeEatingResponseCard>
               onPressed: toggleEditing,
               icon: Icon(_isEditing ? Icons.done : Icons.edit))
         ],
-        backgroundColor: Color.fromARGB(255, 223, 221, 240),
       ),
       body: _getReorderableWidget(),
     );

@@ -10,6 +10,7 @@ abstract class Question {
   final String? alias;
   final bool required;
   getAnswer();
+  setAnswer(dynamic value);
 
   Question(this.questionText,
       {this.description,
@@ -32,6 +33,11 @@ class SingleChoiceQuestion extends Question {
   @override
   String getAnswer() {
     return selectedOption ?? '';
+  }
+
+  @override
+  void setAnswer(value) {
+    selectedOption = value;
   }
 
   void answer(String option) {
@@ -67,6 +73,11 @@ class MultipleChoiceQuestion extends Question {
   @override
   List<String> getAnswer() {
     return selectedOptions;
+  }
+
+  @override
+  void setAnswer(value) {
+    selectedOptions = value;
   }
 
   void selectAdditionalOption(String option, bool isSelected) {
@@ -114,6 +125,35 @@ class TextQuestion extends Question {
     return answers;
   }
 
+  @override
+  void setAnswer(dynamic value) {
+    // 清空现有答案和控制器
+    answers.clear();
+    for (var controller in controllers) {
+      controller.dispose(); // 释放现有控制器的资源
+    }
+    controllers.clear();
+
+    if (value is String) {
+      // 如果是单个字符串，将其作为唯一答案
+      answers.add(value);
+      controllers.add(TextEditingController(text: value));
+    } else if (value is List<String>) {
+      // 如果是字符串列表，逐一添加
+      for (var el in value) {
+        answers.add(el);
+        controllers.add(TextEditingController(text: el));
+      }
+    } else {
+      // 如果值的类型不匹配，抛出错误或记录日志
+      print('Invalid value type for setAnswer: $value');
+      return;
+    }
+
+    // 打印调试信息
+    print('Set Text Answers: $answers');
+  }
+
   void removeAnswer(int index) {
     if (index >= 0 && index < answers.length) {
       answers.removeAt(index);
@@ -125,7 +165,7 @@ class TextQuestion extends Question {
 
 class Survey {
   final String title;
-  final List<Question> questions;
+  List<Question> questions;
   final bool navigateToSummary;
   final bool isNeedTopArea;
   // 问卷额外信息
@@ -172,11 +212,14 @@ extension SurveyExtension on Survey {
         continue;
       }
       if (question is SingleChoiceQuestion && question.selectedOption == null) {
+        print('SingleChoice ${question.questionText}');
         return false;
       } else if (question is MultipleChoiceQuestion &&
           question.selectedOptions.isEmpty) {
+        print('MultipleChoiceQuestion ${question.questionText}');
         return false;
       } else if (question is TextQuestion && question.answers.isEmpty) {
+        print('TextQuestion ${question.questionText}');
         return false;
       }
     }
@@ -278,6 +321,11 @@ class TimeQuestion extends Question {
   int getAnswer() {
     return selectedTime.millisecondsSinceEpoch;
   }
+
+  @override
+  void setAnswer(value) {
+    selectedTime = value;
+  }
 }
 
 class SliderQuestion extends Question {
@@ -305,6 +353,11 @@ class SliderQuestion extends Question {
   @override
   double getAnswer() {
     return sliderValue;
+  }
+
+  @override
+  void setAnswer(value) {
+    sliderValue = value;
   }
 
   List<Question>? getSubQuestions(bool Function(double value)? condition) {
@@ -369,6 +422,11 @@ class ChartQuestion extends Question {
     // 对于 QuestionType.None，不需要执行任何操作
   }
 
+  @override
+  void setAnswer(value) {
+    // answers = value;
+  }
+
   // TODO getAnswer
   @override
   void getAnswer() {}
@@ -382,6 +440,9 @@ class ResponseCardQuestion extends Question {
 
   @override
   void getAnswer() {}
+
+  @override
+  void setAnswer(value) {}
 
   ResponseCardQuestion({String questionText = 'ResponseCard'})
       : super(questionText);
@@ -406,6 +467,11 @@ class PriorityQuestion extends Question {
   @override
   List<String> getAnswer() {
     return options;
+  }
+
+  @override
+  void setAnswer(value) {
+    selectedOptions = value;
   }
 
   // 获取用户选中的选项，按点击顺序
@@ -440,5 +506,11 @@ class MealQuestion extends Question {
   @override
   List<String> getAnswer() {
     return meals;
+  }
+
+  @override
+  void setAnswer(value) {
+    print('Set Meal $value');
+    meals = value;
   }
 }

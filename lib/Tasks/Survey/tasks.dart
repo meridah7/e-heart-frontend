@@ -1,3 +1,5 @@
+import 'package:namer_app/Survey/survey_models.dart';
+
 import '../../TodayList/task_models.dart';
 import 'contents.dart';
 
@@ -102,3 +104,21 @@ Task impulseRecording = Task(
   day: 1, // Assuming this is for the second day
   survey: impulseRecordingSurvey,
 );
+
+Future<Task> generateTask(
+  String title,
+  String id,
+  TaskType type,
+  bool isCompleted,
+  int day,
+) async {
+  Survey survey = await generateRegularDietReflectionSurvey();
+
+  return Task(
+      title: title,
+      id: id,
+      type: type,
+      isCompleted: isCompleted,
+      day: day,
+      survey: survey);
+}

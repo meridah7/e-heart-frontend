@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:namer_app/global_setting.dart';
 import 'package:provider/provider.dart';
 import '../Login/user_model.dart';
 import './profile_page.dart';
@@ -12,7 +11,6 @@ class MyPage extends StatelessWidget {
         title: Text('我的页面',
             style:
                 TextStyle(color: Colors.black)), // Text color changed to black
-        backgroundColor: themeColor,
       ),
       body: Consumer<UserProvider>(builder: (context, user, child) {
         return Padding(

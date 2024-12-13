@@ -19,6 +19,12 @@ class _LoginPageState extends State<LoginPage> {
   // 登录步骤
   var _loginStep = 1;
 
+  @override
+  void dispose() {
+    FocusManager.instance.primaryFocus?.unfocus();
+    super.dispose();
+  }
+
   // TODO 验证码重发功能
   void _sendSMS() async {
     try {
@@ -86,17 +92,15 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // title: Text('登录'),
-        backgroundColor: Color.fromRGBO(160, 158, 235, 1),
-      ),
-      backgroundColor: Color.fromRGBO(160, 158, 235, 1),
+          // title: Text('登录'),
+          ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Column(
           children: <Widget>[
             Text(
               '手机号注册/登录',
-              style: TextStyle(color: Colors.white, fontSize: 28.0),
+              style: TextStyle(color: Colors.black, fontSize: 28.0),
             ),
             SizedBox(
               height: 16,
@@ -108,7 +112,7 @@ class _LoginPageState extends State<LoginPage> {
                   padding: EdgeInsets.symmetric(horizontal: 12),
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: Color.fromRGBO(255, 255, 255, 0.29),
+                    // color: Color.fromRGBO(255, 255, 255, 0.29),
                     borderRadius: BorderRadius.circular(32),
                   ),
                   child: Row(

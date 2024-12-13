@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'survey_models.dart';
-import 'package:namer_app/global_setting.dart';
 import 'survey_question_factory.dart';
 import 'SurveySummaryPage.dart';
 import 'package:namer_app/utils/dio_client.dart';
@@ -110,9 +109,9 @@ class _FlippableSurveyPageState extends State<FlippableSurveyPage> {
         }
       });
       Map<String, List<Question>> subQuestions = {};
-      options.forEach((element) {
+      for (var element in options) {
         subQuestions[element] = [TextQuestion('$element具体执行方法', false)];
-      });
+      }
       widget.survey.questions[1] = SingleChoiceQuestion('第二步，计划具体执行方法', [
         '好的！'
       ], {
@@ -232,7 +231,6 @@ class _FlippableSurveyPageState extends State<FlippableSurveyPage> {
     return Scaffold(
         appBar: AppBar(
           title: Text(widget.survey.title),
-          backgroundColor: themeColor,
         ),
         body: ListView.builder(
             itemCount: 1,

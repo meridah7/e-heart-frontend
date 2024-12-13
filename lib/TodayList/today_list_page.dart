@@ -1,8 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:namer_app/DailyDiet/diet_models.dart';
-import 'package:namer_app/DietMonitoring/binge_eating_options.dart';
 import '../Tasks/daily_tasks.dart';
 import 'task_models.dart';
 import '../Chatbot/diet_contents.dart';
@@ -19,9 +17,7 @@ import 'package:namer_app/utils/dio_client.dart';
 import 'package:provider/provider.dart';
 import 'package:namer_app/Login/user_model.dart';
 import 'package:namer_app/utils/helper.dart';
-import 'package:namer_app/TodayList/task_models.dart';
 import 'package:namer_app/Survey/survey_models.dart';
-import 'package:intl/intl.dart';
 
 class TodayListPage extends StatefulWidget {
   @override
@@ -142,16 +138,9 @@ class _TodayListPageState extends State<TodayListPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Day $_currentDay', style: TextStyle(color: Colors.black)),
-        backgroundColor: Color.fromARGB(255, 223, 221, 240),
         elevation: 0,
       ),
       body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/images/background1.jpg'), // 替换为您的图片路径
-            fit: BoxFit.cover,
-          ),
-        ),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
@@ -159,10 +148,10 @@ class _TodayListPageState extends State<TodayListPage> {
               _buildSegmentedControl(),
               Expanded(
                 child: _currentDay != null
-                    ? (showTasks
-                        // ? _buildTaskListView(DailyTask[_currentDay!])
-                        ? _buildTaskListView(_dailyTaskList)
-                        : _buildDietListView(DietDay0))
+                    ?
+                    // ? _buildTaskListView(DailyTask[_currentDay!])
+                    _buildTaskListView(_dailyTaskList)
+                    // : _buildDietListView(DietDay0))
                     : SizedBox.shrink(),
               ),
             ],
@@ -339,49 +328,49 @@ class _TodayListPageState extends State<TodayListPage> {
     );
   }
 
-  Widget _buildDietListView(List<Diet> diets) {
-    return ListView.builder(
-      padding: EdgeInsets.only(bottom: 64),
-      itemCount: diets.length,
-      itemBuilder: (context, index) {
-        final diet = diets[index];
-        return Container(
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.7), // 半透明背景
-              borderRadius: BorderRadius.circular(10), // 可选的圆角
-            ),
-            margin:
-                EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0), // 添加一些边距
-            child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(diet.food, style: TextStyle(fontSize: 16.0)),
-                          Text(diet.type),
-                        ],
-                      ),
-                      Text(DateFormat('kk:mm').format(
-                          DateTime.fromMillisecondsSinceEpoch(
-                              diet.createTime))),
-                    ])));
-        // ListTile(
-        //   title: Text(diet.food),
-        //   subtitle: Text(diet.type),
-        //   onTap: () {
-        //     Navigator.push(
-        //         context,
-        //         MaterialPageRoute(
-        //             builder: (context) =>
-        //                 ChatbotPage(contents: diet.mealContent!)));
-        //   },
-      },
-    );
-  }
+  // Widget _buildDietListView(List<Diet> diets) {
+  //   return ListView.builder(
+  //     padding: EdgeInsets.only(bottom: 64),
+  //     itemCount: diets.length,
+  //     itemBuilder: (context, index) {
+  //       final diet = diets[index];
+  //       return Container(
+  //           decoration: BoxDecoration(
+  //             color: Colors.white.withOpacity(0.7), // 半透明背景
+  //             borderRadius: BorderRadius.circular(10), // 可选的圆角
+  //           ),
+  //           margin:
+  //               EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0), // 添加一些边距
+  //           child: Padding(
+  //               padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+  //               child: Row(
+  //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                   children: [
+  //                     Column(
+  //                       crossAxisAlignment: CrossAxisAlignment.start,
+  //                       mainAxisAlignment: MainAxisAlignment.center,
+  //                       children: [
+  //                         Text(diet.food, style: TextStyle(fontSize: 16.0)),
+  //                         Text(diet.type),
+  //                       ],
+  //                     ),
+  //                     Text(DateFormat('kk:mm').format(
+  //                         DateTime.fromMillisecondsSinceEpoch(
+  //                             diet.createTime))),
+  //                   ])));
+  //       // ListTile(
+  //       //   title: Text(diet.food),
+  //       //   subtitle: Text(diet.type),
+  //       //   onTap: () {
+  //       //     Navigator.push(
+  //       //         context,
+  //       //         MaterialPageRoute(
+  //       //             builder: (context) =>
+  //       //                 ChatbotPage(contents: diet.mealContent!)));
+  //       //   },
+  //     },
+  //   );
+  // }
 
   void _toggleView(bool showTaskView) async {
     final userProvider = Provider.of<UserProvider>(context, listen: false);

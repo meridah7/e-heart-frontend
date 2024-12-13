@@ -58,7 +58,6 @@ class CustomElevatedButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: onPressed,
-      child: Text(text),
       style: ElevatedButton.styleFrom(
         foregroundColor: Colors.white, backgroundColor: Color(0xFF9D9BE9), // 设置按钮文本的颜色
         padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15), // 设置内边距
@@ -67,6 +66,7 @@ class CustomElevatedButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(8), // 设置边框圆角
         ),
       ),
+      child: Text(text),
     );
   }
 }

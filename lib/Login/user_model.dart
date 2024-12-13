@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:namer_app/utils/api_service.dart';
 import 'package:namer_app/utils/helper.dart';
-import 'package:provider/provider.dart';
-import 'package:namer_app/user_preference.dart';
 
 class User {
   final String uuid;

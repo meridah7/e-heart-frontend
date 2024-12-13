@@ -1,13 +1,5 @@
 import 'package:flutter/material.dart';
-import '../Tasks/daily_tasks.dart';
-import '../TodayList/task_models.dart';
-import '../Chatbot/diet_contents.dart';
-import '../DailyDiet/diet_models.dart';
-import '../Chatbot/chatbot_page.dart';
-import '../Survey/survey_page.dart';
-import '../main.dart';
 import '../DietaryAnalysis/dietary_analysis_page.dart';
-import '../global_setting.dart';
 
 class ReviewAnalysisPage extends StatefulWidget {
   @override
@@ -22,7 +14,6 @@ class _ReviewAnalysisPageState extends State<ReviewAnalysisPage> {
         title: Text('分析反思',
             style:
                 TextStyle(color: Colors.black)), // Text color changed to black
-        backgroundColor: themeColor, // AppBar color changed as specified
       ),
       body: SingleChildScrollView(
         child: Column(

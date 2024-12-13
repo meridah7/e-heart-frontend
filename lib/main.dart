@@ -1,23 +1,18 @@
 //这个文件是应用程序的入口文件，创建了一个具有底部导航栏的主界面。
 //应用程序包括三个页面：今日列表页面（TodayListPage）、分析反思页面（ReviewAnalysisPage）和我的页面（MyPage）。
-import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'TodayList/today_list_page.dart';
 import 'AnalysisReview/review_analysis_page.dart';
-import 'Chatbot/chat_models.dart';
 import 'MyPage/my_page.dart';
 import 'DietaryAnalysis/dietary_analysis_page.dart';
 //import 'DAO/database_helper.dart';
 import 'Login/login_page.dart';
-import 'Login/register_page.dart';
 import 'Login/user_model.dart';
 import 'package:namer_app/ResponseCard/response_card_model.dart';
 import 'Login/register_info_page.dart';
 import 'package:provider/provider.dart';
-import 'user_preference.dart';
 import 'debugButton.dart';
-import 'DailyDiet/daily_diet_page.dart';
-import 'package:intl/intl.dart';
+import 'DailyDiet/event_log_page.dart';
 import 'package:namer_app/utils/api_service.dart';
 import 'package:dio/dio.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -46,8 +41,35 @@ class MyApp extends StatelessWidget {
 
       child: MaterialApp(
         title: 'CBT-E App',
-        // home: isLoggedIn ? MainScreen() : LoginPage(), // 初始路由为登录页面
         home: MainScreen(),
+        theme: ThemeData(
+          dialogTheme: DialogTheme(
+            backgroundColor: Colors.white, // 设置弹窗的全局背景色为白色
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10), // 可选：为弹窗添加圆角
+            ),
+          ),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color(0xFFD98E8E), // 设置按钮背景色
+              foregroundColor: Colors.white, // 设置按钮文字颜色
+              shadowColor: Colors.grey, // 设置阴影颜色
+              elevation: 5, // 设置阴影高度
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24), // 设置按钮的圆角
+              ),
+            ),
+          ),
+          appBarTheme: AppBarTheme(backgroundColor: Color(0xFFF0E5E7)),
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Color(0xFFD98E8E), // 设置全局的主颜色
+            primary: Color(0xFFD98E8E), // 主要按钮颜色
+            onPrimary: Color(0xFFFFFFFF), // 主按钮下的字色
+            secondary: Color(0xFFFFFFFF), // 次要按钮颜色
+            onSecondary: Color(0xFF505050), // 普通按钮字色
+          ),
+          scaffoldBackgroundColor: Color(0xFFF0E5E7), // 设置整体背景色
+        ),
         initialRoute: '/',
         routes: {
           '/login': (context) => LoginPage(), // 登录页面
@@ -69,7 +91,7 @@ class _MainScreenState extends State<MainScreen> {
   final ApiService apiService = ApiService();
   static List<Widget> _widgetOptions = <Widget>[
     TodayListPage(),
-    DailyDietPage(),
+    EventLogPage(),
     ReviewAnalysisPage(),
     MyPage(),
   ];
@@ -104,8 +126,8 @@ class _MainScreenState extends State<MainScreen> {
             label: ('每日任务'),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.ramen_dining_sharp),
-            label: ('今日饮食'),
+            icon: Icon(Icons.event_note),
+            label: ('行为记录'),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.analytics_outlined),
