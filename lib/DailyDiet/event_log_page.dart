@@ -418,8 +418,8 @@ class _EventLogPageState extends State<EventLogPage>
                     children: [
                       Row(
                         children: [
+                          // 用餐类型
                           Text(
-                            // diet.food,
                             plan.type,
                             style: TextStyle(
                               fontSize: 16,
@@ -438,65 +438,63 @@ class _EventLogPageState extends State<EventLogPage>
                   ),
                   // 第二栏：显示进食时间 内容 编辑按钮
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment:
+                        MainAxisAlignment.spaceBetween, // 确保时间和按钮在两端
                     children: [
+                      // 时间部分，靠左显示
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Row(
-                            children: [
-                              Text("时间：",
-                                  style: TextStyle(
-                                      fontSize: 16, color: Colors.black)),
-                              Text(
-                                DateFormat('HH:mm').format(
-                                    DateTime.fromMillisecondsSinceEpoch(
-                                        plan.targetDate)),
-                                style: GoogleFonts.aBeeZee(
-                                    fontSize: 16,
-                                    color: Colors.black,
-                                    fontStyle: FontStyle.italic),
-                              )
-                            ],
+                          Text(
+                            "时间：",
+                            style: TextStyle(fontSize: 16, color: Colors.black),
                           ),
-
-                          SizedBox(
-                            width: 32,
-                          ),
-                          //  暴食指数
-                          Container(
-                            width: 200, // Fixed width for the text container
-                            child: Text(
-                              plan.foodDetails,
-                              style: GoogleFonts.aBeeZee(
-                                fontSize: 16,
-                                color: Colors.black,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
+                          Text(
+                            DateFormat('HH:mm').format(
+                              DateTime.fromMillisecondsSinceEpoch(
+                                  plan.targetDate),
+                            ),
+                            style: GoogleFonts.aBeeZee(
+                              fontSize: 16,
+                              color: Colors.black,
+                              fontStyle: FontStyle.italic,
                             ),
                           ),
-                          SizedBox(width: 4),
                         ],
                       ),
-                      if (!plan.state)
-                        SizedBox(
-                          width: 32,
-                          height: 32,
-                          child: IconButton(
-                            icon: Icon(
-                              Icons.edit,
+
+                      // 使用 Flexible 确保文本内容居中
+                      Flexible(
+                        child: Container(
+                          alignment: Alignment.center, // 文本居中对齐
+                          child: Text(
+                            plan.foodDetails,
+                            style: GoogleFonts.aBeeZee(
+                              fontSize: 16,
                               color: Colors.black,
-                              size: 16,
                             ),
-                            onPressed: () {
-                              // 处理编辑操作
-                              _showConfirmationDialog(context, plan);
-                            },
+                            overflow: TextOverflow.ellipsis, // 文本过长时省略
+                            maxLines: 1,
                           ),
-                        )
+                        ),
+                      ),
+
+                      // 编辑按钮，靠右显示
+                      SizedBox(
+                        width: 32,
+                        height: 32,
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.edit,
+                            color: Colors.black,
+                            size: 16,
+                          ),
+                          onPressed: () {
+                            _showConfirmationDialog(context, plan);
+                          },
+                        ),
+                      ),
                     ],
-                  ),
+                  )
                 ],
               ),
             ),
