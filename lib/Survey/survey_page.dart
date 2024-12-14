@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:namer_app/Login/user_model.dart';
+import 'package:namer_app/main.dart';
 import 'survey_models.dart';
 import 'SurveySummaryPage.dart';
 import 'survey_question_factory.dart';
@@ -327,6 +328,17 @@ class _SurveyPageState extends State<SurveyPage> {
                     summary: summary,
                   ),
                 ),
+              );
+            }
+          } else if (widget.taskId == 'dietaryIntake') {
+            if (mounted) {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      MainScreen(initialTabIndex: 1), // 切换到 EventLog Tab
+                ),
+                (Route<dynamic> route) => false,
               );
             }
           } else {

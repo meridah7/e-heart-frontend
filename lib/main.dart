@@ -82,6 +82,9 @@ class MyApp extends StatelessWidget {
 }
 
 class MainScreen extends StatefulWidget {
+  final int initialTabIndex;
+
+  MainScreen({this.initialTabIndex = 0});
   @override
   _MainScreenState createState() => _MainScreenState();
 }
@@ -193,6 +196,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
+    _selectedIndex = widget.initialTabIndex;
     _checkLoggedIn();
   }
 
