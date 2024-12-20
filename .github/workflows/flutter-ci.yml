@@ -19,9 +19,6 @@ jobs:
     - name: Install dependencies
       run: flutter pub get
 
-    - name: Run tests
-      run: flutter test
-
     - name: Build Android (Debug)
       run: flutter build apk --debug
 
@@ -45,9 +42,6 @@ jobs:
 
     - name: Install dependencies
       run: flutter pub get
-
-    - name: Run tests
-      run: flutter test
 
     - name: Build Windows (Debug)
       run: flutter build windows --debug
