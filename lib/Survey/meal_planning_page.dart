@@ -30,7 +30,14 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
 
   getAllMealPlans() async {
     try {
-      Response response = await dioClient.getRequest('/meal_plans/get-all');
+      final now = DateTime.now();
+      int startTime =
+          DateTime(now.year, now.month, now.day + 1).millisecondsSinceEpoch;
+      // 当天 23:59:59 的时间戳
+      int endTime = DateTime(now.year, now.month, now.day + 1, 23, 59, 59, 999)
+          .millisecondsSinceEpoch;
+      Response response =
+          await dioClient.getRequest('/meal_plans/$startTime/$endTime');
       if (response.statusCode == 200) {
         List<dynamic> data = response.data;
         setState(() {
