@@ -1,0 +1,59 @@
+name: Flutter CI
+
+on:
+  workflow_dispatch:  # 手动触发构建
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest  # 使用 Ubuntu 环境构建 Android
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.19.5'  # 设置为你使用的 Flutter 版本
+
+    - name: Install dependencies
+      run: flutter pub get
+
+    - name: Run tests
+      run: flutter test
+
+    - name: Build Android (Debug)
+      run: flutter build apk --debug
+
+    - name: Upload Android build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: flutter-android-debug
+        path: build/
+
+  build-windows:
+    runs-on: windows-latest  # 使用 Windows 环境构建 Windows
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.19.5'  # 设置为你使用的 Flutter 版本
+
+    - name: Install dependencies
+      run: flutter pub get
+
+    - name: Run tests
+      run: flutter test
+
+    - name: Build Windows (Debug)
+      run: flutter build windows --debug
+
+    - name: Upload Windows build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: flutter-windows-debug
+        path: build/
