@@ -47,6 +47,10 @@ class Preferences {
       if (_instance!.getData('completedTaskAnswers') == null) {
         _instance!.setData('completedTaskAnswers', {});
       }
+      // 用户历史问卷的所有记录 用TaskID为Key 历史问卷的List 为Value
+      if (_instance!.getData('completedSurveys') == null) {
+        _instance!.setData('completedSurveys', {});
+      }
     }
     return _instance!;
   }

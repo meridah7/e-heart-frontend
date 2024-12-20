@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../DietaryAnalysis/dietary_analysis_page.dart';
+import '../DietReview/diet_review_page.dart';
 
 class ReviewAnalysisPage extends StatefulWidget {
   @override
@@ -227,7 +228,8 @@ class _ReviewAnalysisPageState extends State<ReviewAnalysisPage> {
   }
 
   void _navigateToDietMonitoring() {
-    //Navigator.push(context, MaterialPageRoute(builder: (context) => DietMonitoringPage()));
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => DietReviewPage()));
   }
 
   void _navigateToRegularDiet() {

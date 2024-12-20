@@ -479,6 +479,8 @@ class _EventLogPageState extends State<EventLogPage>
                       ),
 
                       // 编辑按钮，靠右显示
+                      // FIXME: 展示时机
+                      // if (!plan.state)
                       SizedBox(
                         width: 32,
                         height: 32,
