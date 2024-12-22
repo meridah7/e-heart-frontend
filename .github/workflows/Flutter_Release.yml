@@ -73,7 +73,11 @@ jobs:
         mkdir -p output/windows
         cp build/windows/x64/runner/Release/*.exe output/windows/
         cp build/windows/x64/runner/Release/*.dll output/windows/
-        cp build/windows/x64/runner/Release/icudtl.dat output/windows/ || echo "icudtl.dat not found, skipping."
+        if [ -f build/windows/x64/runner/Release/icudtl.dat ]; then
+          cp build/windows/x64/runner/Release/icudtl.dat output/windows/
+        else
+          echo "icudtl.dat not found, skipping."
+        fi
 
     - name: Clean up intermediate files
       run: rm -rf build/windows/flutter/ build/windows/runner/Debug/
