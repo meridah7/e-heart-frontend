@@ -36,6 +36,7 @@ jobs:
             Copy-Item build/windows/x64/runner/Release/icudtl.dat output/windows/
           } else {
             Write-Host "icudtl.dat not found, skipping."
+          }
 
       # 打包成 ZIP 文件
       - name: Create ZIP Package
