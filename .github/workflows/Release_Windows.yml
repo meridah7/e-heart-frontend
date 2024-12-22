@@ -1,10 +1,10 @@
 name: Windows Build and Release
 
 on:
-  workflow_dispatch:  # 手动触发支持
+  workflow_dispatch: # 手动触发
 
 permissions:
-  contents: write  # 允许写入内容
+  contents: write # 确保拥有写入权限
 
 jobs:
   build-windows:
@@ -18,7 +18,7 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.5'
+          flutter-version: "3.19.5"
 
       # 清理和构建 Windows Release 版本
       - name: Build Windows Release
@@ -26,14 +26,8 @@ jobs:
           flutter clean
           flutter build windows --release
 
-      # 调试构建目录
-      - name: Debug Build Directory
-        run: |
-          echo "Listing build directory..."
-          Get-ChildItem build/windows/x64/runner/Release
-
       # 创建输出目录并复制文件
-      - name: Copy Release Files
+      - name: Prepare Release Files
         run: |
           mkdir output/windows -Force
           Copy-Item build/windows/x64/runner/Release/*.exe output/windows/
@@ -42,25 +36,29 @@ jobs:
             Copy-Item build/windows/x64/runner/Release/icudtl.dat output/windows/
           } else {
             Write-Host "icudtl.dat not found, skipping."
-          }
 
-      # 上传构建产物到 GitHub Actions 的工件
-      - name: Upload Windows Artifacts
+      # 打包成 ZIP 文件
+      - name: Create ZIP Package
+        run: |
+          Compress-Archive -Path output/windows/* -DestinationPath output/windows-release.zip
+
+      # 上传 ZIP 文件到 GitHub Actions 的工件
+      - name: Upload ZIP Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: windows-release
-          path: output/windows/
+          name: windows-release-zip
+          path: output/windows-release.zip
 
-      # 自动发布 Release
-      - name: Create GitHub Release
+      # 自动发布 Release 并上传 ZIP 文件
+      - name: Create GitHub Release with ZIP
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "output/windows/*"
+          artifacts: "output/windows-release.zip"
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.ref_name }}
           name: "Windows Release - ${{ github.ref_name }}"
           body: |
             This release includes the following updates:
-            - Windows build created automatically.
+            - Windows build packaged as a ZIP file.
           draft: false
           prerelease: false

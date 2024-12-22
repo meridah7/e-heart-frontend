@@ -1,7 +1,10 @@
 name: Flutter CI - Release Build
 
 on:
-  workflow_dispatch:  # 手动触发工作流
+  workflow_dispatch: # 手动触发工作流
+
+permissions:
+  contents: write # 确保拥有写入权限
 
 env:
   RELEASE_TAG: v1.0.0
@@ -16,108 +19,108 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set up Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: '3.19.5'
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.19.5"
 
-    - name: Clean build
-      run: flutter clean
+      - name: Clean build
+        run: flutter clean
 
-    - name: Install dependencies
-      run: flutter pub get
+      - name: Install dependencies
+        run: flutter pub get
 
-    - name: Build Android APK (Split per ABI)
-      run: flutter build apk --release --split-per-abi
+      - name: Build Android APK (Split per ABI)
+        run: flutter build apk --release --split-per-abi
 
-    - name: Backup important APKs
-      run: |
-        mkdir -p output/android
-        cp build/app/outputs/flutter-apk/*.apk output/android/
+      - name: Backup important APKs
+        run: |
+          mkdir -p output/android
+          cp build/app/outputs/flutter-apk/*.apk output/android/
 
-    - name: Clean up intermediate files
-      run: rm -rf build/app/intermediates/ build/app/outputs/flutter-apk/debug/
+      - name: Clean up intermediate files
+        run: rm -rf build/app/intermediates/ build/app/outputs/flutter-apk/debug/
 
-    - name: Upload Android APKs
-      uses: actions/upload-artifact@v3
-      with:
-        name: android-apk
-        path: output/android/
+      - name: Upload Android APKs
+        uses: actions/upload-artifact@v3
+        with:
+          name: android-apk
+          path: output/android/
 
   build-windows:
     runs-on: windows-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set up Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: '3.19.5'
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.19.5"
 
-    - name: Clean build
-      run: flutter clean
+      - name: Clean build
+        run: flutter clean
 
-    - name: Install dependencies
-      run: flutter pub get
+      - name: Install dependencies
+        run: flutter pub get
 
-    - name: Build Windows Executable (Release)
-      run: flutter build windows --release
+      - name: Build Windows Executable (Release)
+        run: flutter build windows --release
 
-    - name: Copy Windows Release files
-      run: |
-        mkdir -p output/windows
-        cp build/windows/x64/runner/Release/*.exe output/windows/
-        cp build/windows/x64/runner/Release/*.dll output/windows/
-        if [ -f build/windows/x64/runner/Release/icudtl.dat ]; then
-          cp build/windows/x64/runner/Release/icudtl.dat output/windows/
-        else
-          echo "icudtl.dat not found, skipping."
-        fi
+      - name: Copy Windows Release files
+        run: |
+          mkdir -p output/windows
+          cp build/windows/x64/runner/Release/*.exe output/windows/
+          cp build/windows/x64/runner/Release/*.dll output/windows/
+          if (Test-Path build/windows/x64/runner/Release/icudtl.dat) {
+            Copy-Item build/windows/x64/runner/Release/icudtl.dat output/windows/
+          } else {
+            Write-Host "icudtl.dat not found, skipping."
+          }
 
-    - name: Clean up intermediate files
-      run: rm -rf build/windows/flutter/ build/windows/runner/Debug/
+      - name: Clean up intermediate files
+        run: rm -rf build/windows/flutter/ build/windows/runner/Debug/
 
-    - name: Upload Windows Executables
-      uses: actions/upload-artifact@v3
-      with:
-        name: windows-release
-        path: output/windows/
+      - name: Upload Windows Executables
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows-release
+          path: output/windows/
 
   create-release:
     needs: [build-android, build-windows]
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Create a new Release
-      id: create-release
-      uses: actions/create-release@v1
-      with:
-        tag_name: ${{ env.RELEASE_TAG }}
-        release_name: ${{ env.RELEASE_NAME }}
-        body: ${{ env.RELEASE_BODY }}
-        draft: false
-        prerelease: false
+      - name: Create a new Release
+        id: create-release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ env.RELEASE_TAG }}
+          release_name: ${{ env.RELEASE_NAME }}
+          body: ${{ env.RELEASE_BODY }}
+          draft: false
+          prerelease: false
 
-    - name: Upload Android APKs to Release
-      uses: actions/upload-release-asset@v1
-      with:
-        upload_url: ${{ steps.create-release.outputs.upload_url }}
-        asset_path: output/android/*.apk
-        asset_name: android-apks.zip
-        asset_content_type: application/zip
+      - name: Upload Android APKs to Release
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create-release.outputs.upload_url }}
+          asset_path: output/android/*.apk
+          asset_name: android-apks.zip
+          asset_content_type: application/zip
 
-    - name: Upload Windows Executables to Release
-      uses: actions/upload-release-asset@v1
-      with:
-        upload_url: ${{ steps.create-release.outputs.upload_url }}
-        asset_path: output/windows/*
-        asset_name: windows-executables.zip
-        asset_content_type: application/zip
+      - name: Upload Windows Executables to Release
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create-release.outputs.upload_url }}
+          asset_path: output/windows/*
+          asset_name: windows-executables.zip
+          asset_content_type: application/zip
