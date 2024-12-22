@@ -1,0 +1,64 @@
+name: Windows Build and Release
+
+on:
+  push:
+  workflow_dispatch:  # 手动触发支持
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      # 检出代码
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 设置 Flutter 环境
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.5'
+
+      # 清理和构建 Windows Release 版本
+      - name: Build Windows Release
+        run: |
+          flutter clean
+          flutter build windows --release
+
+      # 调试构建目录
+      - name: Debug Build Directory
+        run: |
+          echo "Listing build directory..."
+          Get-ChildItem build/windows/x64/runner/Release
+
+      # 创建输出目录并复制文件
+      - name: Copy Release Files
+        run: |
+          mkdir output/windows -Force
+          Copy-Item build/windows/x64/runner/Release/*.exe output/windows/
+          Copy-Item build/windows/x64/runner/Release/*.dll output/windows/
+          if (Test-Path build/windows/x64/runner/Release/icudtl.dat) {
+            Copy-Item build/windows/x64/runner/Release/icudtl.dat output/windows/
+          } else {
+            Write-Host "icudtl.dat not found, skipping."
+          }
+
+      # 上传构建产物到 GitHub Actions 的工件
+      - name: Upload Windows Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows-release
+          path: output/windows/
+
+      # 自动发布 Release
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "output/windows/*"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ github.ref_name }}
+          name: "Windows Release - ${{ github.ref_name }}"
+          body: |
+            This release includes the following updates:
+            - Windows build created automatically.
+          draft: false
+          prerelease: false
