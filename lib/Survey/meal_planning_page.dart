@@ -28,6 +28,7 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
     getAllMealPlans();
   }
 
+  // 获取今天的每日饮食计划
   getAllMealPlans() async {
     try {
       final now = DateTime.now();
@@ -142,16 +143,19 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
                           timeController.text.isNotEmpty &&
                           food != null) {
                         String planningDate = getMealPlanningDate('yyyy-MM-dd');
-
+                        // 改动：用户在中午12点前提交的计划为当天的计划，12点后是明天的计划
                         try {
                           await dioClient.postRequest('/meal_plans/create', {
                             "type": mealName,
                             "food_details": food,
                             "time": "${timeController.text}:00",
                             "date": DateTime.now().millisecondsSinceEpoch,
-                            "target_date": DateTime.now()
-                                .add(Duration(days: 1))
-                                .millisecondsSinceEpoch
+                            // 12点后日期➕1
+                            "target_date": DateTime.now().hour > 12
+                                ? DateTime.now()
+                                    .add(Duration(days: 1))
+                                    .millisecondsSinceEpoch
+                                : DateTime.now().millisecondsSinceEpoch
                           });
                           await getAllMealPlans();
                         } catch (e) {
