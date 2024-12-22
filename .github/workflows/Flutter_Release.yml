@@ -76,14 +76,16 @@ jobs:
           mkdir -p output/windows
           cp build/windows/x64/runner/Release/*.exe output/windows/
           cp build/windows/x64/runner/Release/*.dll output/windows/
-          if (Test-Path build/windows/x64/runner/Release/icudtl.dat) {
-            Copy-Item build/windows/x64/runner/Release/icudtl.dat output/windows/
-          } else {
-            Write-Host "icudtl.dat not found, skipping."
-          }
+          if [ -f build/windows/x64/runner/Release/icudtl.dat ]; then
+            cp build/windows/x64/runner/Release/icudtl.dat output/windows/
+          fi
+          zip -r output/windows-release.zip output/windows/
+        shell: msys2
+
 
       - name: Clean up intermediate files
         run: rm -rf build/windows/flutter/ build/windows/runner/Debug/
+        shell: msys2
 
       - name: Upload Windows Executables
         uses: actions/upload-artifact@v3
