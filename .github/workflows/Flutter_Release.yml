@@ -82,10 +82,6 @@ jobs:
             Write-Host "icudtl.dat not found, skipping."
           }
 
-       # 清理旧的构建产物
-      - name: Clean old build files
-        run: |
-          Remove-Item -Recurse -Force build/windows/flutter/, build/windows/runner/Debug/ || Write-Host "No files to delete."
 
       - name: Upload Windows Executables
         uses: actions/upload-artifact@v3
