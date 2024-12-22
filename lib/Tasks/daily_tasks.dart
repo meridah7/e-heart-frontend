@@ -6,8 +6,7 @@ import './Chatbot/tasks.dart';
 import './Survey/tasks.dart';
 
 List<List<Task>> DailyTask = [
-  // ChatbotTest,
-  SurveyTest,
+  TaskTestAll,
   TaskDay0,
   TaskDay1,
   TaskDay2,
@@ -36,7 +35,8 @@ List<List<Task>> DailyTask = [
   TaskDay25
 ];
 // TODO: mock task
-List<Task> TaskDay0 = [dietLogTutor, ...SurveyTest];
+List<Task> TaskTestAll = [...SurveyTest, ...ChatbotTest];
+List<Task> TaskDay0 = [dietLogTutor];
 List<Task> TaskDay1 = [impulseSurfingTutor];
 List<Task> TaskDay2 = [reflectiveActivity];
 List<Task> TaskDay3 = [];
