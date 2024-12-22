@@ -1,8 +1,10 @@
 name: Windows Build and Release
 
 on:
-  push:
   workflow_dispatch:  # 手动触发支持
+
+permissions:
+  contents: write  # 允许写入内容
 
 jobs:
   build-windows:
