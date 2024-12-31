@@ -29,14 +29,17 @@ class MyPage extends StatelessWidget {
               // 分隔线
               Divider(height: 15, thickness: 1),
 
+              // FIXME: 调试Token
+
               // 饮食日志补录选项
-              _buildOption('饮食日志补录', Icons.local_dining, context),
+              // _buildOption('饮食日志补录', Icons.local_dining, context),
+              _buildOption('清除accessToken', Icons.local_dining, context),
 
               // 分隔线
               Divider(height: 15, thickness: 1),
 
               // 占卜回顾选项
-              _buildOption('占卜回顾', Icons.star, context),
+              _buildOption('清除所有Token', Icons.star, context),
 
               // 分隔线
               Divider(height: 15, thickness: 1),
@@ -83,6 +86,7 @@ class MyPage extends StatelessWidget {
     }
   }
 
+  // FIXME: 调试Token
   Widget _buildOption(String title, IconData icon, BuildContext context) {
     return ListTile(
       leading: Icon(icon),
@@ -109,12 +113,12 @@ class MyPage extends StatelessWidget {
               );
             }
             break;
-          case '饮食日志补录':
+          case '清除accessToken':
             DioClient().setAccessToken('');
             // 导航到饮食日志补录页面
             // Navigator.pushNamed(context, '/diet_review');
             break;
-          case '占卜回顾':
+          case '清除所有Token':
             DioClient().clearTokens();
             break;
           default:
