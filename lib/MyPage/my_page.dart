@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:namer_app/utils/dio_client.dart';
 import 'package:provider/provider.dart';
 import '../Login/user_model.dart';
 import './profile_page.dart';
@@ -90,20 +91,33 @@ class MyPage extends StatelessWidget {
         // 使用context获取UserProvider实例
         final userProvider = Provider.of<UserProvider>(context, listen: false);
 
-        if (userProvider.user != null) {
-          // 如果用户已登录，导航到设置页面
-          Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) => ProfilePage()));
-        } else {
-          // 如果用户未登录，显示登录提示
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text('请先登录')));
+        switch (title) {
+          case '设置':
+            if (userProvider.user != null) {
+              // 如果用户已登录，导航到设置页面
+              Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (context) => ProfilePage()));
+            } else {
+              // 如果用户未登录，显示登录提示
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text('请先登录')));
 
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            '/login',
-            ModalRoute.withName('/login'), // 保留根页面
-          );
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                '/login',
+                ModalRoute.withName('/login'), // 保留根页面
+              );
+            }
+            break;
+          case '饮食日志补录':
+            DioClient().setAccessToken('');
+            // 导航到饮食日志补录页面
+            // Navigator.pushNamed(context, '/diet_review');
+            break;
+          case '占卜回顾':
+            DioClient().clearTokens();
+            break;
+          default:
         }
       },
     );

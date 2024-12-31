@@ -17,6 +17,8 @@ import 'package:namer_app/utils/api_service.dart';
 import 'package:dio/dio.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 void main() async {
   // 初始化中文 Locale 数据
   initializeDateFormatting('zh_CN', null);
@@ -40,43 +42,43 @@ class MyApp extends StatelessWidget {
       ],
 
       child: MaterialApp(
-        title: 'CBT-E App',
-        home: MainScreen(),
-        theme: ThemeData(
-          dialogTheme: DialogTheme(
-            backgroundColor: Colors.white, // 设置弹窗的全局背景色为白色
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10), // 可选：为弹窗添加圆角
-            ),
-          ),
-          elevatedButtonTheme: ElevatedButtonThemeData(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Color(0xFFD98E8E), // 设置按钮背景色
-              foregroundColor: Colors.white, // 设置按钮文字颜色
-              shadowColor: Colors.grey, // 设置阴影颜色
-              elevation: 5, // 设置阴影高度
+          title: 'CBT-E App',
+          home: MainScreen(),
+          theme: ThemeData(
+            dialogTheme: DialogTheme(
+              backgroundColor: Colors.white, // 设置弹窗的全局背景色为白色
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(24), // 设置按钮的圆角
+                borderRadius: BorderRadius.circular(10), // 可选：为弹窗添加圆角
               ),
             ),
+            elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFFD98E8E), // 设置按钮背景色
+                foregroundColor: Colors.white, // 设置按钮文字颜色
+                shadowColor: Colors.grey, // 设置阴影颜色
+                elevation: 5, // 设置阴影高度
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(24), // 设置按钮的圆角
+                ),
+              ),
+            ),
+            appBarTheme: AppBarTheme(backgroundColor: Color(0xFFF0E5E7)),
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: Color(0xFFD98E8E), // 设置全局的主颜色
+              primary: Color(0xFFD98E8E), // 主要按钮颜色
+              onPrimary: Color(0xFFFFFFFF), // 主按钮下的字色
+              secondary: Color(0xFFFFFFFF), // 次要按钮颜色
+              onSecondary: Color(0xFF505050), // 普通按钮字色
+            ),
+            scaffoldBackgroundColor: Color(0xFFF0E5E7), // 设置整体背景色
           ),
-          appBarTheme: AppBarTheme(backgroundColor: Color(0xFFF0E5E7)),
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: Color(0xFFD98E8E), // 设置全局的主颜色
-            primary: Color(0xFFD98E8E), // 主要按钮颜色
-            onPrimary: Color(0xFFFFFFFF), // 主按钮下的字色
-            secondary: Color(0xFFFFFFFF), // 次要按钮颜色
-            onSecondary: Color(0xFF505050), // 普通按钮字色
-          ),
-          scaffoldBackgroundColor: Color(0xFFF0E5E7), // 设置整体背景色
-        ),
-        initialRoute: '/',
-        routes: {
-          '/login': (context) => LoginPage(), // 登录页面
-          '/home': (context) => MainScreen(), // 主屏幕，登录成功后跳转的页面
-          '/register': (context) => RegisterInfoPage(), // 添加注册页面的路由
-        },
-      ),
+          initialRoute: '/',
+          routes: {
+            '/login': (context) => LoginPage(), // 登录页面
+            '/home': (context) => MainScreen(), // 主屏幕，登录成功后跳转的页面
+            '/register': (context) => RegisterInfoPage(), // 添加注册页面的路由
+          },
+          navigatorKey: navigatorKey),
     );
   }
 }
@@ -202,37 +204,12 @@ class _MainScreenState extends State<MainScreen> {
 
   void _checkLoggedIn() async {
     try {
-      final ApiService apiService = ApiService();
-      String? token = await apiService.getToken();
-
-      // If no token is stored, user is not logged in
-      if (token == null) {
-        _redirectToLogin();
-      }
-
       if (mounted) {
         final userProvider = Provider.of<UserProvider>(context, listen: false);
         userProvider.fetchUser();
       }
-    } on DioException catch (e) {
-      if (e.response?.statusCode == 403) {
-        // 处理 403 错误，重定向到登录页
-        _redirectToLogin();
-      } else {
-        print('请求出错: ${e.response?.statusCode}');
-      }
     } catch (e) {
-      // In case of error, treat user as not logged in
-      print('Error checking login status: $e');
-      _redirectToLogin();
+      print('请求用户信息出错: $e');
     }
-  }
-
-  void _redirectToLogin() {
-    Navigator.pushNamedAndRemoveUntil(
-      context,
-      '/login',
-      ModalRoute.withName('/login'), // 保留根页面
-    );
   }
 }
