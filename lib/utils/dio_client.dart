@@ -1,13 +1,143 @@
+// ignore_for_file: constant_identifier_names
+import 'package:namer_app/main.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
-const String userBaseUrl = 'http://121.41.30.133/api';
-const String agentBaseUrl = ' http://223.4.25.37:3000/api/agent';
+const String USER_BASE_URL = 'http://121.41.30.133/api';
+const String AGENT_BASE_URL = ' http://223.4.25.37:3000/api/agent';
 
 class DioClient {
-  final Dio _dio;
+  late final Dio _dio;
   // Token 安全存储
   final _storage = FlutterSecureStorage();
+
+  static final DioClient _instance = DioClient._internal();
+
+  factory DioClient() {
+    return _instance;
+  }
+
+  DioClient._internal() {
+    _dio = Dio(
+      BaseOptions(
+        baseUrl: USER_BASE_URL, // 全局基础 URL
+        connectTimeout: const Duration(seconds: 10), // 连接超时时间
+        receiveTimeout: const Duration(seconds: 15), // 响应超时时间
+        headers: {
+          'Content-Type': 'application/json', // 默认请求头
+        },
+      ),
+    );
+
+    // 添加拦截器
+    _dio.interceptors.add(_createInterceptors());
+    // 添加 PrettyDioLogger 拦截器
+    _dio.interceptors.add(
+      PrettyDioLogger(
+        requestHeader: true, // 打印请求头
+        requestBody: true, // 打印请求体
+        responseHeader: false, // 不打印响应头
+        responseBody: true, // 打印响应体
+        error: true, // 打印错误信息
+        compact: true, // 压缩日志（使其更紧凑）
+        maxWidth: 90, // 日志的最大宽度
+      ),
+    );
+  }
+  // 创建拦截器
+  Interceptor _createInterceptors() {
+    return InterceptorsWrapper(
+      onRequest: (options, handler) async {
+        // 在请求前统一处理，比如添加 Token
+        String? accessToken = await _getAccessToken();
+        options.headers["Authorization"] = "Bearer $accessToken";
+        return handler.next(options);
+      },
+      onResponse: (response, handler) async {
+        // 处理Token 存储
+        final data = response.data;
+
+        // 检查是否有 token，并存储
+        if (data is Map<String, dynamic>) {
+          if (data.containsKey('accessToken')) {
+            await _setAccessToken(data['accessToken']);
+          }
+          if (data.containsKey('refreshToken')) {
+            await _setRefreshToken(data['refreshToken']);
+          }
+        }
+
+        return handler.next(response);
+      },
+      onError: (DioException exception, handler) async {
+        if (exception.response?.statusCode == 401) {
+          // 刷新 Token
+          final isRefreshed = await _refreshAccessToken();
+          if (isRefreshed) {
+            final options = exception.requestOptions;
+            final newToken = await _getAccessToken();
+            if (newToken != null) {
+              options.headers['Authorization'] = 'Bearer $newToken';
+            }
+            try {
+              final retryResponse = await _dio.request(
+                options.path,
+                options: Options(
+                  method: options.method,
+                  headers: options.headers,
+                ),
+                data: options.data,
+                queryParameters: options.queryParameters,
+              );
+              return handler.resolve(retryResponse);
+            } catch (retryException) {
+              return handler.next(retryException as DioException);
+            }
+          }
+        } else if (exception.response?.statusCode == 403) {
+          _handleForbidden();
+        }
+        handler.next(exception);
+      },
+    );
+  }
+
+  // 刷新 Access Token
+  Future<bool> _refreshAccessToken() async {
+    final refreshToken = await _getRefreshToken();
+    if (refreshToken == null) return false;
+
+    try {
+      final response = await postRequest(
+        "/auth/refresh-token",
+        {"refreshToken": refreshToken},
+      );
+
+      if (response.statusCode == 200) {
+        final newAccessToken = response.data['accessToken'];
+        final newRefreshToken = response.data['refreshToken'];
+        if (newAccessToken != null) {
+          await _setAccessToken(newAccessToken);
+        }
+        if (newRefreshToken != null) {
+          await _setRefreshToken(newRefreshToken);
+        }
+        return true;
+      }
+    } catch (e) {
+      print("刷新 Token 失败: $e");
+    }
+    return false;
+  }
+
+  // 跳转到登录页面
+  void _handleForbidden() {
+    print("403 Forbidden: 跳转到登录页面");
+    // 具体实现根据你的路由逻辑
+    navigatorKey.currentState
+        ?.pushNamedAndRemoveUntil('/login', (route) => false);
+  }
 
   // Token 相关方法
   Future<void> storeToken(String accessToken, String refreshToken) async {
@@ -15,99 +145,28 @@ class DioClient {
     await _storage.write(key: 'refreshToken', value: refreshToken);
   }
 
-  Future<String?> getAccessToken() async {
+  Future<void> _setAccessToken(String accessToken) async {
+    await _storage.write(key: 'accessToken', value: accessToken);
+  }
+
+  Future<void> setAccessToken(String accessToken) async {
+    await _storage.write(key: 'accessToken', value: accessToken);
+  }
+
+  Future<void> _setRefreshToken(String refreshToken) async {
+    await _storage.write(key: 'refreshToken', value: refreshToken);
+  }
+
+  Future<String?> _getAccessToken() async {
     return await _storage.read(key: 'accessToken');
   }
 
-  Future<String?> getRefreshToken() async {
+  Future<String?> _getRefreshToken() async {
     return await _storage.read(key: 'refreshToken');
   }
 
-  Future<void> deleteAllTokens() async {
+  Future<void> clearTokens() async {
     await _storage.deleteAll();
-  }
-
-  // 配合Dio来处理请求
-  // 指定baseUrl， 可以更改
-  DioClient({String baseUrl = userBaseUrl})
-      : _dio = Dio(BaseOptions(
-          baseUrl: baseUrl, // 设置基本URL
-          connectTimeout: Duration(seconds: 5), // 连接超时
-          receiveTimeout: Duration(seconds: 5), // 接收超时
-          sendTimeout: Duration(seconds: 15), // Added send timeout
-          validateStatus: (status) {
-            return status != null &&
-                status < 500; // Accept all status codes less than 500
-          },
-        )) {
-    // 拦截器
-    _dio.interceptors.add(LogInterceptor(responseBody: true));
-    _dio.interceptors.add(InterceptorsWrapper(
-      onRequest: (options, handler) async {
-        // 请求头添加token
-        String? accessToken = await getAccessToken();
-        if (accessToken != null) {
-          options.headers['Authorization'] = 'Bearer $accessToken';
-        }
-        return handler.next(options);
-      },
-      // 响应拦截
-      onResponse: (response, handler) {
-        // check status code
-        // TODO 这里应该配合错误码处理
-        // if (response.statusCode != 200) {
-        //   return handler.reject(DioException(
-        //       requestOptions: response.requestOptions,
-        //       response: response,
-        //       type: DioExceptionType.badResponse,
-        //       error: 'HTTP Error: ${response.statusCode}'));
-        // }
-        if (response.statusCode == 403) {
-          // 在这里可以执行重定向逻辑
-          // 将其传递给上层调用
-          throw DioException(
-            requestOptions: response.requestOptions,
-            response: response,
-            type: DioExceptionType.badResponse,
-            error: 'HTTP Error: ${response.statusCode}',
-          );
-        }
-        // 处理Token 存储
-        if (response.requestOptions.path == '/auth/verifyCode') {
-          var data = response.data;
-          storeToken(data['accessToken'], data['refreshToken']);
-        }
-        return handler.next(response);
-      },
-      onError: (error, handler) async {
-        // 刷新token
-        if (error.response?.statusCode == 401 ||
-            error.response?.statusMessage == 'invalid token') {
-          // Token expired, attempt to refresh
-          String? refreshToken = await getRefreshToken();
-          if (refreshToken != null) {
-            try {
-              // Call your refresh token endpoint
-              final response = await _dio.post('/auth/refresh-token', data: {
-                'refreshToken': refreshToken,
-              });
-
-              // Store the new access token
-              await storeToken(response.data['accessToken'], refreshToken);
-
-              // Retry the original request with the new access token
-              error.requestOptions.headers['Authorization'] =
-                  'Bearer ${response.data['accessToken']}';
-              final newResponse = await _dio.fetch(error.requestOptions);
-              return handler.resolve(newResponse);
-            } catch (e) {
-              // Handle refresh token failure (e.g., redirect to login)
-            }
-          }
-        }
-        return handler.next(error);
-      },
-    ));
   }
 
   // GET 请求方法

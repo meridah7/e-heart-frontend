@@ -174,15 +174,15 @@ class _ProfilePageState extends State<ProfilePage> {
       if (response.statusCode == 200) {
         // 重置preference
         // 删除token
-        await dioClient.deleteAllTokens();
+        await dioClient.clearTokens();
         if (mounted) {
-          var userProvider = Provider.of<UserProvider>(context, listen: false);
-          userProvider.logOut();
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            '/login',
-            ModalRoute.withName('/login'), // 保留根页面
-          );
+          // var userProvider = Provider.of<UserProvider>(context, listen: false);
+          // userProvider.logOut();
+          // Navigator.pushNamedAndRemoveUntil(
+          //   context,
+          //   '/login',
+          //   ModalRoute.withName('/login'), // 保留根页面
+          // );
         }
       }
     } catch (e) {
