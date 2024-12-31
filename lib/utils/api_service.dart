@@ -9,10 +9,6 @@ class ApiService {
 
   ApiService();
 
-  Future<String?> getToken() async {
-    return dioClient.getAccessToken();
-  }
-
   Future<User?> fetchUser() async {
     try {
       Response response = await dioClient.getRequest('/users/current');
