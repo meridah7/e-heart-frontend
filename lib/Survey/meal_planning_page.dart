@@ -28,6 +28,22 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
     getAllMealPlans();
   }
 
+  DateTime getTargetDateTime(Map<String, dynamic> item) {
+    // Convert the `target_date` (timestamp in milliseconds) to DateTime
+    DateTime targetDate =
+        DateTime.fromMillisecondsSinceEpoch(item['target_date']);
+    // Parse the `time` string and apply it to the `target_date`
+    List<String> timeParts = (item['time'] as String).split(':');
+    return DateTime(
+      targetDate.year,
+      targetDate.month,
+      targetDate.day,
+      int.parse(timeParts[0]), // hours
+      int.parse(timeParts[1]), // minutes
+      int.parse(timeParts[2]), // seconds
+    );
+  }
+
   // 获取今天的每日饮食计划
   getAllMealPlans() async {
     try {
@@ -41,6 +57,11 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
           await dioClient.getRequest('/meal_plans/$startTime/$endTime');
       if (response.statusCode == 200) {
         List<dynamic> data = response.data;
+        // 根据目标饮食时间先后来排序
+        data.sort((a, b) {
+          return getTargetDateTime(a).compareTo(getTargetDateTime(b));
+        });
+        print('data $data');
         setState(() {
           cards = [...data];
         });
