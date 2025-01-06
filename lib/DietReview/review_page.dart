@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:namer_app/Login/user_model.dart';
@@ -19,7 +17,7 @@ class ReviewPage extends StatefulWidget {
 }
 
 class _ReviewPageState extends State<ReviewPage> {
-  List<ReviewModel> dietLogs = [];
+  List<ReviewModel> reviewLogs = [];
 
   late Preferences _userPref;
 
@@ -78,35 +76,36 @@ class _ReviewPageState extends State<ReviewPage> {
     Map<String, dynamic> data = _userPref.getData(COMPLETED_SURVEY_KEY);
     data.remove(widget.surveyKey);
     await _userPref.setData(COMPLETED_SURVEY_KEY, data);
-    await _loadDiet();
+    await _loadLog();
   }
 
   Future<void> _initializePreferences() async {
     if (mounted) {
       var userProvider = Provider.of<UserProvider>(context, listen: false);
       _userPref = await Preferences.getInstance(namespace: userProvider.uuid);
-      await _loadDiet();
+      await _loadLog();
     }
   }
 
-  Future<void> _loadDiet() async {
+  Future<void> _loadLog() async {
     try {
-      var dietData = await _userPref.readSurveyData(widget.surveyKey);
-      print('load diet: $dietData');
+      var logData = await _userPref.readSurveyData(widget.surveyKey);
+      print('load log: $logData');
       setState(() {
-        dietLogs = (dietData).map((item) => ReviewModel.fromMap(item)).toList();
-        dietLogs.sort((a, b) => b.timestamp.compareTo(a.timestamp));
-        print(dietLogs);
+        reviewLogs =
+            (logData).map((item) => ReviewModel.fromMap(item)).toList();
+        reviewLogs.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+        print(reviewLogs);
       });
       // return;
     } catch (e) {
-      print('Error in load diet $e');
+      print('Error in load log $e');
       throw Exception(e);
     }
   }
 
-  Widget _buildDietTail(
-    ReviewModel diet,
+  Widget _buildLogTail(
+    ReviewModel log,
     int index,
   ) {
     return InkWell(
@@ -115,7 +114,7 @@ class _ReviewPageState extends State<ReviewPage> {
             context,
             MaterialPageRoute(
               builder: (context) => ReviewTemplatePage(
-                qaContent: diet.content,
+                qaContent: log.content,
                 title: widget.reviewTitle,
                 subTitle: '第${index + 1}次${widget.reviewTitle}',
               ),
@@ -124,7 +123,7 @@ class _ReviewPageState extends State<ReviewPage> {
       child: Card(
         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
         elevation: 1, // 阴影高度
-        // color: Colors.white,
+        color: Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16), // 圆角边框
         ),
@@ -138,9 +137,12 @@ class _ReviewPageState extends State<ReviewPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(DateFormat('yyyy-MM-dd HH:mm').format(
-                      DateTime.fromMillisecondsSinceEpoch(diet.timestamp))),
-                  Icon(Icons.arrow_forward_ios_outlined)
+                  Text(DateFormat('yyyy年MM月dd日 HH:mm').format(
+                      DateTime.fromMillisecondsSinceEpoch(log.timestamp))),
+                  Icon(
+                    Icons.arrow_forward_ios_outlined,
+                    color: Color(0xFF868686),
+                  )
                 ],
               ),
             ],
@@ -150,14 +152,14 @@ class _ReviewPageState extends State<ReviewPage> {
     );
   }
 
-  Widget _buildDietListView(List<ReviewModel> diets, {bool shrinkWrap = true}) {
+  Widget _buildLogListView(List<ReviewModel> logs, {bool shrinkWrap = true}) {
     return ListView.builder(
         shrinkWrap: shrinkWrap, // 根据内容自适应高度
         physics: NeverScrollableScrollPhysics(), // 禁用列表自身的滚动
-        itemCount: diets.length,
+        itemCount: logs.length,
         itemBuilder: (context, index) {
-          final diet = diets[index];
-          return _buildDietTail(diet, index);
+          final log = logs[index];
+          return _buildLogTail(log, index);
         });
   }
 
@@ -172,8 +174,24 @@ class _ReviewPageState extends State<ReviewPage> {
         ),
         body: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Expanded(
-            child: _buildDietListView(dietLogs),
+          child: Column(
+            children: [
+              if (reviewLogs.isNotEmpty)
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: Text(
+                      '共${reviewLogs.length}次${widget.reviewTitle}',
+                      style: TextStyle(fontSize: 14, color: Color(0xFF7a7a7a)),
+                    ),
+                  ),
+                ),
+              Expanded(
+                child: _buildLogListView(reviewLogs),
+              ),
+            ],
           ),
         ));
   }

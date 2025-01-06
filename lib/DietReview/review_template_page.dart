@@ -34,6 +34,7 @@ class ReviewTemplatePage extends StatelessWidget {
       body: Column(children: [
         Card(
             margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+            color: Colors.white,
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Row(
@@ -59,6 +60,7 @@ class ReviewTemplatePage extends StatelessWidget {
               final item = qaPairs[index];
               return Card(
                 margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                color: Colors.white,
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Column(
