@@ -2,6 +2,8 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
+const String COMPLETED_SURVEY_KEY = 'completedSurveys';
+
 class Preferences {
   SharedPreferences? _prefs;
   // Use UserName to distinguish between different user data
@@ -48,8 +50,8 @@ class Preferences {
         _instance!.setData('completedTaskAnswers', {});
       }
       // 用户历史问卷的所有记录 用TaskID为Key 历史问卷的List 为Value
-      if (_instance!.getData('completedSurveys') == null) {
-        _instance!.setData('completedSurveys', {});
+      if (_instance!.getData(COMPLETED_SURVEY_KEY) == null) {
+        _instance!.setData(COMPLETED_SURVEY_KEY, {});
       }
     }
     return _instance!;
@@ -122,6 +124,53 @@ class Preferences {
       return jsonString != null ? jsonDecode(jsonString) : null;
     } else {
       throw ArgumentError('Unsupported type found for the key: $key');
+    }
+  }
+
+  // 更新数据
+  Future<void> updateSurveyData(String category, List<String> newItem) async {
+    if (_prefs == null) {
+      throw Exception("SharedPreferences not initialized. Call init() first.");
+    }
+
+    // 获取现有数据
+    Map<String, dynamic> data = getData(COMPLETED_SURVEY_KEY) ?? {};
+
+    // // 反序列化为 Map
+    // // 如果没有数据，初始化为一个空 Map
+    // Map<String, List<List<String>>> data = jsonData != null
+    //     ? Map<String, List<List<String>>>.from(jsonDecode(jsonData))
+    //     : {};
+
+    // 更新数据
+    if (data.containsKey(category)) {
+      // 如果类别已存在，追加新数据
+      data[category]?.add(newItem);
+    } else {
+      // 如果类别不存在，创建新类别并添加数据
+      data[category] = [newItem];
+    }
+
+    // 序列化回 JSON 并存储
+    String updatedJsonData = jsonEncode(data);
+
+    print('Updated Data: $updatedJsonData');
+
+    await setData(COMPLETED_SURVEY_KEY, updatedJsonData);
+
+    print('Data updated successfully!');
+  }
+
+// 读取数据
+  Future<void> readSurveyData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? jsonData = prefs.getString(COMPLETED_SURVEY_KEY);
+    if (jsonData != null) {
+      Map<String, List<List<String>>> data =
+          Map<String, List<List<String>>>.from(jsonDecode(jsonData));
+      print('Current Data: $data');
+    } else {
+      print('No data found!');
     }
   }
 

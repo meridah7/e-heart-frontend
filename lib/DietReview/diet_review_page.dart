@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:namer_app/Login/user_model.dart';
+import 'package:namer_app/user_preference.dart';
 import 'package:namer_app/utils/dio_client.dart';
 import 'package:dio/dio.dart';
 import 'package:namer_app/DailyDiet/diet_models.dart';
+import 'package:provider/provider.dart';
 import './review_template_page.dart';
 
 class DietReviewPage extends StatefulWidget {
@@ -13,26 +16,51 @@ class DietReviewPage extends StatefulWidget {
 }
 
 class _DietReviewPageState extends State<DietReviewPage> {
-  DioClient dioClient = DioClient();
   List<Diet> dietLogs = [];
+  DioClient dioClient = DioClient();
+  late Preferences _userPref;
+
+  Future<void> _initializePreferences() async {
+    if (mounted) {
+      var userProvider = Provider.of<UserProvider>(context, listen: false);
+      _userPref = await Preferences.getInstance(namespace: userProvider.uuid);
+      await _loadDiet();
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _initializePreferences();
+  }
 
   Future<void> _loadDiet() async {
     try {
-      Response response = await dioClient.getRequest('/diet_logs/');
-      if (response.statusCode == 200) {
-        setState(() {
-          dietLogs = (response.data['data'] as List)
-              .map((item) => Diet.fromJson(item))
-              .toList();
-          dietLogs.sort((a, b) => b.id.compareTo(a.id));
-          print(dietLogs);
-        });
-      }
+      await _userPref.readSurveyData();
+      print('load diet');
+      // return;
     } catch (e) {
       print('Error in load diet $e');
       throw Exception(e);
     }
   }
+  // Future<void> _loadDiet() async {
+  //   try {
+  //     Response response = await dioClient.getRequest('/diet_logs/');
+  //     if (response.statusCode == 200) {
+  //       setState(() {
+  //         dietLogs = (response.data['data'] as List)
+  //             .map((item) => Diet.fromJson(item))
+  //             .toList();
+  //         dietLogs.sort((a, b) => b.id.compareTo(a.id));
+  //         print(dietLogs);
+  //       });
+  //     }
+  //   } catch (e) {
+  //     print('Error in load diet $e');
+  //     throw Exception(e);
+  //   }
+  // }
 
   Widget _buildDietTail(
     Diet diet,
@@ -112,12 +140,6 @@ class _DietReviewPageState extends State<DietReviewPage> {
           final diet = diets[index];
           return _buildDietTail(diet);
         });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _loadDiet();
   }
 
   @override
