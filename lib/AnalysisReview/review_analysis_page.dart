@@ -1,6 +1,15 @@
+// ignore_for_file: constant_identifier_names
+
 import 'package:flutter/material.dart';
 import '../DietaryAnalysis/dietary_analysis_page.dart';
-import '../DietReview/diet_review_page.dart';
+import '../DietReview/review_page.dart';
+
+// 饮食日志反思
+const String DIET_REVIEW_KEY = 'S2';
+// 饮食计划反思
+const String DIET_PLAN_REVIEW_KEY = 'S4';
+// 冲动记录反思
+const String IMPULSE_REVIEW_KEY = 'S5';
 
 class ReviewAnalysisPage extends StatefulWidget {
   @override
@@ -161,9 +170,8 @@ class _ReviewAnalysisPageState extends State<ReviewAnalysisPage> {
               _buildIconSection(
                   Icons.restaurant_menu, '饮食日志', _navigateToDietMonitoring),
               _buildIconSection(
-                  Icons.access_time, '饮食计划', _navigateToRegularDiet),
-              _buildIconSection(
-                  Icons.update, '暴食替代', _navigateToBingeSubstitution),
+                  Icons.access_time, '饮食计划', _navigateToDietPlanReview),
+              _buildIconSection(Icons.update, '暴食替代', _navigateToImpulseReview),
             ],
           ),
         ],
@@ -229,15 +237,32 @@ class _ReviewAnalysisPageState extends State<ReviewAnalysisPage> {
 
   void _navigateToDietMonitoring() {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => DietReviewPage()));
+        context,
+        MaterialPageRoute(
+            builder: (context) => ReviewPage(
+                  surveyKey: DIET_REVIEW_KEY,
+                  reviewTitle: '饮食日志反思',
+                )));
   }
 
-  void _navigateToRegularDiet() {
-    // Navigate to the Regular Diet page
+  void _navigateToDietPlanReview() {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ReviewPage(
+                  surveyKey: DIET_PLAN_REVIEW_KEY,
+                  reviewTitle: '饮食计划反思',
+                )));
   }
 
-  void _navigateToBingeSubstitution() {
-    // Navigate to the Binge Substitution page
+  void _navigateToImpulseReview() {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ReviewPage(
+                  surveyKey: IMPULSE_REVIEW_KEY,
+                  reviewTitle: '冲动记录反思',
+                )));
   }
 
   void _navigateToMyBingeEatingStrategy() {

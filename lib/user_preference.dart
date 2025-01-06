@@ -5,15 +5,16 @@ import 'dart:convert';
 const String COMPLETED_SURVEY_KEY = 'completedSurveys';
 
 class Preferences {
-  SharedPreferences? _prefs;
-  // Use UserName to distinguish between different user data
-  final String namespace;
-
   // Private constructor with an asynchronous initialization
   Preferences._internal(this.namespace);
 
+  // Use UserName to distinguish between different user data
+  final String namespace;
+
   // Static variable to hold the instance
   static Preferences? _instance;
+
+  SharedPreferences? _prefs;
 
   static Future<Preferences> getInstance({required String namespace}) async {
     if (_instance == null || _instance!.namespace != namespace) {
@@ -55,11 +56,6 @@ class Preferences {
       }
     }
     return _instance!;
-  }
-
-  // Initialization method for SharedPreferences
-  Future<void> _init() async {
-    _prefs = await SharedPreferences.getInstance();
   }
 
   // Set data method for various types
@@ -128,7 +124,7 @@ class Preferences {
   }
 
   // 更新数据
-  Future<void> updateSurveyData(String category, List<String> newItem) async {
+  Future<void> updateSurveyData(String category, List<String> survey) async {
     if (_prefs == null) {
       throw Exception("SharedPreferences not initialized. Call init() first.");
     }
@@ -136,11 +132,15 @@ class Preferences {
     // 获取现有数据
     Map<String, dynamic> data = getData(COMPLETED_SURVEY_KEY) ?? {};
 
-    // // 反序列化为 Map
-    // // 如果没有数据，初始化为一个空 Map
-    // Map<String, List<List<String>>> data = jsonData != null
-    //     ? Map<String, List<List<String>>>.from(jsonDecode(jsonData))
-    //     : {};
+    // print('Current Data: $data');
+    // print('Current category: $category');
+
+    int now = DateTime.now().millisecondsSinceEpoch;
+
+    Map<String, dynamic> newItem = {
+      'content': survey,
+      'timestamp': now,
+    };
 
     // 更新数据
     if (data.containsKey(category)) {
@@ -151,27 +151,18 @@ class Preferences {
       data[category] = [newItem];
     }
 
-    // 序列化回 JSON 并存储
-    String updatedJsonData = jsonEncode(data);
+    await setData(COMPLETED_SURVEY_KEY, data);
 
-    print('Updated Data: $updatedJsonData');
-
-    await setData(COMPLETED_SURVEY_KEY, updatedJsonData);
-
-    print('Data updated successfully!');
+    // print('Data updated successfully!');
   }
 
 // 读取数据
-  Future<void> readSurveyData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? jsonData = prefs.getString(COMPLETED_SURVEY_KEY);
-    if (jsonData != null) {
-      Map<String, List<List<String>>> data =
-          Map<String, List<List<String>>>.from(jsonDecode(jsonData));
-      print('Current Data: $data');
-    } else {
-      print('No data found!');
+  Future<List<dynamic>> readSurveyData(String category) async {
+    var data = await getData(COMPLETED_SURVEY_KEY);
+    if (data == null || data[category] == null) {
+      return [];
     }
+    return data[category];
   }
 
   String? getNamespace() {
@@ -221,5 +212,10 @@ class Preferences {
     for (String key in keysToDelete) {
       await _prefs!.remove(key);
     }
+  }
+
+  // Initialization method for SharedPreferences
+  Future<void> _init() async {
+    _prefs = await SharedPreferences.getInstance();
   }
 }
