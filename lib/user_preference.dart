@@ -2,16 +2,19 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
-class Preferences {
-  SharedPreferences? _prefs;
-  // Use UserName to distinguish between different user data
-  final String namespace;
+const String COMPLETED_SURVEY_KEY = 'completedSurveys';
 
+class Preferences {
   // Private constructor with an asynchronous initialization
   Preferences._internal(this.namespace);
 
+  // Use UserName to distinguish between different user data
+  final String namespace;
+
   // Static variable to hold the instance
   static Preferences? _instance;
+
+  SharedPreferences? _prefs;
 
   static Future<Preferences> getInstance({required String namespace}) async {
     if (_instance == null || _instance!.namespace != namespace) {
@@ -47,13 +50,12 @@ class Preferences {
       if (_instance!.getData('completedTaskAnswers') == null) {
         _instance!.setData('completedTaskAnswers', {});
       }
+      // 用户历史问卷的所有记录 用TaskID为Key 历史问卷的List 为Value
+      if (_instance!.getData(COMPLETED_SURVEY_KEY) == null) {
+        _instance!.setData(COMPLETED_SURVEY_KEY, {});
+      }
     }
     return _instance!;
-  }
-
-  // Initialization method for SharedPreferences
-  Future<void> _init() async {
-    _prefs = await SharedPreferences.getInstance();
   }
 
   // Set data method for various types
@@ -121,6 +123,48 @@ class Preferences {
     }
   }
 
+  // 更新数据
+  Future<void> updateSurveyData(String category, List<String> survey) async {
+    if (_prefs == null) {
+      throw Exception("SharedPreferences not initialized. Call init() first.");
+    }
+
+    // 获取现有数据
+    Map<String, dynamic> data = getData(COMPLETED_SURVEY_KEY) ?? {};
+
+    // print('Current Data: $data');
+    // print('Current category: $category');
+
+    int now = DateTime.now().millisecondsSinceEpoch;
+
+    Map<String, dynamic> newItem = {
+      'content': survey,
+      'timestamp': now,
+    };
+
+    // 更新数据
+    if (data.containsKey(category)) {
+      // 如果类别已存在，追加新数据
+      data[category]?.add(newItem);
+    } else {
+      // 如果类别不存在，创建新类别并添加数据
+      data[category] = [newItem];
+    }
+
+    await setData(COMPLETED_SURVEY_KEY, data);
+
+    // print('Data updated successfully!');
+  }
+
+// 读取数据
+  Future<List<dynamic>> readSurveyData(String category) async {
+    var data = await getData(COMPLETED_SURVEY_KEY);
+    if (data == null || data[category] == null) {
+      return [];
+    }
+    return data[category];
+  }
+
   String? getNamespace() {
     return namespace;
   }
@@ -168,5 +212,10 @@ class Preferences {
     for (String key in keysToDelete) {
       await _prefs!.remove(key);
     }
+  }
+
+  // Initialization method for SharedPreferences
+  Future<void> _init() async {
+    _prefs = await SharedPreferences.getInstance();
   }
 }
