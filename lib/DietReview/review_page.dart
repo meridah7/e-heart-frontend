@@ -106,8 +106,8 @@ class _ReviewPageState extends State<ReviewPage> {
 
   Widget _buildLogTail(
     ReviewModel log,
-    int index,
   ) {
+    int index = log.index;
     return InkWell(
       onTap: () {
         Navigator.push(
@@ -116,7 +116,7 @@ class _ReviewPageState extends State<ReviewPage> {
               builder: (context) => ReviewTemplatePage(
                 qaContent: log.content,
                 title: widget.reviewTitle,
-                subTitle: '第${index + 1}次${widget.reviewTitle}',
+                subTitle: '第$index次${widget.reviewTitle}',
               ),
             ));
       },
@@ -133,7 +133,7 @@ class _ReviewPageState extends State<ReviewPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text('第${index + 1}次${widget.reviewTitle}'),
+              Text('第$index次${widget.reviewTitle}'),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -159,7 +159,7 @@ class _ReviewPageState extends State<ReviewPage> {
         itemCount: logs.length,
         itemBuilder: (context, index) {
           final log = logs[index];
-          return _buildLogTail(log, index);
+          return _buildLogTail(log);
         });
   }
 
@@ -174,25 +174,48 @@ class _ReviewPageState extends State<ReviewPage> {
         ),
         body: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              if (reviewLogs.isNotEmpty)
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12),
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: Text(
-                      '共${reviewLogs.length}次${widget.reviewTitle}',
-                      style: TextStyle(fontSize: 14, color: Color(0xFF7a7a7a)),
+          child: reviewLogs.isNotEmpty
+              ? Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8.0, horizontal: 12),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: Text(
+                          '共${reviewLogs.length}次${widget.reviewTitle}',
+                          style:
+                              TextStyle(fontSize: 14, color: Color(0xFF7a7a7a)),
+                        ),
+                      ),
                     ),
+                    Expanded(
+                      child: _buildLogListView(reviewLogs),
+                    ),
+                  ],
+                )
+              : Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.inbox,
+                        size: 80,
+                        color: Colors.grey,
+                      ),
+                      SizedBox(
+                        height: 16,
+                      ),
+                      Text(
+                        '暂无记录',
+                        style: TextStyle(fontSize: 18, color: Colors.grey),
+                      ),
+                      SizedBox(
+                        height: 32,
+                      )
+                    ],
                   ),
                 ),
-              Expanded(
-                child: _buildLogListView(reviewLogs),
-              ),
-            ],
-          ),
         ));
   }
 }

@@ -291,14 +291,7 @@ class _SurveyPageState extends State<SurveyPage> {
           Map answers = _userPref.getData('completedTaskAnswers');
           answers[widget.taskId] = summary;
           await _userPref.setData('completedTaskAnswers', answers);
-
-          // TODO: 本地保存该问卷历史
-          // Map allSurveyHistories = _userPref.getData(COMPLETED_SURVEY_KEY);
-          // List<List<String>> currentTaskIdHistory =
-          //     allSurveyHistories[widget.taskId] ?? [];
-          // currentTaskIdHistory.add(summary);
-          // allSurveyHistories[widget.taskId] = currentTaskIdHistory;
-          // await _userPref.setData('completedSurveys', allSurveyHistories);
+          // 本地保存问卷记录
           await _userPref.updateSurveyData(widget.taskId, summary);
 
           if (widget.isLastTask) {

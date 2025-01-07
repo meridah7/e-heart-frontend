@@ -1,5 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:namer_app/Login/user_model.dart';
+import 'package:namer_app/user_preference.dart';
+import 'package:provider/provider.dart';
 import 'survey_models.dart';
 import 'survey_question_factory.dart';
 import 'SurveySummaryPage.dart';
@@ -9,20 +12,35 @@ import 'package:namer_app/utils/dio_client.dart';
 ///
 /// @note 当前需求只要求给问题全部分页 / 全部不分页，所以这个组件粗暴的把全部问题分页了，后续如果有混合诉求的话，则考虑把这个跟 SurveyPage 一起重构了
 class FlippableSurveyPage extends StatefulWidget {
-  final Survey survey;
-  final String taskId;
-  final bool isLastTask;
-
   FlippableSurveyPage(
       {required this.survey, required this.taskId, required this.isLastTask});
+
+  final bool isLastTask;
+  final Survey survey;
+  final String taskId;
 
   @override
   _FlippableSurveyPageState createState() => _FlippableSurveyPageState();
 }
 
 class _FlippableSurveyPageState extends State<FlippableSurveyPage> {
-  int _curStep = 0;
   final DioClient dioClient = DioClient();
+  late Preferences _userPref;
+
+  int _curStep = 0;
+
+  Future<void> _initializePreferences() async {
+    if (mounted) {
+      var userProvider = Provider.of<UserProvider>(context, listen: false);
+      _userPref = await Preferences.getInstance(namespace: userProvider.uuid);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _initializePreferences();
+  }
 
   Map<String, dynamic> extractAnswer(Survey survey, int step,
       {bool showText = false}) {
@@ -92,6 +110,11 @@ class _FlippableSurveyPageState extends State<FlippableSurveyPage> {
 
     extractAnswerRecursive(questions);
     return answers;
+  }
+
+  Future<void> handleSaveSummary(List<String> summary) async {
+    // 本地保存问卷记录
+    await _userPref.updateSurveyData(widget.taskId, summary);
   }
 
   void handleFirstImpulseStrategies() {
@@ -198,6 +221,7 @@ class _FlippableSurveyPageState extends State<FlippableSurveyPage> {
         for (String line in summary) {
           print(line);
         }
+        handleSaveSummary(summary);
         // 冲动策略应对制定
         if (widget.taskId == 'D1') {
           handleSubmitImpulseStrategies();
