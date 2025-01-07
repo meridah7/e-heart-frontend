@@ -145,9 +145,12 @@ class Preferences {
     // 更新数据
     if (data.containsKey(category)) {
       // 如果类别已存在，追加新数据
+      int index = data[category]!.length + 1;
+      newItem['index'] = index;
       data[category]?.add(newItem);
     } else {
       // 如果类别不存在，创建新类别并添加数据
+      newItem['index'] = 1;
       data[category] = [newItem];
     }
 

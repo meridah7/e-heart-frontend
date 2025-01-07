@@ -1,9 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:namer_app/DailyDiet/diet_models.dart';
 import '../Tasks/daily_tasks.dart';
 import 'task_models.dart';
-import '../Chatbot/diet_contents.dart';
 import '../Chatbot/chatbot_page.dart';
 import '../Survey/survey_page.dart';
 import '../Survey/flippable_survey_page.dart';
@@ -25,23 +23,67 @@ class TodayListPage extends StatefulWidget {
 }
 
 class _TodayListPageState extends State<TodayListPage> {
-  late Preferences _userPref;
   // 用于HTTP 请求的Dio 实例
   final DioClient dioClient = DioClient();
+
   bool showTasks = true;
+
   // Fetch rules:
   // 1. check local storage, if has data, use the data
   // 2. check db's data, if has, use it
   // 3. start from day 0
   int? _currentDay;
-  List<String>? _finishedTaskIds = [];
+
   List<Task> _dailyTaskList = [];
+  List<String>? _finishedTaskIds = [];
+  late Preferences _userPref;
 
   //初始化的状态
   @override
   void initState() {
     super.initState();
     _initWidget();
+  }
+
+  Future<List<Task>> fetchImpulseReflectionRecords() async {
+    List<Task> impulseRecordTaskList = [];
+    try {
+      Response response =
+          await dioClient.getRequest('/impulse/impulse-reflection-records/');
+      if (response.statusCode == 200) {
+        List<dynamic> data = response.data;
+        impulseRecordTaskList = data.map((val) {
+          DateTime dateTime = DateTime.parse(val['createdAt']).toUtc();
+          return Task(
+              title: '冲动记录回顾 ${DateFormat('MM月dd日HH时mm分').format(dateTime)}',
+              id: 'S1',
+              type: TaskType.SURVEY,
+              isCompleted: false,
+              day: 0,
+              survey: Survey(
+                  title: '${DateFormat('MM月dd日').format(dateTime)}冲动记录回顾',
+                  extra: {
+                    'impulse_record_id': Helper.safeParseInt(val['id']),
+                  },
+                  questions: [
+                    TextQuestion('你感觉这次的应对策略怎么样？整个应对过程有什么可以改进的地方呢？', false,
+                        alias: 'impulse_response_experience',
+                        description:
+                            '你的冲动记录时间是：${DateFormat('yyyy年MM月dd日 HH时mm分').format(dateTime)}\n'
+                            '你记录的冲动种类是：${val['impulse_type']}\n'
+                            '你记录的冲动强度是：${val['intensity']}\n'
+                            '你记录的冲动诱因是：${val['trigger']}\n'
+                            '针对这次冲动，你制定的应对策略是:${val['plan']}\n'
+                            '针对这次冲动，你希望自己坚持冲动冲浪的时间：${val['impulse_duration_min'] ?? 0}分钟\n'),
+                    TextQuestion('你这次冲动大约持续了多少分钟？', false,
+                        alias: 'impulse_duration_min'),
+                  ]));
+        }).toList();
+      }
+    } catch (e) {
+      throw Exception('Error in fetch impulse record list $e');
+    }
+    return impulseRecordTaskList;
   }
 
   Future<void> _initWidget() async {
@@ -92,86 +134,16 @@ class _TodayListPageState extends State<TodayListPage> {
     }
   }
 
-  Future<List<Task>> fetchImpulseReflectionRecords() async {
-    List<Task> impulseRecordTaskList = [];
-    try {
-      Response response =
-          await dioClient.getRequest('/impulse/impulse-reflection-records/');
-      if (response.statusCode == 200) {
-        List<dynamic> data = response.data;
-        impulseRecordTaskList = data.map((val) {
-          DateTime dateTime = DateTime.parse(val['createdAt']).toUtc();
-          return Task(
-              title: '冲动记录回顾 ${DateFormat('MM月dd日HH时mm分').format(dateTime)}',
-              id: 'S1',
-              type: TaskType.SURVEY,
-              isCompleted: false,
-              day: 0,
-              survey: Survey(
-                  title: '${DateFormat('MM月dd日').format(dateTime)}冲动记录回顾',
-                  extra: {
-                    'impulse_record_id': Helper.safeParseInt(val['id']),
-                  },
-                  questions: [
-                    TextQuestion('你感觉这次的应对策略怎么样？整个应对过程有什么可以改进的地方呢？', false,
-                        alias: 'impulse_response_experience',
-                        description:
-                            '你的冲动记录时间是：${DateFormat('yyyy年MM月dd日 HH时mm分').format(dateTime)}\n'
-                            '你记录的冲动种类是：${val['impulse_type']}\n'
-                            '你记录的冲动强度是：${val['intensity']}\n'
-                            '你记录的冲动诱因是：${val['trigger']}\n'
-                            '针对这次冲动，你制定的应对策略是:${val['plan']}\n'
-                            '针对这次冲动，你希望自己坚持冲动冲浪的时间：${val['impulse_duration_min'] ?? 0}分钟\n'),
-                    TextQuestion('你这次冲动大约持续了多少分钟？', false,
-                        alias: 'impulse_duration_min'),
-                  ]));
-        }).toList();
-      }
-    } catch (e) {
-      throw Exception('Error in fetch impulse record list $e');
-    }
-    return impulseRecordTaskList;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Day $_currentDay', style: TextStyle(color: Colors.black)),
-        elevation: 0,
-      ),
-      body: Container(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              _buildSegmentedControl(),
-              Expanded(
-                child: _currentDay != null
-                    ?
-                    // ? _buildTaskListView(DailyTask[_currentDay!])
-                    _buildTaskListView(_dailyTaskList)
-                    // : _buildDietListView(DietDay0))
-                    : SizedBox.shrink(),
-              ),
-            ],
-          ),
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: _buildFloatingActionButtons(),
-    );
-  }
-
   Widget _buildSegmentedControl() {
     ThemeData themeData = Theme.of(context);
     Color taskColor = Color(0xFF9D9BE9);
     Color dietColor = Color(0xFF6FCF97);
 
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 20.0),
+      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           _buildButton(
             '今日任务',
@@ -206,7 +178,7 @@ class _TodayListPageState extends State<TodayListPage> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(18.0),
           ),
-          padding: EdgeInsets.symmetric(vertical: 12),
+          padding: EdgeInsets.symmetric(vertical: 16),
           textStyle: TextStyle(fontSize: 16),
         ),
         child: Text(text),
@@ -378,5 +350,33 @@ class _TodayListPageState extends State<TodayListPage> {
     setState(() {
       showTasks = showTaskView;
     });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Day $_currentDay', style: TextStyle(color: Colors.black)),
+        elevation: 0,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            _buildSegmentedControl(),
+            Expanded(
+              child: _currentDay != null
+                  ?
+                  // ? _buildTaskListView(DailyTask[_currentDay!])
+                  _buildTaskListView(_dailyTaskList)
+                  // : _buildDietListView(DietDay0))
+                  : SizedBox.shrink(),
+            ),
+          ],
+        ),
+      ),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      // floatingActionButton: _buildFloatingActionButtons(),
+    );
   }
 }
