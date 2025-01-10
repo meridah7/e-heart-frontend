@@ -58,3 +58,6 @@ ios/Runner.xcconfig
 ios/Flutter/App.framework/
 ios/Flutter/engine/
 ios/Flutter/flutter_export_environment.sh
+
+# FVM Version Cache
+.fvm/
