@@ -7,8 +7,8 @@ permissions:
   contents: write # 确保拥有写入权限
 
 env:
-  RELEASE_TAG: v1.0.0
-  RELEASE_NAME: "Release v1.0.0"
+  RELEASE_TAG: v1.0.0-beta.2
+  RELEASE_NAME: "Release v1.0.0-beta.2"
   RELEASE_BODY: |
     ## 更新内容
     - 新功能上线
