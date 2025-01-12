@@ -135,8 +135,8 @@ class _MainScreenState extends State<MainScreen> {
             label: ('行为记录'),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.analytics_outlined),
-            label: ('分析反思'),
+            icon: Icon(Icons.rocket_launch_outlined),
+            label: ('巩固提升'),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),
