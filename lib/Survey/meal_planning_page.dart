@@ -231,12 +231,12 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '制定饮食计划的核心原则：',
+                  '每日饮食计划帮助',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 8),
                 Text(
-                  '每餐的间隔应该在3-4小时之间！',
+                  '请在这里制定下一次的计划，记得一定要计划5-6餐哦。',
                   style: TextStyle(fontSize: 14),
                 ),
                 SizedBox(height: 16),
@@ -244,7 +244,7 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
                   alignment: Alignment.centerRight,
                   child: TextButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    child: Text('关闭', style: TextStyle(color: Colors.blue)),
+                    child: Text('关闭'),
                   ),
                 ),
               ],

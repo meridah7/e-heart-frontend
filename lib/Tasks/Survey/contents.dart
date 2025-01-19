@@ -191,23 +191,15 @@ var vomitRecordSurvey = Survey(title: '食物清除记录', questions: [
     else if (value == 7) return '超开心';
     return value.toInt().toString();
   }),
-  MultipleChoiceQuestion('食物清除的时候感受到的情绪种类', [
-    '伤心',
-    '疲惫',
-    '紧张',
-    '无聊',
-    '兴奋',
-    '羞愧',
-    '愤怒',
-    '恐惧',
-    '平静',
-    '开心',
-    '其他'
-  ], {
-    '其他': [
-      TextQuestion('请输入其他情绪种类', false),
-    ]
-  }),
+  MultipleChoiceQuestion(
+      '食物清除的时候感受到的情绪种类',
+      ['伤心', '疲惫', '紧张', '无聊', '兴奋', '羞愧', '愤怒', '恐惧', '平静', '开心', '其他'],
+      {
+        '其他': [
+          TextQuestion('请输入其他情绪种类', false),
+        ]
+      },
+      type: 'tag'),
   TextQuestion('请努力识别这次食物清除的诱发因素并填写它！', false),
   TextQuestion('更多注释（想法，感受等等）', false,
       description:
