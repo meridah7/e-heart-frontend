@@ -127,6 +127,7 @@ Widget buildMultipleChoiceQuestion(BuildContext context,
             children: [
               CheckboxListTile(
                 title: Text(option),
+                visualDensity: VisualDensity(vertical: -2), // 减少上下间距（负值更紧凑）
                 value: question.isSelected(option),
                 onChanged: (bool? value) {
                   setState(() {
@@ -308,16 +309,47 @@ Widget buildTimeQuestion(BuildContext context, TimeQuestion question,
       builder: (BuildContext builder) {
         return SizedBox(
           height: MediaQuery.of(context).copyWith().size.height / 3,
-          child: CupertinoDatePicker(
-            mode:
-                CupertinoDatePickerMode.time, // Display only hours and minutes
-            use24hFormat: true, // Use 24-hour format
-            initialDateTime: question.selectedTime,
-            onDateTimeChanged: (DateTime newDateTime) {
-              setState(() {
-                question.setTime(newDateTime);
-              });
-            },
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  CupertinoButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Text('完成'),
+                    ),
+                  )
+                ],
+              ),
+              Expanded(
+                child: CupertinoTheme(
+                  data: CupertinoThemeData(
+                    textTheme: CupertinoTextThemeData(
+                      dateTimePickerTextStyle: TextStyle(
+                        fontSize: 24, // 自定义字体大小
+                        color: Colors.black, // 自定义字体颜色
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  child: CupertinoDatePicker(
+                    mode: CupertinoDatePickerMode
+                        .time, // Display only hours and minutes
+                    use24hFormat: true, // Use 24-hour format
+                    initialDateTime: question.selectedTime,
+                    onDateTimeChanged: (DateTime newDateTime) {
+                      setState(() {
+                        question.setTime(newDateTime);
+                      });
+                    },
+                  ),
+                ),
+              ),
+            ],
           ),
         );
       },
@@ -327,29 +359,32 @@ Widget buildTimeQuestion(BuildContext context, TimeQuestion question,
   return Card(
     child: Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.start, // Align content to the left
-        children: [
-          TitleText(question.questionText),
-          SizedBox(height: 10),
-          if (question.description != null)
-            Padding(
-              padding:
-                  const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
-              child: DescriptionText(question.description!),
+      child: SizedBox(
+        width: double.infinity,
+        child: Column(
+          crossAxisAlignment:
+              CrossAxisAlignment.start, // Align content to the left
+          children: [
+            TitleText(question.questionText),
+            SizedBox(height: 10),
+            if (question.description != null)
+              Padding(
+                padding:
+                    const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
+                child: DescriptionText(question.description!),
+              ),
+            Text(
+              // Display the selected date and time
+              '${question.selectedTime.year}年${question.selectedTime.month}月${question.selectedTime.day}日 时间: ${question.selectedTime.hour}:${question.selectedTime.minute.toString().padLeft(2, '0')}',
+              style: TextStyle(fontSize: 16),
             ),
-          Text(
-// Display the selected date and time
-            '${question.selectedTime.year}年${question.selectedTime.month}月${question.selectedTime.day}日 时间: ${question.selectedTime.hour}:${question.selectedTime.minute.toString().padLeft(2, '0')}',
-            style: TextStyle(fontSize: 16),
-          ),
-          SizedBox(height: 10),
-          CustomElevatedButton(
-            text: 'Change Time',
-            onPressed: showTimePicker,
-          ),
-        ],
+            SizedBox(height: 10),
+            CustomElevatedButton(
+              text: '选择时间',
+              onPressed: showTimePicker,
+            ),
+          ],
+        ),
       ),
     ),
   );
@@ -870,6 +905,7 @@ Widget buildSubMultipleChoiceQuestion(BuildContext context,
           children: [
             CheckboxListTile(
               title: Text(option),
+              visualDensity: VisualDensity(vertical: -2), // 减少上下间距（负值更紧凑）
               value: question.isSelected(option),
               onChanged: (bool? value) {
                 setState(() {
