@@ -11,7 +11,8 @@ class TitleText extends StatelessWidget {
     List<TextSpan> textSpans = parts.asMap().entries.map((entry) {
       int index = entry.key;
       String part = entry.value;
-      String displayText = index < parts.length - 1 ? "$part\n" : part; // 仅为最后一个片段之前的片段添加换行符
+      String displayText =
+          index < parts.length - 1 ? "$part\n" : part; // 仅为最后一个片段之前的片段添加换行符
       return TextSpan(
         text: displayText,
         style: TextStyle(
@@ -28,7 +29,6 @@ class TitleText extends StatelessWidget {
     );
   }
 }
-
 
 class DescriptionText extends StatelessWidget {
   final String text;
@@ -47,7 +47,6 @@ class DescriptionText extends StatelessWidget {
   }
 }
 
-
 class CustomElevatedButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
@@ -59,8 +58,8 @@ class CustomElevatedButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        foregroundColor: Colors.white, backgroundColor: Color(0xFF9D9BE9), // 设置按钮文本的颜色
-        padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15), // 设置内边距
+        // foregroundColor: Colors.white, backgroundColor: Color(0xFF9D9BE9), // 设置按钮文本的颜色
+        padding: EdgeInsets.symmetric(horizontal: 30, vertical: 14), // 设置内边距
         textStyle: TextStyle(fontSize: 16), // 设置文本样式
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8), // 设置边框圆角

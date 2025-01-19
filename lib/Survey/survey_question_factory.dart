@@ -107,72 +107,118 @@ Widget buildSingleChoiceQuestion(BuildContext context,
 // 多选问题的Widget，其中包含二级问题的逻辑
 Widget buildMultipleChoiceQuestion(BuildContext context,
     MultipleChoiceQuestion question, void Function(void Function()) setState) {
-  return Card(
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (question.imageUrl != null) // 如果有图片 URL，则显示图片
-          Image.network(question.imageUrl!),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: TitleText(question.questionText),
-        ),
-        if (question.description != null)
+  return SizedBox(
+    width: double.infinity,
+    child: Card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (question.imageUrl != null) // 如果有图片 URL，则显示图片
+            Image.network(question.imageUrl!),
           Padding(
-            padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
-            child: DescriptionText(question.description!),
+            padding: const EdgeInsets.all(8.0),
+            child: TitleText(question.questionText),
           ),
-        ...question.options.map((option) {
-          return Column(
-            children: [
-              CheckboxListTile(
-                title: Text(option),
-                value: question.isSelected(option),
-                onChanged: (bool? value) {
-                  setState(() {
-                    if (value ?? false) {
-                      if (!question.selectedOptions.contains(option)) {
-                        question.selectedOptions.add(option);
-                      }
-                    } else {
-                      question.selectedOptions.remove(option);
-                    }
-                  });
-                },
+          if (question.description != null)
+            Padding(
+              padding:
+                  const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
+              child: DescriptionText(question.description!),
+            ),
+          if (question.type == 'checkbox')
+            ...question.options.map((option) {
+              return Column(
+                children: [
+                  CheckboxListTile(
+                    title: Text(option),
+                    visualDensity: VisualDensity(vertical: -2), // 减少上下间距（负值更紧凑）
+                    value: question.isSelected(option),
+                    onChanged: (bool? value) {
+                      setState(() {
+                        if (value ?? false) {
+                          if (!question.selectedOptions.contains(option)) {
+                            question.selectedOptions.add(option);
+                          }
+                        } else {
+                          question.selectedOptions.remove(option);
+                        }
+                      });
+                    },
+                  ),
+                  if (question.isSelected(option) &&
+                      question.subQuestions.containsKey(option))
+                    Column(
+                      children: question.subQuestions[option]!
+                          .map((subQuestion) =>
+                              buildSubQuestion(context, subQuestion, setState))
+                          .toList(),
+                    ),
+                ],
+              );
+            }).toList(),
+          if (question.type == 'tag')
+            Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: Wrap(
+                spacing: 8.0, // Chip 之间的水平间距
+                runSpacing: 8.0, // Chip 之间的垂直间距
+                children: question.options.map((option) {
+                  return Column(
+                    children: [
+                      FilterChip(
+                        label: Text(option),
+                        // visualDensity:
+                        //     VisualDensity(vertical: -2), // 减少上下间距（负值更紧凑）
+                        selected: question.isSelected(option),
+                        onSelected: (bool? value) {
+                          setState(() {
+                            if (value ?? false) {
+                              if (!question.selectedOptions.contains(option)) {
+                                question.selectedOptions.add(option);
+                              }
+                            } else {
+                              question.selectedOptions.remove(option);
+                            }
+                          });
+                        },
+                      ),
+                      if (question.isSelected(option) &&
+                          question.subQuestions.containsKey(option))
+                        Column(
+                          children: question.subQuestions[option]!
+                              .map((subQuestion) => buildSubQuestion(
+                                  context, subQuestion, setState))
+                              .toList(),
+                        ),
+                    ],
+                  );
+                }).toList(),
               ),
-              if (question.isSelected(option) &&
-                  question.subQuestions.containsKey(option))
-                Column(
-                  children: question.subQuestions[option]!
-                      .map((subQuestion) =>
-                          buildSubQuestion(context, subQuestion, setState))
-                      .toList(),
-                ),
-            ],
-          );
-        }).toList(),
-        if (question.additionalOptions != null &&
-            question.additionalOptions!.isNotEmpty)
-          CustomElevatedButton(
-            text: '选择更多',
-            onPressed: () => _showMoreChoices(
-                context, question.additionalOptions!, setState),
-          ),
-        SizedBox(height: 10),
-        // Padding(
-        //   padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        //   child: TextField(
-        //     decoration: InputDecoration(
-        //       hintText: '自定义',
-        //       border: OutlineInputBorder(),
-        //     ),
-        //     onChanged: (value) {
-        //       _updateCustomAnswer(question.questionText, value);
-        //     },
-        //   ),
-        // ),
-        SizedBox(height: 10),
-      ],
+            ),
+
+          if (question.additionalOptions != null &&
+              question.additionalOptions!.isNotEmpty)
+            CustomElevatedButton(
+              text: '选择更多',
+              onPressed: () => _showMoreChoices(
+                  context, question.additionalOptions!, setState),
+            ),
+          SizedBox(height: 10),
+          // Padding(
+          //   padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          //   child: TextField(
+          //     decoration: InputDecoration(
+          //       hintText: '自定义',
+          //       border: OutlineInputBorder(),
+          //     ),
+          //     onChanged: (value) {
+          //       _updateCustomAnswer(question.questionText, value);
+          //     },
+          //   ),
+          // ),
+          SizedBox(height: 10),
+        ],
+      ),
     ),
   );
 }
@@ -228,6 +274,83 @@ void _showMoreChoices(BuildContext context, Map<String, bool> moreChoices,
       });
     }
   });
+}
+
+// 多选标签
+
+//多选
+// 多选问题的Widget，其中包含二级问题的逻辑
+Widget buildMultipleTagQuestion(BuildContext context,
+    MultipleChoiceQuestion question, void Function(void Function()) setState) {
+  return Card(
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (question.imageUrl != null) // 如果有图片 URL，则显示图片
+          Image.network(question.imageUrl!),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TitleText(question.questionText),
+        ),
+        if (question.description != null)
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
+            child: DescriptionText(question.description!),
+          ),
+        ...question.options.map((option) {
+          return Column(
+            children: [
+              FilterChip(
+                label: Text(option),
+                visualDensity: VisualDensity(vertical: -2), // 减少上下间距（负值更紧凑）
+                selected: question.isSelected(option),
+                onSelected: (bool? value) {
+                  setState(() {
+                    if (value ?? false) {
+                      if (!question.selectedOptions.contains(option)) {
+                        question.selectedOptions.add(option);
+                      }
+                    } else {
+                      question.selectedOptions.remove(option);
+                    }
+                  });
+                },
+              ),
+              if (question.isSelected(option) &&
+                  question.subQuestions.containsKey(option))
+                Column(
+                  children: question.subQuestions[option]!
+                      .map((subQuestion) =>
+                          buildSubQuestion(context, subQuestion, setState))
+                      .toList(),
+                ),
+            ],
+          );
+        }).toList(),
+        if (question.additionalOptions != null &&
+            question.additionalOptions!.isNotEmpty)
+          CustomElevatedButton(
+            text: '选择更多',
+            onPressed: () => _showMoreChoices(
+                context, question.additionalOptions!, setState),
+          ),
+        SizedBox(height: 10),
+        // Padding(
+        //   padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        //   child: TextField(
+        //     decoration: InputDecoration(
+        //       hintText: '自定义',
+        //       border: OutlineInputBorder(),
+        //     ),
+        //     onChanged: (value) {
+        //       _updateCustomAnswer(question.questionText, value);
+        //     },
+        //   ),
+        // ),
+        SizedBox(height: 10),
+      ],
+    ),
+  );
 }
 
 //文本
@@ -308,16 +431,47 @@ Widget buildTimeQuestion(BuildContext context, TimeQuestion question,
       builder: (BuildContext builder) {
         return SizedBox(
           height: MediaQuery.of(context).copyWith().size.height / 3,
-          child: CupertinoDatePicker(
-            mode:
-                CupertinoDatePickerMode.time, // Display only hours and minutes
-            use24hFormat: true, // Use 24-hour format
-            initialDateTime: question.selectedTime,
-            onDateTimeChanged: (DateTime newDateTime) {
-              setState(() {
-                question.setTime(newDateTime);
-              });
-            },
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  CupertinoButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Text('完成'),
+                    ),
+                  )
+                ],
+              ),
+              Expanded(
+                child: CupertinoTheme(
+                  data: CupertinoThemeData(
+                    textTheme: CupertinoTextThemeData(
+                      dateTimePickerTextStyle: TextStyle(
+                        fontSize: 24, // 自定义字体大小
+                        color: Colors.black, // 自定义字体颜色
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  child: CupertinoDatePicker(
+                    mode: CupertinoDatePickerMode
+                        .time, // Display only hours and minutes
+                    use24hFormat: true, // Use 24-hour format
+                    initialDateTime: question.selectedTime,
+                    onDateTimeChanged: (DateTime newDateTime) {
+                      setState(() {
+                        question.setTime(newDateTime);
+                      });
+                    },
+                  ),
+                ),
+              ),
+            ],
           ),
         );
       },
@@ -327,29 +481,32 @@ Widget buildTimeQuestion(BuildContext context, TimeQuestion question,
   return Card(
     child: Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.start, // Align content to the left
-        children: [
-          TitleText(question.questionText),
-          SizedBox(height: 10),
-          if (question.description != null)
-            Padding(
-              padding:
-                  const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
-              child: DescriptionText(question.description!),
+      child: SizedBox(
+        width: double.infinity,
+        child: Column(
+          crossAxisAlignment:
+              CrossAxisAlignment.start, // Align content to the left
+          children: [
+            TitleText(question.questionText),
+            SizedBox(height: 10),
+            if (question.description != null)
+              Padding(
+                padding:
+                    const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
+                child: DescriptionText(question.description!),
+              ),
+            Text(
+              // Display the selected date and time
+              '${question.selectedTime.year}年${question.selectedTime.month}月${question.selectedTime.day}日 时间: ${question.selectedTime.hour}:${question.selectedTime.minute.toString().padLeft(2, '0')}',
+              style: TextStyle(fontSize: 16),
             ),
-          Text(
-// Display the selected date and time
-            '${question.selectedTime.year}年${question.selectedTime.month}月${question.selectedTime.day}日 时间: ${question.selectedTime.hour}:${question.selectedTime.minute.toString().padLeft(2, '0')}',
-            style: TextStyle(fontSize: 16),
-          ),
-          SizedBox(height: 10),
-          CustomElevatedButton(
-            text: 'Change Time',
-            onPressed: showTimePicker,
-          ),
-        ],
+            SizedBox(height: 10),
+            CustomElevatedButton(
+              text: '选择时间',
+              onPressed: showTimePicker,
+            ),
+          ],
+        ),
       ),
     ),
   );
@@ -713,17 +870,25 @@ Widget buildSliderQuestion(BuildContext context, SliderQuestion question,
             padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
             child: DescriptionText(question.description!),
           ),
-        Slider(
-          value: question.sliderValue,
-          min: question.min,
-          max: question.max,
-          divisions: question.divisions,
-          label: question.labelBuilder(question.sliderValue),
-          onChanged: (newValue) {
-            setState(() {
-              question.sliderValue = newValue;
-            });
-          },
+        Row(
+          children: [
+            if (question.leftDesc != null) Text(question.leftDesc!),
+            Expanded(
+              child: Slider(
+                value: question.sliderValue,
+                min: question.min,
+                max: question.max,
+                divisions: question.divisions,
+                label: question.labelBuilder(question.sliderValue),
+                onChanged: (newValue) {
+                  setState(() {
+                    question.sliderValue = newValue;
+                  });
+                },
+              ),
+            ),
+            if (question.rightDesc != null) Text(question.rightDesc!),
+          ],
         ),
         ...?question.getSubQuestions((value) => value > 0)?.map((subQuestion) {
           return buildSubQuestion(
@@ -870,6 +1035,7 @@ Widget buildSubMultipleChoiceQuestion(BuildContext context,
           children: [
             CheckboxListTile(
               title: Text(option),
+              visualDensity: VisualDensity(vertical: -2), // 减少上下间距（负值更紧凑）
               value: question.isSelected(option),
               onChanged: (bool? value) {
                 setState(() {

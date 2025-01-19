@@ -14,8 +14,8 @@ import 'package:provider/provider.dart';
 import 'debugButton.dart';
 import 'DailyDiet/event_log_page.dart';
 import 'package:namer_app/utils/api_service.dart';
-import 'package:dio/dio.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -43,6 +43,20 @@ class MyApp extends StatelessWidget {
 
       child: MaterialApp(
           title: 'CBT-E App',
+          // 配置本地化
+          localizationsDelegates: [
+            GlobalMaterialLocalizations.delegate, // Material 组件本地化
+            GlobalCupertinoLocalizations.delegate, // Cupertino 组件本地化
+            GlobalWidgetsLocalizations.delegate, // 基本小部件本地化
+          ],
+          supportedLocales: [
+            Locale('zh', ''), // 中文
+            Locale('en', ''), // 英文
+            Locale('es', ''), // 西班牙语（可根据需要添加更多语言）
+          ],
+
+          // 设置默认语言（可根据用户设备的语言设置）
+          locale: Locale('zh', ''), // 默认中文
           home: MainScreen(),
           theme: ThemeData(
             dialogTheme: DialogTheme(

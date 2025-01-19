@@ -57,6 +57,7 @@ class SingleChoiceQuestion extends Question {
 }
 
 class MultipleChoiceQuestion extends Question {
+  String type = 'checkbox'; // 默认为 checkbox
   final List<String> options;
 
   List<String> selectedOptions = [];
@@ -64,9 +65,17 @@ class MultipleChoiceQuestion extends Question {
       subQuestions; // Map each option to a list of Questions
   Map<String, bool>? additionalOptions; // Optional additional options
 
-  MultipleChoiceQuestion(String questionText, this.options, this.subQuestions,
-      {this.additionalOptions, String? description, String? alias})
-      : super(questionText, description: description, alias: alias);
+  MultipleChoiceQuestion(
+    String questionText,
+    this.options,
+    this.subQuestions, {
+    this.additionalOptions,
+    String? description,
+    String? alias,
+    String? type,
+  }) : super(questionText, description: description, alias: alias) {
+    this.type = type ?? 'checkbox'; // 如果未传递 type，使用默认值
+  }
 
   bool isSelected(String option) => selectedOptions.contains(option);
 
@@ -334,6 +343,8 @@ class SliderQuestion extends Question {
   final double max;
   final int divisions;
   final String Function(double) labelBuilder;
+  String? leftDesc;
+  String? rightDesc;
   Map<String, List<Question>>? subQuestions;
 
   SliderQuestion(
@@ -346,6 +357,8 @@ class SliderQuestion extends Question {
     required this.labelBuilder,
     String? description,
     String? alias,
+    this.leftDesc,
+    this.rightDesc,
   }) : super(questionText, description: description, alias: alias) {
     subQuestions ??= {};
   }
