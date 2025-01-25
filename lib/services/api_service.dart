@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import './dio_client.dart';
+import 'dio_client.dart';
 import 'package:namer_app/Login/user_model.dart';
 import 'package:namer_app/user_preference.dart';
 

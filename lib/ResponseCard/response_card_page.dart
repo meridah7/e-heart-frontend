@@ -5,7 +5,7 @@ import './response_card.dart';
 import './editable_card.dart';
 import './edit_card_dialog.dart';
 import 'hero_dialog_route.dart';
-import 'package:namer_app/utils/dio_client.dart';
+import 'package:namer_app/services/dio_client.dart';
 import 'package:dio/dio.dart';
 
 class BingeEatingResponseCard extends StatefulWidget {

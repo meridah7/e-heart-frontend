@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'survey_models.dart';
 import 'survey_question_factory.dart';
 import 'SurveySummaryPage.dart';
-import 'package:namer_app/utils/dio_client.dart';
+import 'package:namer_app/services/dio_client.dart';
 
 /// @desc 可翻页的问券
 ///

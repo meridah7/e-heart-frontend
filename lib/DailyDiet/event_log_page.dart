@@ -6,7 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:namer_app/Survey/survey_page.dart';
 import 'package:namer_app/Tasks/Survey/tasks.dart';
 import 'package:namer_app/TodayList/task_models.dart';
-import 'package:namer_app/utils/dio_client.dart';
+import 'package:namer_app/services/dio_client.dart';
 
 class EventLogPage extends StatefulWidget {
   @override

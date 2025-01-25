@@ -6,7 +6,7 @@ import './response_card.dart';
 import './edit_card_dialog.dart';
 import 'hero_dialog_route.dart';
 import '../ResponseCard/response_card_page.dart';
-import 'package:namer_app/utils/dio_client.dart';
+import 'package:namer_app/services/dio_client.dart';
 import 'package:dio/dio.dart';
 
 // 问卷内部使用，卡片滑动展示组件

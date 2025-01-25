@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:namer_app/utils/dio_client.dart';
+import 'package:namer_app/services/dio_client.dart';
 import 'package:provider/provider.dart';
 import '../Login/user_model.dart';
 import './profile_page.dart';

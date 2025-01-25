@@ -10,7 +10,8 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController(); // 假设注册需要电子邮件
+  final TextEditingController _emailController =
+      TextEditingController(); // 假设注册需要电子邮件
 
   void _register() async {
     final response = await http.post(
@@ -27,11 +28,12 @@ class _RegisterPageState extends State<RegisterPage> {
 
     if (response.statusCode == 200) {
       // 注册成功，可能会跳转到登录页面或主页
-      
+
       Navigator.pushReplacementNamed(context, '/login'); // 假设登录页面路由为/login
     } else {
       // 显示错误消息
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('注册失败')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('注册失败')));
     }
   }
 

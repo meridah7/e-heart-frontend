@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:namer_app/utils/api_service.dart';
+import 'package:namer_app/services/api_service.dart';
 import 'package:namer_app/utils/helper.dart';
 
 class User {

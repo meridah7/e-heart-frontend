@@ -13,7 +13,7 @@ import 'Login/register_info_page.dart';
 import 'package:provider/provider.dart';
 import 'debugButton.dart';
 import 'DailyDiet/event_log_page.dart';
-import 'package:namer_app/utils/api_service.dart';
+import 'package:namer_app/services/api_service.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 

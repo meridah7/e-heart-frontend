@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:namer_app/utils/dio_client.dart';
+import 'package:namer_app/services/dio_client.dart';
 import 'package:dio/dio.dart';
 import 'package:namer_app/utils/helper.dart';
 import 'package:provider/provider.dart';
 import 'package:namer_app/Login/user_model.dart';
-import 'package:namer_app/utils/api_service.dart';
+import 'package:namer_app/services/api_service.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
