@@ -872,7 +872,11 @@ Widget buildSliderQuestion(BuildContext context, SliderQuestion question,
           ),
         Row(
           children: [
-            if (question.leftDesc != null) Text(question.leftDesc!),
+            if (question.leftDesc != null)
+              Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Text(question.leftDesc!),
+              ),
             Expanded(
               child: Slider(
                 value: question.sliderValue,
@@ -887,7 +891,11 @@ Widget buildSliderQuestion(BuildContext context, SliderQuestion question,
                 },
               ),
             ),
-            if (question.rightDesc != null) Text(question.rightDesc!),
+            if (question.rightDesc != null)
+              Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Text(question.rightDesc!),
+              ),
           ],
         ),
         ...?question.getSubQuestions((value) => value > 0)?.map((subQuestion) {
