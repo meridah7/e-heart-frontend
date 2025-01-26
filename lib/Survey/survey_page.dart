@@ -1,7 +1,6 @@
 // 定义了survey界面，和创建不同类型问题的功能
 
 import 'package:flutter/material.dart';
-import 'package:namer_app/Login/user_model.dart';
 import 'package:namer_app/main.dart';
 import 'survey_models.dart';
 import 'SurveySummaryPage.dart';
@@ -10,6 +9,7 @@ import 'impulsive_record_and_reflection_summary.dart';
 import 'package:namer_app/user_preference.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:namer_app/providers/user_provider.dart';
 import 'utils.dart';
 import 'package:dio/dio.dart';
 

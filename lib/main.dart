@@ -1,22 +1,28 @@
 //这个文件是应用程序的入口文件，创建了一个具有底部导航栏的主界面。
 //应用程序包括三个页面：今日列表页面（TodayListPage）、分析反思页面（ReviewAnalysisPage）和我的页面（MyPage）。
+// basic
 import 'package:flutter/material.dart';
+// utils
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+// models
+import 'package:namer_app/ResponseCard/response_card_model.dart';
+// providers
+import 'package:namer_app/providers/user_provider.dart';
+// pages
 import 'TodayList/today_list_page.dart';
 import 'AnalysisReview/review_analysis_page.dart';
 import 'MyPage/my_page.dart';
 import 'DietaryAnalysis/dietary_analysis_page.dart';
-//import 'DAO/database_helper.dart';
 import 'Login/login_page.dart';
-import 'Login/user_model.dart';
-import 'package:namer_app/ResponseCard/response_card_model.dart';
 import 'Login/register_info_page.dart';
 import 'package:provider/provider.dart';
 import 'debugButton.dart';
 import 'DailyDiet/event_log_page.dart';
-import 'package:namer_app/services/api_service.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+// services
+import 'package:namer_app/services/user_service.dart';
 
+// 用于控制全局路由
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
@@ -36,7 +42,8 @@ class MyApp extends StatelessWidget {
       // 使用MultiProvider包裹MaterialApp
       providers: [
         ChangeNotifierProvider(
-            create: (context) => UserProvider()), // 创建UserProvider实例
+            create: (context) =>
+                UserProvider(apiService: UserService())), // 创建UserProvider实例
         ChangeNotifierProvider(
             create: (context) => ResponseCardModelProvider()),
       ],
@@ -107,7 +114,6 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
-  final ApiService apiService = ApiService();
   static List<Widget> _widgetOptions = <Widget>[
     TodayListPage(),
     EventLogPage(),
