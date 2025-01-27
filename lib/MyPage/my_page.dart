@@ -60,6 +60,7 @@ class MyPage extends StatelessWidget {
   }
 
   Widget _buildUserInfo(BuildContext context, UserProvider user) {
+    print('My Page user: $user');
     if (user.uuid == '') {
       print('My Page not login: ${user.name}');
       return Text(

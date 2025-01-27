@@ -13,10 +13,9 @@ import 'package:namer_app/providers/user_provider.dart';
 class ChatbotPage extends StatefulWidget {
   final List<Content> contents;
   final String taskId;
-  final bool isLastTask;
+  // final bool isLastTask;
 
-  ChatbotPage(
-      {required this.contents, required this.taskId, required this.isLastTask});
+  ChatbotPage({required this.contents, required this.taskId});
 
   @override
   _ChatbotPageState createState() => _ChatbotPageState();
@@ -170,13 +169,13 @@ class _ChatbotPageState extends State<ChatbotPage> {
     answers[widget.taskId] = userResponses;
     await _userPref.setData('completedTaskAnswers', answers);
 
-    if (widget.isLastTask) {
-      int? userProgress = _userPref.getData('progress');
-      await _userPref.setData(
-          'progress', userProgress == null ? 1 : userProgress + 1);
-      await _userPref.setData('progressLastUpdatedDate',
-          DateFormat('yyyyMMdd').format(DateTime.now()));
-    }
+    // if (widget.isLastTask) {
+    //   int? userProgress = _userPref.getData('progress');
+    //   await _userPref.setData(
+    //       'progress', userProgress == null ? 1 : userProgress + 1);
+    //   await _userPref.setData('progressLastUpdatedDate',
+    //       DateFormat('yyyyMMdd').format(DateTime.now()));
+    // }
 
     if (_userPref.hasKey('finishedTaskIds')) {
       List taskIds = _userPref.getData('finishedTaskIds');

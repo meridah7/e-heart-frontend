@@ -212,7 +212,6 @@ class _EventLogPageState extends State<EventLogPage>
         builder: (context) => SurveyPage(
           survey: task.survey!,
           taskId: task.id,
-          isLastTask: false,
           presetAnswers: presetAnswers,
         ),
       ),

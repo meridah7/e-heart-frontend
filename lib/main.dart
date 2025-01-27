@@ -9,6 +9,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:namer_app/ResponseCard/response_card_model.dart';
 // providers
 import 'package:namer_app/providers/user_provider.dart';
+import 'package:namer_app/providers/progress_provider.dart';
 // pages
 import 'TodayList/today_list_page.dart';
 import 'AnalysisReview/review_analysis_page.dart';
@@ -21,6 +22,7 @@ import 'debugButton.dart';
 import 'DailyDiet/event_log_page.dart';
 // services
 import 'package:namer_app/services/user_service.dart';
+import 'package:namer_app/services/progress_service.dart';
 
 // 用于控制全局路由
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -44,6 +46,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
             create: (context) =>
                 UserProvider(apiService: UserService())), // 创建UserProvider实例
+        ChangeNotifierProvider(
+            create: (context) => ProgressProvider(
+                apiService: ProgressService())), // 创建UserProvider实例
         ChangeNotifierProvider(
             create: (context) => ResponseCardModelProvider()),
       ],

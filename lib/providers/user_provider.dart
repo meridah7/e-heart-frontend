@@ -1,30 +1,30 @@
 // lib/providers/user_provider.dart
 import 'package:flutter/foundation.dart';
-import '../models/user/user.dart';
+import '../models/user.dart';
 import '../services/api_service.dart';
 
 class UserProvider with ChangeNotifier {
-  final ApiService apiService;
+  final UserApiService apiService;
   User? _user;
   bool _isLoading = false;
 
   User? get user => _user;
 
-  String? get name => _user?.data?.name;
+  String? get name => _user?.name;
 
-  int? get id => _user?.data?.id;
+  int? get id => _user?.id;
 
-  String? get email => _user?.data?.email;
+  String? get email => _user?.email;
 
-  double get height => _user?.data?.height ?? 0;
+  double get height => _user?.height ?? 0;
 
-  double get weight => _user?.data?.weight ?? 0;
+  double get weight => _user?.weight ?? 0;
 
-  String? get phoneNumber => _user?.data?.phoneNumber;
+  String? get phoneNumber => _user?.phoneNumber;
 
-  String get uuid => _user?.data?.uuid ?? '';
+  String get uuid => _user?.uuid ?? '';
 
-  DateTime get birthday => _user?.data?.birthday ?? DateTime(2003, 9, 7);
+  DateTime get birthday => _user?.birthday ?? DateTime(2003, 9, 7);
 
   UserProvider({required this.apiService});
 

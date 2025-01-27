@@ -16,6 +16,9 @@
 
 在VSCode 中使用Json To Dart 插件，直接将接口的响应转换成dart class，命名后存放在/lib/models 目录下。
 
+* **user**
+* **user_progress**
+
 ### 接口请求
 
 项目中使用的Dio 作为网络请求库。基于Dio 进行封装，以处理接口请求，Token更新等操作。
