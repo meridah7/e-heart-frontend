@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:namer_app/models/user_progress.dart';
 import 'package:namer_app/services/api_service.dart';
+import 'package:namer_app/utils/helper.dart';
 
 class ProgressProvider with ChangeNotifier {
+  String? _inputValue;
+
+  String? get inputValue => _inputValue;
+
   final ProgressApiService apiService;
   UserProgress? _userProgress;
 
@@ -45,5 +50,11 @@ class ProgressProvider with ChangeNotifier {
       throw Exception(err);
     }
     notifyListeners();
+  }
+
+  // 更新输入值并通知监听者
+  void updateInputValue(String value) {
+    _inputValue = value;
+    setProgress(int.parse(value));
   }
 }
