@@ -194,7 +194,12 @@ class _FlippableSurveyPageState extends State<FlippableSurveyPage> {
         'strategies': strategies,
       });
       if (response.statusCode == 200) {
+        // 更新用户进度
+
         if (mounted) {
+          var progressProvider =
+              Provider.of<ProgressProvider>(context, listen: false);
+          progressProvider.updateProgress(widget.taskId);
           Navigator.pushNamedAndRemoveUntil(
               context, '/home', (Route<dynamic> route) => false);
         }
@@ -227,10 +232,7 @@ class _FlippableSurveyPageState extends State<FlippableSurveyPage> {
           handleSubmitImpulseStrategies();
         }
 
-        // 更新用户进度
-        var progressProvider =
-            Provider.of<ProgressProvider>(context, listen: false);
-        progressProvider.updateProgress(widget.taskId);
+        // TODO 提交问卷添加进度接口
 
         if (widget.survey.navigateToSummary) {
 // 导航到问卷摘要页面

@@ -16,14 +16,6 @@ enum TaskType {
 }
 
 class Task {
-  final String title;
-  final String id;
-  final TaskType type;
-  bool isCompleted;
-  final int day;
-  final List<Content>? chatbotContent;
-  final Survey? survey;
-
   Task({
     required this.title,
     required this.id,
@@ -33,4 +25,33 @@ class Task {
     this.chatbotContent,
     this.survey,
   });
+
+  final List<Content>? chatbotContent;
+  final int day;
+  final String id;
+  bool isCompleted;
+  final Survey? survey;
+  final String title;
+  final TaskType type;
+
+  /// 实现 copyWith 方法
+  Task copyWith({
+    String? title,
+    String? id,
+    TaskType? type,
+    bool? isCompleted,
+    int? day,
+    List<Content>? chatbotContent,
+    Survey? survey,
+  }) {
+    return Task(
+      title: title ?? this.title,
+      id: id ?? this.id,
+      type: type ?? this.type,
+      isCompleted: isCompleted ?? this.isCompleted,
+      day: day ?? this.day,
+      chatbotContent: chatbotContent ?? this.chatbotContent,
+      survey: survey ?? this.survey,
+    );
+  }
 }

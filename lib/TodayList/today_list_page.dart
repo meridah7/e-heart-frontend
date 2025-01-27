@@ -132,9 +132,13 @@ class _TodayListPageState extends State<TodayListPage> {
       List<String> displayTaskId = [
         ...progressProvider.allRequiredTaskIds,
         ...progressProvider.allOptionalTaskIds,
-        ...progressProvider.finishedTaskIds
       ];
+      List<Task> finishedTaskList =
+          getTasksByIds(progressProvider.finishedTaskIds)
+              .map((e) => e.copyWith(isCompleted: true))
+              .toList();
       List<Task> dailyTaskList = getTasksByIds(displayTaskId);
+      dailyTaskList.addAll(finishedTaskList);
       print('dailyTaskList $displayTaskId');
       setState(() {
         // _finishedTaskIds = finishedTaskIds;
@@ -171,7 +175,7 @@ class _TodayListPageState extends State<TodayListPage> {
             textColor: showTasks ? Colors.white : Colors.black,
           ),
           SizedBox(width: 10),
-          _buildCircleButton(
+          _buildRoundButton(
             '冲动应对卡',
             icon: Icons.card_travel,
             onPressed: () => Navigator.push(
@@ -237,6 +241,27 @@ class _TodayListPageState extends State<TodayListPage> {
       label: Text(text),
       icon: Icon(icon),
       backgroundColor: color,
+    );
+  }
+
+  Widget _buildRoundButton(
+    String text, {
+    VoidCallback? onPressed,
+    IconData? icon,
+    Color? color,
+  }) {
+    return ElevatedButton.icon(
+      onPressed: onPressed,
+      icon: Icon(icon, color: Colors.black), // 图标颜色与文字一致
+      label: Text(
+        text,
+        style: TextStyle(color: Colors.black),
+      ),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: color ?? Colors.blue, // 按钮背景色
+        // shape: const CircleBorder(), // 圆形按钮外观
+        padding: const EdgeInsets.all(16), // 按钮内边距
+      ),
     );
   }
 

@@ -4,10 +4,10 @@ import 'package:namer_app/global_setting.dart';
 import 'chat_models.dart';
 import 'chat_widgets.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:intl/intl.dart';
 import '../user_preference.dart';
 import 'package:provider/provider.dart';
 import 'package:namer_app/providers/user_provider.dart';
+import 'package:namer_app/providers/progress_provider.dart';
 
 // ChatbotPage class是chatbot的主页面，负责显示聊天界面和处理用户输入。
 class ChatbotPage extends StatefulWidget {
@@ -182,6 +182,12 @@ class _ChatbotPageState extends State<ChatbotPage> {
       taskIds.add(widget.taskId);
 
       await _userPref.setData('finishedTaskIds', taskIds);
+    }
+
+    if (mounted) {
+      var progressProvider =
+          Provider.of<ProgressProvider>(context, listen: false);
+      progressProvider.updateProgress(widget.taskId);
     }
 
     setState(() {
