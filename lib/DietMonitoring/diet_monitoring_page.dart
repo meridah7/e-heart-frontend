@@ -28,7 +28,6 @@ class _DietMonitoringPageState extends State<DietMonitoringPage> {
           ? SurveyPage(
               survey: currentSurvey!.survey!,
               taskId: currentSurvey!.id,
-              isLastTask: false,
             )
           : Column(
               crossAxisAlignment:

@@ -1,4 +1,3 @@
-
 class BingeEatingEvent {
   String time;
   String description;
@@ -20,14 +19,12 @@ class BingeEatingEmotionData {
   BingeEatingEmotionData(this.time, this.emotion);
 }
 
-
 class WeeklyData {
   final String dayOfWeek; // 星期几，例如 "周一", "周二" 等
   final int count; // 食物清除次数
 
   WeeklyData(this.dayOfWeek, this.count);
 }
-
 
 class EatingEmotionData {
   final String dayOfWeek;

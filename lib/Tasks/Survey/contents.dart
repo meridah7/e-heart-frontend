@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import '../../Survey/survey_models.dart';
-import 'package:namer_app/utils/dio_client.dart';
+import 'package:namer_app/services/dio_client.dart';
 import 'package:intl/intl.dart';
 
 // var impulseRetrospectSurvey = Survey(title: 'x 月 x 日冲动记录回顾', questions: [

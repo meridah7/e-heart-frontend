@@ -21,9 +21,6 @@ class BingeEatingList extends StatelessWidget {
   }
 }
 
-
-
-
 class FoodClearanceEmotionTable extends StatelessWidget {
   late final List<FoodClearanceEmotionData> data;
 
@@ -34,13 +31,14 @@ class FoodClearanceEmotionTable extends StatelessWidget {
         DataColumn(label: Text('时间')),
         DataColumn(label: Text('情绪指数')),
       ],
-      rows: data.map<DataRow>((item) => DataRow(
-        cells: <DataCell>[
-          DataCell(Text(item.time)),
-          DataCell(Text(item.emotionLevel.toString())),
-        ],
-      )).toList(),
+      rows: data
+          .map<DataRow>((item) => DataRow(
+                cells: <DataCell>[
+                  DataCell(Text(item.time)),
+                  DataCell(Text(item.emotionLevel.toString())),
+                ],
+              ))
+          .toList(),
     );
   }
 }
-

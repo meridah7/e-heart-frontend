@@ -1,11 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:namer_app/utils/dio_client.dart';
+import 'package:namer_app/services/dio_client.dart';
 import 'package:dio/dio.dart';
 import 'package:namer_app/utils/helper.dart';
 import 'package:provider/provider.dart';
-import 'package:namer_app/Login/user_model.dart';
-import 'package:namer_app/utils/api_service.dart';
+import 'package:namer_app/providers/user_provider.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -16,7 +15,6 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final DioClient dioClient = DioClient();
-  final ApiService apiService = ApiService();
 
   // 更新生日数据
   void _editBirthdayField(DateTime currentValue) {
@@ -169,30 +167,9 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void _logOut() async {
-    try {
-      Response response = await dioClient.postRequest('/auth/logout', {});
-      if (response.statusCode == 200) {
-        // 重置preference
-        // 删除token
-        await dioClient.clearTokens();
-        if (mounted) {
-          // var userProvider = Provider.of<UserProvider>(context, listen: false);
-          // userProvider.logOut();
-          // Navigator.pushNamedAndRemoveUntil(
-          //   context,
-          //   '/login',
-          //   ModalRoute.withName('/login'), // 保留根页面
-          // );
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          '/login',
-          ModalRoute.withName('/login'), // 保留根页面
-        );
-      }
+    if (mounted) {
+      var userProvider = Provider.of<UserProvider>(context, listen: false);
+      await userProvider.logOut();
     }
   }
 

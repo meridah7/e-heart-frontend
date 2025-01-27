@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:namer_app/Login/user_model.dart';
+import 'package:namer_app/providers/user_provider.dart';
 import 'package:namer_app/user_preference.dart';
 import 'package:provider/provider.dart';
 import './review_template_page.dart';

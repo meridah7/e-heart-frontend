@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:namer_app/providers/progress_provider.dart';
 import '../Tasks/daily_tasks.dart';
 import 'task_models.dart';
 import '../Chatbot/chatbot_page.dart';
@@ -11,9 +12,10 @@ import '../DietMonitoring/diet_monitoring_page.dart';
 import 'package:intl/intl.dart';
 import '../ResponseCard/response_card_page.dart';
 import '../user_preference.dart';
-import 'package:namer_app/utils/dio_client.dart';
+import 'package:namer_app/services/dio_client.dart';
 import 'package:provider/provider.dart';
-import 'package:namer_app/Login/user_model.dart';
+import 'package:namer_app/providers/user_provider.dart';
+
 import 'package:namer_app/utils/helper.dart';
 import 'package:namer_app/Survey/survey_models.dart';
 
@@ -35,7 +37,7 @@ class _TodayListPageState extends State<TodayListPage> {
   int? _currentDay;
 
   List<Task> _dailyTaskList = [];
-  List<String>? _finishedTaskIds = [];
+  // List<String>? _finishedTaskIds = [];
   late Preferences _userPref;
 
   //初始化的状态
@@ -91,38 +93,55 @@ class _TodayListPageState extends State<TodayListPage> {
       _dailyTaskList.clear();
       print('init');
       var userProvider = Provider.of<UserProvider>(context, listen: false);
+      var progressProvider =
+          Provider.of<ProgressProvider>(context, listen: false);
+      await progressProvider.fetchProgress();
       _userPref = await Preferences.getInstance(namespace: userProvider.uuid);
       print('TodayListPage init ${userProvider.uuid}');
       List<Task> impulseRecordTaskList = await fetchImpulseReflectionRecords();
-
-      int userProgress =
-          Helper.safeParseInt(_userPref.getData('progress')) ?? 0;
-      String lastUpdatedDate = _userPref.getData('progressLastUpdatedDate');
-      if (lastUpdatedDate != '') {
-        String currentDate = DateFormat('yyyyMMdd').format(DateTime.now());
-
-        setState(() {
-          if (lastUpdatedDate == currentDate) {
-            // if lastUpdatedDate is today, keep the task list for today
-            _currentDay = userProgress - 1;
-          } else {
-            // if lastUpdatedDate is yesterday, update the task list
-            _currentDay = userProgress;
-          }
-        });
-      } else {
-        setState(() {
-          _currentDay = 0;
-        });
-      }
-      print('${_userPref.getData('finishedTaskIds')}');
-      List<String> taskIds =
-          List<String>.from(_userPref.getData('finishedTaskIds'));
+      int userProgress = progressProvider.progress ?? 0;
+      print('progress $userProgress');
       setState(() {
-        _finishedTaskIds = taskIds;
+        _currentDay = userProgress;
+      });
+      // int userProgress =
+      //     Helper.safeParseInt(_userPref.getData('progress')) ?? 0;
+      // String lastUpdatedDate = _userPref.getData('progressLastUpdatedDate');
+      // if (lastUpdatedDate != '') {
+      //   String currentDate = DateFormat('yyyyMMdd').format(DateTime.now());
+
+      //   setState(() {
+      //     if (lastUpdatedDate == currentDate) {
+      //       // if lastUpdatedDate is today, keep the task list for today
+      //       _currentDay = userProgress - 1;
+      //     } else {
+      //       // if lastUpdatedDate is yesterday, update the task list
+      //       _currentDay = userProgress;
+      //     }
+      //   });
+      // } else {
+      //   setState(() {
+      //     _currentDay = 0;
+      //   });
+      // }
+      // print('${_userPref.getData('finishedTaskIds')}');
+      // List<String> taskIds =
+      //     List<String>.from(_userPref.getData('finishedTaskIds'));
+      // List<String> finishedTaskIds =
+      //     progressProvider.userProgress!.data!.finishedTaskIds ?? [];
+      List<String> displayTaskId = [
+        ...progressProvider.allRequiredTaskIds,
+        ...progressProvider.allOptionalTaskIds,
+        ...progressProvider.finishedTaskIds
+      ];
+      List<Task> dailyTaskList = getTasksByIds(displayTaskId);
+      print('dailyTaskList $displayTaskId');
+      setState(() {
+        // _finishedTaskIds = finishedTaskIds;
         if (_currentDay != null) {
           // 深拷贝
-          _dailyTaskList = List.from(DailyTask[_currentDay ?? 0]);
+          // _dailyTaskList = List.from(DailyTask[_currentDay ?? 0]);
+          _dailyTaskList = dailyTaskList;
           print('daily$_dailyTaskList');
           // 如果没有重复的记录，则添加 impulseRecordTaskList
           _dailyTaskList.addAll(impulseRecordTaskList);
@@ -258,8 +277,8 @@ class _TodayListPageState extends State<TodayListPage> {
                           builder: (context) => ChatbotPage(
                                 contents: task.chatbotContent!,
                                 taskId: task.id,
-                                isLastTask: DailyTask[_currentDay!].length ==
-                                    _finishedTaskIds!.length + 1,
+                                // isLastTask: DailyTask[_currentDay!].length ==
+                                //     _finishedTaskIds!.length + 1,
                               )));
                   break;
                 case TaskType.SURVEY:
@@ -267,20 +286,20 @@ class _TodayListPageState extends State<TodayListPage> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => SurveyPage(
-                              survey: task.survey!,
-                              taskId: task.id,
-                              isLastTask: DailyTask[_currentDay!].length ==
-                                  _finishedTaskIds!.length + 1)));
+                                survey: task.survey!,
+                                taskId: task.id,
+                                // isLastTask: DailyTask[_currentDay!].length ==
+                                //     _finishedTaskIds!.length + 1
+                              )));
                   break;
                 case TaskType.SURVEY_FLIPPABLE:
                   Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) => FlippableSurveyPage(
-                              survey: task.survey!,
-                              taskId: task.id,
-                              isLastTask: DailyTask[_currentDay!].length ==
-                                  _finishedTaskIds!.length + 1)));
+                                survey: task.survey!,
+                                taskId: task.id,
+                              )));
                   break;
                 case TaskType.MEAL_PLANNING:
                   Navigator.push(
@@ -354,9 +373,11 @@ class _TodayListPageState extends State<TodayListPage> {
 
   @override
   Widget build(BuildContext context) {
+    // 使用context获取UserProvider实例
     return Scaffold(
       appBar: AppBar(
-        title: Text('Day $_currentDay', style: TextStyle(color: Colors.black)),
+        title: Text('Day ${_currentDay ?? 0}',
+            style: TextStyle(color: Colors.black)),
         elevation: 0,
       ),
       body: Padding(

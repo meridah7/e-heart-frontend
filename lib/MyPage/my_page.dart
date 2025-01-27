@@ -1,65 +1,51 @@
 import 'package:flutter/material.dart';
-import 'package:namer_app/utils/dio_client.dart';
+import 'package:namer_app/services/dio_client.dart';
 import 'package:provider/provider.dart';
-import '../Login/user_model.dart';
+import 'package:namer_app/providers/user_provider.dart';
+import 'package:namer_app/providers/progress_provider.dart';
 import './profile_page.dart';
 
 class MyPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('我的页面',
-            style:
-                TextStyle(color: Colors.black)), // Text color changed to black
-      ),
-      body: Consumer<UserProvider>(builder: (context, user, child) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: ListView(
-            children: [
-              _buildUserInfo(context, user),
+  Future<void> _showNumberInputDialog(BuildContext context) async {
+    final textController = TextEditingController();
 
-              // 分隔线
-              Divider(height: 15, thickness: 1),
-
-              // 设置选项
-              _buildOption('设置', Icons.settings, context),
-
-              // 分隔线
-              Divider(height: 15, thickness: 1),
-
-              // FIXME: 调试Token
-
-              // 饮食日志补录选项
-              // _buildOption('饮食日志补录', Icons.local_dining, context),
-              _buildOption('清除accessToken', Icons.local_dining, context),
-
-              // 分隔线
-              Divider(height: 15, thickness: 1),
-
-              // 占卜回顾选项
-              _buildOption('清除所有Token', Icons.star, context),
-
-              // 分隔线
-              Divider(height: 15, thickness: 1),
-
-              // 我应对复发策略选项
-              _buildOption('我应对复发策略', Icons.security, context),
-
-              // 分隔线
-              Divider(height: 15, thickness: 1),
-
-              // 当我不在暴食后选项
-              _buildOption('当我不在暴食后', Icons.healing, context),
-            ],
+    // 弹出输入框
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("请输入一个数字"),
+          content: TextField(
+            controller: textController,
+            keyboardType: TextInputType.number, // 数字键盘
+            decoration: const InputDecoration(
+              hintText: "输入数字",
+              border: OutlineInputBorder(),
+            ),
           ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(), // 关闭弹窗
+              child: const Text("取消"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                // 更新状态
+                context
+                    .read<ProgressProvider>()
+                    .updateInputValue(textController.text);
+                Navigator.of(context).pop(); // 关闭弹窗
+              },
+              child: const Text("确定"),
+            ),
+          ],
         );
-      }),
+      },
     );
   }
 
   Widget _buildUserInfo(BuildContext context, UserProvider user) {
+    print('My Page user: $user');
     if (user.uuid == '') {
       print('My Page not login: ${user.name}');
       return Text(
@@ -121,9 +107,67 @@ class MyPage extends StatelessWidget {
           case '清除所有Token':
             DioClient().clearTokens();
             break;
+
+          case '调整进度':
+            _showNumberInputDialog(context);
+            break;
           default:
         }
       },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('我的页面',
+            style:
+                TextStyle(color: Colors.black)), // Text color changed to black
+      ),
+      body: Consumer<UserProvider>(builder: (context, user, child) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: ListView(
+            children: [
+              _buildUserInfo(context, user),
+
+              // 分隔线
+              Divider(height: 15, thickness: 1),
+
+              // 设置选项
+              _buildOption('设置', Icons.settings, context),
+
+              // 分隔线
+              Divider(height: 15, thickness: 1),
+
+              // FIXME: 调试Token
+
+              // 饮食日志补录选项
+              // _buildOption('饮食日志补录', Icons.local_dining, context),
+              _buildOption('清除accessToken', Icons.local_dining, context),
+
+              // 分隔线
+              Divider(height: 15, thickness: 1),
+
+              // 占卜回顾选项
+              _buildOption('清除所有Token', Icons.star, context),
+
+              // 分隔线
+              Divider(height: 15, thickness: 1),
+
+              // 我应对复发策略选项
+              _buildOption('调整进度', Icons.security, context),
+
+              // 分隔线
+              Divider(height: 15, thickness: 1),
+
+              // 当我不在暴食后选项
+              _buildOption('当我不在暴食后', Icons.healing, context),
+            ],
+          ),
+        );
+      }),
     );
   }
 }

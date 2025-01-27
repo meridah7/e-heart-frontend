@@ -1,86 +1,45 @@
 // 定义了survey界面，和创建不同类型问题的功能
 
 import 'package:flutter/material.dart';
-import 'package:namer_app/Login/user_model.dart';
 import 'package:namer_app/main.dart';
 import 'survey_models.dart';
 import 'SurveySummaryPage.dart';
 import 'survey_question_factory.dart';
 import 'impulsive_record_and_reflection_summary.dart';
 import 'package:namer_app/user_preference.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:namer_app/providers/user_provider.dart';
+import 'package:namer_app/providers/progress_provider.dart';
 import 'utils.dart';
 import 'package:dio/dio.dart';
 
 class SurveyPage extends StatefulWidget {
-  final Survey survey;
-  final String taskId;
-  final bool isLastTask;
-  final Function? handleSubmit;
-  Map<String, dynamic>? presetAnswers = {};
-
   SurveyPage(
       {required this.survey,
       required this.taskId,
-      required this.isLastTask,
       this.handleSubmit,
       this.presetAnswers});
+
+  // final bool isLastTask;
+  final Function? handleSubmit;
+
+  Map<String, dynamic>? presetAnswers = {};
+  final Survey survey;
+  final String taskId;
 
   @override
   _SurveyPageState createState() => _SurveyPageState();
 }
 
 class _SurveyPageState extends State<SurveyPage> {
+  Map<String, String> _customAnswers = {};
   late Preferences _userPref;
-  // init State for some survey task
-  Future<void> _initWidget() async {
-    await _initializePreferences();
-    Map answers = _userPref.getData('completedTaskAnswers');
-    if (SummaryTaskIds.contains(widget.taskId) &&
-        answers.containsKey(widget.taskId)) {
-      List<String> summary = answers[widget.taskId]!.cast<String>();
-      // 导航到问卷摘要页面
-      if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => SurveySummaryPage(
-              taskId: widget.taskId,
-              summary: summary,
-            ),
-          ),
-        );
-      }
-    }
-  }
 
   @override
   void initState() {
     super.initState();
     _initWidget();
     _initializeQuestions();
-  }
-
-  Future<void> _initializeQuestions() async {
-    // 如果有预设回答
-    if (widget.presetAnswers != null && widget.presetAnswers!.isNotEmpty) {
-      widget.survey.questions = fillSurveyWithPresetAnswer(
-          widget.survey.questions, widget.presetAnswers);
-    }
-
-    if (widget.taskId == 'S4') {
-      setState(() async {
-        widget.survey.questions = await generateDietPlanReview();
-      });
-    }
-  }
-
-  Future<void> _initializePreferences() async {
-    if (mounted) {
-      var userProvider = Provider.of<UserProvider>(context, listen: false);
-      _userPref = await Preferences.getInstance(namespace: userProvider.uuid);
-    }
   }
 
   // 递归填入预设回答
@@ -226,6 +185,55 @@ class _SurveyPageState extends State<SurveyPage> {
     return answers;
   }
 
+  // init State for some survey task
+  Future<void> _initWidget() async {
+    await _initializePreferences();
+    Map answers = _userPref.getData('completedTaskAnswers');
+    if (SummaryTaskIds.contains(widget.taskId) &&
+        answers.containsKey(widget.taskId)) {
+      List<String> summary = answers[widget.taskId]!.cast<String>();
+      // 导航到问卷摘要页面
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SurveySummaryPage(
+              taskId: widget.taskId,
+              summary: summary,
+            ),
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _initializeQuestions() async {
+    // 如果有预设回答
+    if (widget.presetAnswers != null && widget.presetAnswers!.isNotEmpty) {
+      widget.survey.questions = fillSurveyWithPresetAnswer(
+          widget.survey.questions, widget.presetAnswers);
+    }
+
+    if (widget.taskId == 'S4') {
+      setState(() async {
+        widget.survey.questions = await generateDietPlanReview();
+      });
+    }
+  }
+
+  Future<void> _initializePreferences() async {
+    if (mounted) {
+      var userProvider = Provider.of<UserProvider>(context, listen: false);
+      _userPref = await Preferences.getInstance(namespace: userProvider.uuid);
+    }
+  }
+
+  void _updateCustomAnswer(String questionKey, String answer) {
+    setState(() {
+      _customAnswers[questionKey] = answer;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     // NOTE: this is currently only available for 冲动记录反思, please refactor it if other questionnaires are needed
@@ -294,13 +302,13 @@ class _SurveyPageState extends State<SurveyPage> {
           // 本地保存问卷记录
           await _userPref.updateSurveyData(widget.taskId, summary);
 
-          if (widget.isLastTask) {
-            int? userProgress = _userPref.getData('progress');
-            await _userPref.setData(
-                'progress', userProgress == null ? 1 : userProgress + 1);
-            await _userPref.setData('progressLastUpdatedDate',
-                DateFormat('yyyyMMdd').format(DateTime.now()));
-          }
+          // if (widget.isLastTask) {
+          //   int? userProgress = _userPref.getData('progress');
+          //   await _userPref.setData(
+          //       'progress', userProgress == null ? 1 : userProgress + 1);
+          //   await _userPref.setData('progressLastUpdatedDate',
+          //       DateFormat('yyyyMMdd').format(DateTime.now()));
+          // }
 
           if (_userPref.hasKey('finishedTaskIds')) {
             List taskIds = _userPref.getData('finishedTaskIds');
@@ -317,6 +325,14 @@ class _SurveyPageState extends State<SurveyPage> {
                   .catchError((e) {
             print('[uploadSurveyData] error $e');
           });
+
+          if (res?.statusCode == 200) {
+            if (mounted) {
+              var progressProvider =
+                  Provider.of<ProgressProvider>(context, listen: false);
+              progressProvider.updateProgress(widget.taskId);
+            }
+          }
 
           // 导航到问卷摘要页面
           if (widget.survey.navigateToSummary) {
@@ -352,12 +368,5 @@ class _SurveyPageState extends State<SurveyPage> {
         },
       ),
     );
-  }
-
-  Map<String, String> _customAnswers = {};
-  void _updateCustomAnswer(String questionKey, String answer) {
-    setState(() {
-      _customAnswers[questionKey] = answer;
-    });
   }
 }

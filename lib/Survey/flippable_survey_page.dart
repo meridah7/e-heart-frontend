@@ -1,21 +1,21 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:namer_app/Login/user_model.dart';
+import 'package:namer_app/providers/user_provider.dart';
 import 'package:namer_app/user_preference.dart';
 import 'package:provider/provider.dart';
 import 'survey_models.dart';
 import 'survey_question_factory.dart';
 import 'SurveySummaryPage.dart';
-import 'package:namer_app/utils/dio_client.dart';
+import 'package:namer_app/services/dio_client.dart';
+import 'package:namer_app/providers/progress_provider.dart';
 
 /// @desc 可翻页的问券
 ///
 /// @note 当前需求只要求给问题全部分页 / 全部不分页，所以这个组件粗暴的把全部问题分页了，后续如果有混合诉求的话，则考虑把这个跟 SurveyPage 一起重构了
 class FlippableSurveyPage extends StatefulWidget {
-  FlippableSurveyPage(
-      {required this.survey, required this.taskId, required this.isLastTask});
+  FlippableSurveyPage({required this.survey, required this.taskId});
 
-  final bool isLastTask;
+  // final bool isLastTask;
   final Survey survey;
   final String taskId;
 
@@ -226,6 +226,12 @@ class _FlippableSurveyPageState extends State<FlippableSurveyPage> {
         if (widget.taskId == 'D1') {
           handleSubmitImpulseStrategies();
         }
+
+        // 更新用户进度
+        var progressProvider =
+            Provider.of<ProgressProvider>(context, listen: false);
+        progressProvider.updateProgress(widget.taskId);
+
         if (widget.survey.navigateToSummary) {
 // 导航到问卷摘要页面
           Navigator.push(

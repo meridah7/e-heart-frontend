@@ -96,7 +96,7 @@ class DioClient {
             }
           }
         } else if (exception.response?.statusCode == 403) {
-          _handleForbidden();
+          handleRedirectLogin();
         }
         handler.next(exception);
       },
@@ -132,8 +132,9 @@ class DioClient {
   }
 
   // 跳转到登录页面
-  void _handleForbidden() {
-    print("403 Forbidden: 跳转到登录页面");
+  void handleRedirectLogin() {
+    print("跳转到登录页面");
+    print(navigatorKey.currentState); // 确保这里不是 null
     // 具体实现根据你的路由逻辑
     navigatorKey.currentState
         ?.pushNamedAndRemoveUntil('/login', (route) => false);

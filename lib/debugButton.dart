@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'user_preference.dart';
 import 'package:provider/provider.dart';
-import 'package:namer_app/Login/user_model.dart';
+import 'package:namer_app/providers/user_provider.dart';
 
 /// A debug button to modify some config for dev stage
 /// NOTE: do not bring it to online env

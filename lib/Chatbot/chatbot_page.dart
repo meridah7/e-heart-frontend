@@ -7,16 +7,15 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:intl/intl.dart';
 import '../user_preference.dart';
 import 'package:provider/provider.dart';
-import 'package:namer_app/Login/user_model.dart';
+import 'package:namer_app/providers/user_provider.dart';
 
 // ChatbotPage class是chatbot的主页面，负责显示聊天界面和处理用户输入。
 class ChatbotPage extends StatefulWidget {
   final List<Content> contents;
   final String taskId;
-  final bool isLastTask;
+  // final bool isLastTask;
 
-  ChatbotPage(
-      {required this.contents, required this.taskId, required this.isLastTask});
+  ChatbotPage({required this.contents, required this.taskId});
 
   @override
   _ChatbotPageState createState() => _ChatbotPageState();
@@ -170,13 +169,13 @@ class _ChatbotPageState extends State<ChatbotPage> {
     answers[widget.taskId] = userResponses;
     await _userPref.setData('completedTaskAnswers', answers);
 
-    if (widget.isLastTask) {
-      int? userProgress = _userPref.getData('progress');
-      await _userPref.setData(
-          'progress', userProgress == null ? 1 : userProgress + 1);
-      await _userPref.setData('progressLastUpdatedDate',
-          DateFormat('yyyyMMdd').format(DateTime.now()));
-    }
+    // if (widget.isLastTask) {
+    //   int? userProgress = _userPref.getData('progress');
+    //   await _userPref.setData(
+    //       'progress', userProgress == null ? 1 : userProgress + 1);
+    //   await _userPref.setData('progressLastUpdatedDate',
+    //       DateFormat('yyyyMMdd').format(DateTime.now()));
+    // }
 
     if (_userPref.hasKey('finishedTaskIds')) {
       List taskIds = _userPref.getData('finishedTaskIds');

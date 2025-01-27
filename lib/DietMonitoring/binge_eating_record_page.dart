@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:namer_app/Survey/survey_page.dart'; // Assuming SurveyPage can be reused or adapted
 import 'package:namer_app/Tasks/Survey/tasks.dart';
-import 'package:namer_app/utils/dio_client.dart';
+import 'package:namer_app/services/dio_client.dart';
 
 class BingeEatingRecordPage extends StatefulWidget {
   @override
@@ -53,7 +53,6 @@ class _BingeEatingRecordPageState extends State<BingeEatingRecordPage> {
       body: SurveyPage(
         survey: impulseRecording.survey!,
         taskId: impulseRecording.id,
-        isLastTask: false,
         // handleSubmit: handleSubmit,
       ),
       // If you need to adapt the survey logic specifically for this page,
