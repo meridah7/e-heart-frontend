@@ -95,11 +95,13 @@ var dietaryIntakeSurvey = Survey(title: '饮食记录', questions: [
       labelBuilder: (value) {
     if (value == 1) {
       return '很不开心';
-    } else if (value == 4)
+    } else if (value == 4) {
       return '一般';
-    else if (value == 7) return '超开心';
+    } else if (value == 7) {
+      return '超开心';
+    }
     return value.toInt().toString();
-  }),
+  }, leftDesc: '很不开心', rightDesc: '超开心', alias: 'moodIntensity'),
   MultipleChoiceQuestion('情绪种类', [
     '伤心',
     '疲惫',
@@ -186,11 +188,13 @@ var vomitRecordSurvey = Survey(title: '食物清除记录', questions: [
       labelBuilder: (value) {
     if (value == 1) {
       return '很不开心';
-    } else if (value == 4)
+    } else if (value == 4) {
       return '一般';
-    else if (value == 7) return '超开心';
+    } else if (value == 7) {
+      return '超开心';
+    }
     return value.toInt().toString();
-  }),
+  }, leftDesc: '很不开心', rightDesc: '超开心'),
   MultipleChoiceQuestion(
       '食物清除的时候感受到的情绪种类',
       ['伤心', '疲惫', '紧张', '无聊', '兴奋', '羞愧', '愤怒', '恐惧', '平静', '开心', '其他'],
@@ -1103,11 +1107,13 @@ var impulseRecordingSurvey = Survey(title: '冲动记录', questions: [
       min: 1, max: 10, divisions: 9, alias: "intensity", labelBuilder: (value) {
     if (value == 1) {
       return '轻度';
-    } else if (value == 5)
+    } else if (value == 5) {
       return '中度';
-    else if (value == 10) return '重度';
+    } else if (value == 10) {
+      return '重度';
+    }
     return value.toInt().toString();
-  }),
+  }, leftDesc: '轻度', rightDesc: '重度'),
   TextQuestion('此冲动的诱因是什么？', false, alias: 'trigger'),
 
   // TextQuestion('结合你的替代策略，制定你对这次冲动的应对方案', false),
