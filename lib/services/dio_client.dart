@@ -1,8 +1,10 @@
 // ignore_for_file: constant_identifier_names
+import 'package:flutter/foundation.dart'; // 用于访问 kDebugMode
 import 'package:namer_app/main.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
+import 'package:namer_app/utils/toast_util.dart';
 
 const String USER_BASE_URL = 'http://121.41.30.133/api';
 const String AGENT_BASE_URL = ' http://223.4.25.37:3000/api/agent';
@@ -97,6 +99,25 @@ class DioClient {
           }
         } else if (exception.response?.statusCode == 403) {
           handleRedirectLogin();
+        } else {
+          // 判断是否为 debug 模式
+          if (kDebugMode) {
+            // 显示 Toast 提示
+            // Fluttertoast.showToast(
+            //     msg: "This is Center Short Toast",
+            //     toastLength: Toast.LENGTH_SHORT,
+            //     gravity: ToastGravity.CENTER,
+            //     timeInSecForIosWeb: 1,
+            //     fontSize: 16.0);
+            ToastUtils.shotToast(
+              "接口请求失败：${exception.message}",
+            );
+            // Fluttertoast.showToast(
+            //   msg: "接口请求失败：${exception.message}",
+            //   toastLength: Toast.LENGTH_LONG,
+            //   gravity: ToastGravity.CENTER,
+            // );
+          }
         }
         handler.next(exception);
       },
