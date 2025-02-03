@@ -1,7 +1,8 @@
 // Define the tasks of each day
 // Each day has multiple tasks
 // Task can be Chatbot or Survey
-import '../TodayList/task_models.dart';
+import 'package:namer_app/models/task_models.dart';
+
 import './Chatbot/tasks.dart';
 import './Survey/tasks.dart';
 
@@ -26,6 +27,7 @@ List<Task> getTasksByIds(List<String> taskIds) {
       .map((id) => taskMap[id]!) // 获取对应的任务对象
       .toList();
 }
+
 
 // List<List<Task>> DailyTask = [
 //   TaskTestAll,

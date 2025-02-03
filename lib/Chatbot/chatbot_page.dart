@@ -1,7 +1,7 @@
 // 这个文件定义了chatbot的核心功能部分，包括聊天页面和不同对话方式的相关逻辑。
 import 'package:flutter/material.dart';
 import 'package:namer_app/global_setting.dart';
-import 'chat_models.dart';
+import 'package:namer_app/models/chat_models.dart';
 import 'chat_widgets.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import '../user_preference.dart';

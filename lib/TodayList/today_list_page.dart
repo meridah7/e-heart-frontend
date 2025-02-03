@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:namer_app/providers/progress_provider.dart';
 import '../Tasks/daily_tasks.dart';
-import 'task_models.dart';
+import 'package:namer_app/models/task_models.dart';
 import '../Chatbot/chatbot_page.dart';
 import '../Survey/survey_page.dart';
 import '../Survey/flippable_survey_page.dart';
@@ -17,7 +17,7 @@ import 'package:provider/provider.dart';
 import 'package:namer_app/providers/user_provider.dart';
 
 import 'package:namer_app/utils/helper.dart';
-import 'package:namer_app/Survey/survey_models.dart';
+import 'package:namer_app/models/survey_models.dart';
 
 class TodayListPage extends StatefulWidget {
   @override
@@ -129,17 +129,17 @@ class _TodayListPageState extends State<TodayListPage> {
       //     List<String>.from(_userPref.getData('finishedTaskIds'));
       // List<String> finishedTaskIds =
       //     progressProvider.userProgress!.data!.finishedTaskIds ?? [];
-      List<String> displayTaskId = [
-        ...progressProvider.allRequiredTaskIds,
-        ...progressProvider.allOptionalTaskIds,
-      ];
-      List<Task> finishedTaskList =
-          getTasksByIds(progressProvider.finishedTaskIds)
-              .map((e) => e.copyWith(isCompleted: true))
-              .toList();
-      List<Task> dailyTaskList = getTasksByIds(displayTaskId);
-      dailyTaskList.addAll(finishedTaskList);
-      print('dailyTaskList $displayTaskId');
+      // List<String> displayTaskId = [
+      //   ...progressProvider.allRequiredTaskIds,
+      //   ...progressProvider.allOptionalTaskIds,
+      // ];
+      // List<Task> finishedTaskList =
+      //     getTasksByIds(progressProvider.finishedTaskIds)
+      //         .map((e) => e.copyWith(isCompleted: true))
+      //         .toList();
+      List<Task> dailyTaskList = await progressProvider.fetchDisplayTaskList();
+      // dailyTaskList.addAll(finishedTaskList);
+
       setState(() {
         // _finishedTaskIds = finishedTaskIds;
         if (_currentDay != null) {
@@ -283,16 +283,16 @@ class _TodayListPageState extends State<TodayListPage> {
             title: Text(task.title),
             subtitle:
                 Text(task.type == TaskType.CHATBOT ? 'Chatbot' : 'Survey'),
-            trailing: IconButton(
-              icon: Icon(task.isCompleted
-                  ? Icons.check_box
-                  : Icons.check_box_outline_blank),
-              onPressed: () {
-                setState(() {
-                  task.isCompleted = !task.isCompleted;
-                });
-              },
-            ),
+            trailing: Icon(task.isCompleted
+                    ? Icons.check_box
+                    : Icons.check_box_outline_blank
+                // icon: ,
+                // onPressed: () {
+                //   setState(() {
+                //     task.isCompleted = !task.isCompleted;
+                //   });
+                // },
+                ),
             onTap: () {
               switch (task.type) {
                 case TaskType.CHATBOT:
@@ -302,8 +302,6 @@ class _TodayListPageState extends State<TodayListPage> {
                           builder: (context) => ChatbotPage(
                                 contents: task.chatbotContent!,
                                 taskId: task.id,
-                                // isLastTask: DailyTask[_currentDay!].length ==
-                                //     _finishedTaskIds!.length + 1,
                               )));
                   break;
                 case TaskType.SURVEY:
@@ -313,8 +311,6 @@ class _TodayListPageState extends State<TodayListPage> {
                           builder: (context) => SurveyPage(
                                 survey: task.survey!,
                                 taskId: task.id,
-                                // isLastTask: DailyTask[_currentDay!].length ==
-                                //     _finishedTaskIds!.length + 1
                               )));
                   break;
                 case TaskType.SURVEY_FLIPPABLE:
@@ -399,9 +395,10 @@ class _TodayListPageState extends State<TodayListPage> {
   @override
   Widget build(BuildContext context) {
     // 使用context获取UserProvider实例
+    final progressProvider = Provider.of<ProgressProvider>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Day ${_currentDay ?? 0}',
+        title: Text('Day ${progressProvider.progress}',
             style: TextStyle(color: Colors.black)),
         elevation: 0,
       ),
@@ -411,13 +408,10 @@ class _TodayListPageState extends State<TodayListPage> {
           children: [
             _buildSegmentedControl(),
             Expanded(
-              child: _currentDay != null
-                  ?
-                  // ? _buildTaskListView(DailyTask[_currentDay!])
-                  _buildTaskListView(_dailyTaskList)
-                  // : _buildDietListView(DietDay0))
-                  : SizedBox.shrink(),
-            ),
+                // child: _currentDay != null ?
+                child: _buildTaskListView(_dailyTaskList)
+                // : SizedBox.shrink(),
+                ),
           ],
         ),
       ),

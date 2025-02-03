@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:namer_app/main.dart';
-import 'survey_models.dart';
+import 'package:namer_app/models/survey_models.dart';
 import 'SurveySummaryPage.dart';
 import 'survey_question_factory.dart';
 import 'impulsive_record_and_reflection_summary.dart';

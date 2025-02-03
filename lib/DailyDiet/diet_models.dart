@@ -1,8 +1,8 @@
 //定义了饮食的class
 
-import 'package:namer_app/Survey/survey_models.dart';
+import 'package:namer_app/models/survey_models.dart';
 import 'package:namer_app/Survey/utils.dart';
-import '../Chatbot/chat_models.dart';
+import 'package:namer_app/models/chat_models.dart';
 
 enum DietType {
   FormalMeal,

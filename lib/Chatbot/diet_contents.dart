@@ -2,7 +2,7 @@
 // DayX 有很多不同的diet
 // diet有不同的种类，可以是聊天机器人，也可以是问卷调查
 
-import 'chat_models.dart';
+import 'package:namer_app/models/chat_models.dart';
 import '../DailyDiet/diet_models.dart';
 
 // List<Diet> DietDay0 = [
