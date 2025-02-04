@@ -214,11 +214,11 @@ class _TodayListPageState extends State<TodayListPage> {
                               )));
                   break;
                 case TaskType.SURVEY_FLIPPABLE:
-                  // if (task.isCompleted) {
-                  //   print('${task.title} is already completed');
-                  //   ToastUtils.showToast('${task.title}问卷已完成');
-                  //   break;
-                  // }
+                  if (task.isCompleted) {
+                    print('${task.title} is already completed');
+                    ToastUtils.showToast('${task.title}问卷已完成');
+                    break;
+                  }
                   Navigator.push(
                       context,
                       MaterialPageRoute(
