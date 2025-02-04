@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:namer_app/user_preference.dart';
 import 'package:provider/provider.dart';
 import 'package:namer_app/providers/user_provider.dart';
+import 'package:namer_app/Survey/utils.dart';
 
 class SurveySummaryPage extends StatefulWidget {
   final List<String> summary;
@@ -17,6 +19,7 @@ class SurveySummaryPage extends StatefulWidget {
 
 class _SurveySummaryPageState extends State<SurveySummaryPage> {
   late Preferences _userPref;
+  bool showRestart = true;
 
   @override
   void initState() {
@@ -25,6 +28,11 @@ class _SurveySummaryPageState extends State<SurveySummaryPage> {
   }
 
   Future<void> _initWidget() async {
+    if (NotRestartTaskIds.contains(widget.taskId)) {
+      setState(() {
+        showRestart = false;
+      });
+    }
     await _initializePreferences();
   }
 
@@ -57,26 +65,27 @@ class _SurveySummaryPageState extends State<SurveySummaryPage> {
           ),
         ),
         child: Row(children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ElevatedButton(
-                onPressed: () async {
-                  Map answers = _userPref.getData('completedTaskAnswers');
-                  answers.remove(widget.taskId);
-                  await _userPref.setData('completedTaskAnswers', answers);
-                  Navigator.pop(context);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.teal[300],
+          if (showRestart)
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ElevatedButton(
+                  onPressed: () async {
+                    Map answers = _userPref.getData('completedTaskAnswers');
+                    answers.remove(widget.taskId);
+                    await _userPref.setData('completedTaskAnswers', answers);
+                    Navigator.pop(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.teal[300],
+                  ),
+                  child: Text('Restart',
+                      style: TextStyle(
+                        color: Colors.white,
+                      )),
                 ),
-                child: Text('Restart',
-                    style: TextStyle(
-                      color: Colors.white,
-                    )),
               ),
             ),
-          ),
         ]),
       ),
     );

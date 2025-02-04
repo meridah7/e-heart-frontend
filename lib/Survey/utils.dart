@@ -7,7 +7,10 @@ import 'package:namer_app/models/task_models.dart';
 import 'package:namer_app/utils/helper.dart';
 
 // 需要展示总结页面的任务id
-List<String> SummaryTaskIds = ['S3', 'S2', 'S4', 'S5', 'D1'];
+List<String> SummaryTaskIds = ['S3', 'S4', 'S5', 'D1'];
+
+// 不需要总结页面Restart的任务id
+List<String> NotRestartTaskIds = ['S2'];
 
 // 维护餐食类型枚举
 enum MealType {

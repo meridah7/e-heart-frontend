@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class ToastUtils {
-  static void shotToast(
+  static void showToast(
     String message, [
     //方括号里是可选参数，可以不填，等号右边是默认值
     Toast time = Toast.LENGTH_SHORT,

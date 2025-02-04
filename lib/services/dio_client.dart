@@ -103,20 +103,10 @@ class DioClient {
           // 判断是否为 debug 模式
           if (kDebugMode) {
             // 显示 Toast 提示
-            // Fluttertoast.showToast(
-            //     msg: "This is Center Short Toast",
-            //     toastLength: Toast.LENGTH_SHORT,
-            //     gravity: ToastGravity.CENTER,
-            //     timeInSecForIosWeb: 1,
-            //     fontSize: 16.0);
-            ToastUtils.shotToast(
+
+            ToastUtils.showToast(
               "接口请求失败：${exception.message}",
             );
-            // Fluttertoast.showToast(
-            //   msg: "接口请求失败：${exception.message}",
-            //   toastLength: Toast.LENGTH_LONG,
-            //   gravity: ToastGravity.CENTER,
-            // );
           }
         }
         handler.next(exception);

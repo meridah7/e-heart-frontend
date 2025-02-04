@@ -16,6 +16,8 @@ class ProgressProvider with ChangeNotifier {
 
   UserProgress? get userProgress => _userProgress;
 
+  List<Task> displayTaskList = [];
+
   int? get progress => _userProgress?.progress ?? 0;
   List<String> get finishedTaskIds => _userProgress?.finishedTaskIds ?? [];
   List<String> get allRequiredTaskIds =>
@@ -36,6 +38,7 @@ class ProgressProvider with ChangeNotifier {
   Future<void> updateProgress(String taskId) async {
     try {
       _userProgress = await apiService.updateProgress(taskId);
+      await fetchProgress();
     } catch (err) {
       print('Error in parse user progress $err');
       throw Exception(err);
@@ -58,16 +61,20 @@ class ProgressProvider with ChangeNotifier {
       if (_userProgress == null) {
         await fetchProgress();
       }
+      List<Task> impulseRecordTaskList =
+          await apiService.fetchImpulseReflectionRecords();
       // 聚合所有任务 并给完成的任务打上标记
       List<String> displayTaskIds = [
         ...allRequiredTaskIds,
         ...allOptionalTaskIds,
       ];
       // 已完成的任务
-      List<Task> displayTaskList = getTasksByIds(displayTaskIds)
+      List<Task> displayTasks = getTasksByIds(displayTaskIds)
           .map((e) => e.copyWith(isCompleted: finishedTaskIds.contains(e.id)))
           .toList();
-      return displayTaskList;
+      displayTaskList = displayTasks;
+      displayTaskList.addAll(impulseRecordTaskList);
+      return displayTasks;
     } catch (err) {
       print('Error in fetch display task list $err');
       throw Exception(err);

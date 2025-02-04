@@ -233,7 +233,10 @@ class _FlippableSurveyPageState extends State<FlippableSurveyPage> {
         }
 
         // TODO 提交问卷添加进度接口
-
+        // 更新用户进度
+        var progressProvider =
+            Provider.of<ProgressProvider>(context, listen: false);
+        progressProvider.updateProgress(widget.taskId);
         if (widget.survey.navigateToSummary) {
 // 导航到问卷摘要页面
           Navigator.push(
@@ -245,6 +248,9 @@ class _FlippableSurveyPageState extends State<FlippableSurveyPage> {
               ),
             ),
           );
+        } else {
+          Navigator.pushNamedAndRemoveUntil(
+              context, '/home', (Route<dynamic> route) => false);
         }
       }
     });
