@@ -1,8 +1,6 @@
 //定义了任务的class
-
-import 'package:namer_app/Survey/survey_models.dart';
-
-import '../Chatbot/chat_models.dart';
+import 'package:namer_app/models/survey_models.dart';
+import 'package:namer_app/models/chat_models.dart';
 
 enum TaskType {
   // 对话机器人

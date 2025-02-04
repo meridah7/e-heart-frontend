@@ -1,4 +1,5 @@
-import '../../TodayList/task_models.dart';
+import 'package:namer_app/models/task_models.dart';
+
 import './contents.dart';
 
 Task dietLogTutor = Task(

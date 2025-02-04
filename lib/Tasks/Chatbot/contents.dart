@@ -1,4 +1,4 @@
-import '../../Chatbot/chat_models.dart';
+import 'package:namer_app/models/chat_models.dart';
 
 List<Content> dietLogTutorContent = [
   Content(

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:namer_app/providers/user_provider.dart';
 import 'package:namer_app/user_preference.dart';
 import 'package:provider/provider.dart';
-import 'survey_models.dart';
+import 'package:namer_app/models/survey_models.dart';
 import 'survey_question_factory.dart';
 import 'SurveySummaryPage.dart';
 import 'package:namer_app/services/dio_client.dart';
@@ -233,7 +233,10 @@ class _FlippableSurveyPageState extends State<FlippableSurveyPage> {
         }
 
         // TODO 提交问卷添加进度接口
-
+        // 更新用户进度
+        var progressProvider =
+            Provider.of<ProgressProvider>(context, listen: false);
+        progressProvider.updateProgress(widget.taskId);
         if (widget.survey.navigateToSummary) {
 // 导航到问卷摘要页面
           Navigator.push(
@@ -245,6 +248,9 @@ class _FlippableSurveyPageState extends State<FlippableSurveyPage> {
               ),
             ),
           );
+        } else {
+          Navigator.pushNamedAndRemoveUntil(
+              context, '/home', (Route<dynamic> route) => false);
         }
       }
     });

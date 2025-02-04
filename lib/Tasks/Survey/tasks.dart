@@ -1,6 +1,6 @@
-import 'package:namer_app/Survey/survey_models.dart';
+import 'package:namer_app/models/survey_models.dart';
 
-import '../../TodayList/task_models.dart';
+import 'package:namer_app/models/task_models.dart';
 import 'contents.dart';
 
 // 废弃

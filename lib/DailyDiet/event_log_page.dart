@@ -5,7 +5,7 @@ import 'package:namer_app/DailyDiet/diet_models.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:namer_app/Survey/survey_page.dart';
 import 'package:namer_app/Tasks/Survey/tasks.dart';
-import 'package:namer_app/TodayList/task_models.dart';
+import 'package:namer_app/models/task_models.dart';
 import 'package:namer_app/services/dio_client.dart';
 
 class EventLogPage extends StatefulWidget {
@@ -256,7 +256,8 @@ class _EventLogPageState extends State<EventLogPage>
               children: [
                 // 待完成计划标题
                 Padding(
-                  padding: const EdgeInsets.all(12.0),
+                  padding:
+                      const EdgeInsets.only(left: 8, top: 12.0, bottom: 8.0),
                   child: Text(
                     '待完成计划',
                     style: TextStyle(
@@ -269,7 +270,7 @@ class _EventLogPageState extends State<EventLogPage>
                 // 当日饮食标题
                 Padding(
                   padding:
-                      const EdgeInsets.only(left: 16.0, top: 12.0, bottom: 8.0),
+                      const EdgeInsets.only(left: 8.0, top: 12.0, bottom: 8.0),
                   child: Text(
                     '当日饮食',
                     style: TextStyle(

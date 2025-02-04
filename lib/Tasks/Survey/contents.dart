@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
-import '../../Survey/survey_models.dart';
+import 'package:namer_app/models/survey_models.dart';
+
 import 'package:namer_app/services/dio_client.dart';
 import 'package:intl/intl.dart';
 

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:namer_app/models/user_progress.dart';
+import 'package:namer_app/models/task_models.dart';
 import 'package:namer_app/services/api_service.dart';
-import 'package:namer_app/utils/helper.dart';
+import 'package:namer_app/tasks/daily_tasks.dart';
 
 class ProgressProvider with ChangeNotifier {
   String? _inputValue;
@@ -15,7 +16,9 @@ class ProgressProvider with ChangeNotifier {
 
   UserProgress? get userProgress => _userProgress;
 
-  int? get progress => _userProgress?.progress;
+  List<Task> displayTaskList = [];
+
+  int? get progress => _userProgress?.progress ?? 0;
   List<String> get finishedTaskIds => _userProgress?.finishedTaskIds ?? [];
   List<String> get allRequiredTaskIds =>
       _userProgress?.allRequiredTaskIds ?? [];
@@ -35,6 +38,7 @@ class ProgressProvider with ChangeNotifier {
   Future<void> updateProgress(String taskId) async {
     try {
       _userProgress = await apiService.updateProgress(taskId);
+      await fetchProgress();
     } catch (err) {
       print('Error in parse user progress $err');
       throw Exception(err);
@@ -52,7 +56,32 @@ class ProgressProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // 更新输入值并通知监听者
+  Future<List<Task>> fetchDisplayTaskList() async {
+    try {
+      if (_userProgress == null) {
+        await fetchProgress();
+      }
+      List<Task> impulseRecordTaskList =
+          await apiService.fetchImpulseReflectionRecords();
+      // 聚合所有任务 并给完成的任务打上标记
+      List<String> displayTaskIds = [
+        ...allRequiredTaskIds,
+        ...allOptionalTaskIds,
+      ];
+      // 已完成的任务
+      List<Task> displayTasks = getTasksByIds(displayTaskIds)
+          .map((e) => e.copyWith(isCompleted: finishedTaskIds.contains(e.id)))
+          .toList();
+      displayTaskList = displayTasks;
+      displayTaskList.addAll(impulseRecordTaskList);
+      return displayTasks;
+    } catch (err) {
+      print('Error in fetch display task list $err');
+      throw Exception(err);
+    }
+  }
+
+  // 更新用户进度输入值并通知监听者
   void updateInputValue(String value) {
     _inputValue = value;
     setProgress(int.parse(value));

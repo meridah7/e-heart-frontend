@@ -5,73 +5,24 @@ part 'user.g.dart';
 
 @JsonSerializable()
 class User {
-  User({
-    this.id,
-    this.phoneNumber,
-    this.uuid,
-    this.name,
-    this.email,
-    this.height,
-    this.weight,
-    this.age,
-    this.birthday,
-    this.currentProgress,
-    this.expectedProgress,
-    this.gender,
-    this.lastTaskFinishedTime,
-    this.lastFinishedTaskId,
-    this.progress,
-    this.createdAt,
-    this.updatedAt,
-  });
-
-  // factory User.fromJson(Map<String, dynamic> json) => User(
-  //       id: json['id'] as int?,
-  //       phoneNumber: json['phone_number'] as String?,
-  //       uuid: json['uuid'] as String?,
-  //       name: json['name'] as String?,
-  //       email: json['email'] as String?,
-  //       height: json['height'] as String?,
-  //       weight: json['weight'] as String?,
-  //       age: json['age'] as int?,
-  //       birthday: json['birthday'] == null
-  //           ? null
-  //           : DateTime.parse(json['birthday'] as String),
-  //       currentProgress: json['current_progress'] as int?,
-  //       expectedProgress: json['expected_progress'] as int?,
-  //       gender: json['gender'] as dynamic,
-  //       lastTaskFinishedTime: json['lastTaskFinishedTime'] == null
-  //           ? null
-  //           : DateTime.parse(json['lastTaskFinishedTime'] as String),
-  //       lastFinishedTaskId: json['lastFinishedTaskId'] as String?,
-  //       progress: json['progress'] as int?,
-  //       createdAt: json['createdAt'] == null
-  //           ? null
-  //           : DateTime.parse(json['createdAt'] as String),
-  //       updatedAt: json['updatedAt'] == null
-  //           ? null
-  //           : DateTime.parse(json['updatedAt'] as String),
-  //     );
-
-  // Map<String, dynamic> toJson() => {
-  //       'id': id,
-  //       'phone_number': phoneNumber,
-  //       'uuid': uuid,
-  //       'name': name,
-  //       'email': email,
-  //       'height': height,
-  //       'weight': weight,
-  //       'age': age,
-  //       'birthday': birthday?.toIso8601String(),
-  //       'current_progress': currentProgress,
-  //       'expected_progress': expectedProgress,
-  //       'gender': gender,
-  //       'lastTaskFinishedTime': lastTaskFinishedTime?.toIso8601String(),
-  //       'lastFinishedTaskId': lastFinishedTaskId,
-  //       'progress': progress,
-  //       'createdAt': createdAt?.toIso8601String(),
-  //       'updatedAt': updatedAt?.toIso8601String(),
-  //     };
+  User(
+      {this.id,
+      this.uuid,
+      this.name,
+      this.email,
+      this.height,
+      this.weight,
+      this.age,
+      this.birthday,
+      this.currentProgress,
+      this.expectedProgress,
+      this.gender,
+      this.lastTaskFinishedTime,
+      this.lastFinishedTaskId,
+      this.progress,
+      this.createdAt,
+      this.updatedAt,
+      this.phoneNumber});
 
   // 自动生成的方法
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
@@ -91,6 +42,7 @@ class User {
   String? lastFinishedTaskId;
   DateTime? lastTaskFinishedTime;
   String? name;
+  @JsonKey(name: 'phone_number')
   String? phoneNumber;
   int? progress;
   DateTime? updatedAt;

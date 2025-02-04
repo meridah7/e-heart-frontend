@@ -8,7 +8,6 @@ part of 'user.dart';
 
 User _$UserFromJson(Map<String, dynamic> json) => User(
       id: (json['id'] as num?)?.toInt(),
-      phoneNumber: json['phoneNumber'] as String?,
       uuid: json['uuid'] as String?,
       name: json['name'] as String?,
       email: json['email'] as String?,
@@ -34,6 +33,7 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
       updatedAt: json['updatedAt'] == null
           ? null
           : DateTime.parse(json['updatedAt'] as String),
+      phoneNumber: json['phone_number'] as String?,
     );
 
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
@@ -52,7 +52,7 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'lastFinishedTaskId': instance.lastFinishedTaskId,
       'lastTaskFinishedTime': instance.lastTaskFinishedTime?.toIso8601String(),
       'name': instance.name,
-      'phoneNumber': instance.phoneNumber,
+      'phone_number': instance.phoneNumber,
       'progress': instance.progress,
       'updatedAt': instance.updatedAt?.toIso8601String(),
       'uuid': instance.uuid,
