@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:namer_app/user_preference.dart';
 import 'package:provider/provider.dart';
 import 'package:namer_app/providers/user_provider.dart';
-import 'package:namer_app/Survey/utils.dart';
+import 'package:namer_app/main.dart';
 
 class SurveySummaryPage extends StatefulWidget {
   final List<String> summary;
@@ -27,11 +27,11 @@ class _SurveySummaryPageState extends State<SurveySummaryPage> {
   }
 
   Future<void> _initWidget() async {
-    if (NotRestartTaskIds.contains(widget.taskId)) {
-      setState(() {
-        showRestart = false;
-      });
-    }
+    // if (NotRestartTaskIds.contains(widget.taskId)) {
+    //   setState(() {
+    //     showRestart = false;
+    //   });
+    // }
     await _initializePreferences();
   }
 
@@ -56,35 +56,35 @@ class _SurveySummaryPageState extends State<SurveySummaryPage> {
       ),
       bottomNavigationBar: Container(
         padding: EdgeInsets.symmetric(horizontal: 10.0),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.grey[100]!, Colors.grey[300]!],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
+        // decoration: BoxDecoration(
+        //   gradient: LinearGradient(
+        //     colors: [Colors.grey[100]!, Colors.grey[300]!],
+        //     begin: Alignment.topCenter,
+        //     end: Alignment.bottomCenter,
+        //   ),
+        // ),
         child: Row(children: [
-          if (showRestart)
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ElevatedButton(
-                  onPressed: () async {
-                    Map answers = _userPref.getData('completedTaskAnswers');
-                    answers.remove(widget.taskId);
-                    await _userPref.setData('completedTaskAnswers', answers);
-                    Navigator.pop(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal[300],
-                  ),
-                  child: Text('Restart',
-                      style: TextStyle(
-                        color: Colors.white,
-                      )),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ElevatedButton(
+                onPressed: () async {
+                  Map answers = _userPref.getData('completedTaskAnswers');
+                  answers.remove(widget.taskId);
+                  await _userPref.setData('completedTaskAnswers', answers);
+                  navigatorKey.currentState
+                      ?.pushNamedAndRemoveUntil('/home', (route) => false);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.teal[300],
                 ),
+                child: Text('返回主页',
+                    style: TextStyle(
+                      color: Colors.white,
+                    )),
               ),
             ),
+          ),
         ]),
       ),
     );
