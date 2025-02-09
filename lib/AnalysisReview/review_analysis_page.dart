@@ -1,7 +1,6 @@
 // ignore_for_file: constant_identifier_names
 
 import 'package:flutter/material.dart';
-import '../DietaryAnalysis/dietary_analysis_page.dart';
 import '../DietReview/review_page.dart';
 import './practice_list_page.dart';
 

@@ -5,7 +5,7 @@ import 'package:namer_app/user_preference.dart';
 import 'package:provider/provider.dart';
 import 'package:namer_app/models/survey_models.dart';
 import 'survey_question_factory.dart';
-import 'SurveySummaryPage.dart';
+import 'survey_summary_page.dart';
 import 'package:namer_app/services/dio_client.dart';
 import 'package:namer_app/providers/progress_provider.dart';
 
