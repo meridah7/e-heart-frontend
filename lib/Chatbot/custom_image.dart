@@ -62,7 +62,7 @@ class _CustomImageState extends State<CustomImage> {
           );
         },
       );
-    } else if (imageUrlOrPath.startsWith('images/')) {
+    } else if (imageUrlOrPath.startsWith('assets/images/')) {
       // It's a local file image
       // TODO: find a way to call onComplete when finish
       return _buildAssetImage(imageUrlOrPath);
@@ -99,6 +99,7 @@ class _CustomImageState extends State<CustomImage> {
   }
 
   Widget _buildAssetImage(String assetPath) {
+    print('Loading asset image: $assetPath');
     Image image = Image.asset(
       assetPath,
       fit: BoxFit.cover,

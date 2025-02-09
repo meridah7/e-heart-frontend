@@ -73,14 +73,14 @@ class ProgressProvider with ChangeNotifier {
           .map((e) => e.copyWith(isCompleted: finishedTaskIds.contains(e.id)))
           .toList();
       // FIXME: 临时替换mock 数据
+      // displayTaskList = [taskMap['M1']!];
       displayTaskList = displayTasks;
-      // displayTaskList = [taskMap['S2']!];
       displayTaskList.addAll(impulseRecordTaskList);
       return displayTasks;
     } catch (err) {
       print('Error in fetch display task list $err');
       // FIXME: 临时替换mock 数据
-      // return [taskMap['S2']!];
+      // return [taskMap['M1']!];
       throw Exception(err);
     }
   }

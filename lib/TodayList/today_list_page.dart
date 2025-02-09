@@ -31,7 +31,6 @@ class _TodayListPageState extends State<TodayListPage> {
   // 2. check db's data, if has, use it
   // 3. start from day 0
 
-  List<Task> _dailyTaskList = [];
   // List<String>? _finishedTaskIds = [];
 
   //初始化的状态
@@ -43,7 +42,6 @@ class _TodayListPageState extends State<TodayListPage> {
 
   Future<void> _initWidget() async {
     try {
-      _dailyTaskList.clear();
       var userProvider = Provider.of<UserProvider>(context, listen: false);
       var progressProvider =
           Provider.of<ProgressProvider>(context, listen: false);

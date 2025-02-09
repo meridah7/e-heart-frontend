@@ -73,7 +73,7 @@ List<Content> dietLogTutorContent = [
       type: ContentType.TEXT,
       responseType: ResponseType.auto),
   Content(
-    imageUrl: 'images/dietLogTutor-1.PNG',
+    imageUrl: 'assets/images/dietLogTutor-1.PNG',
     type: ContentType.IMAGE,
     responseType: ResponseType.auto,
   ),
@@ -82,7 +82,7 @@ List<Content> dietLogTutorContent = [
       type: ContentType.TEXT,
       responseType: ResponseType.auto),
   Content(
-    imageUrl: 'images/dietLogTutor-2.PNG',
+    imageUrl: 'assets/images/dietLogTutor-2.PNG',
     type: ContentType.IMAGE,
     responseType: ResponseType.auto,
   ),
@@ -92,17 +92,17 @@ List<Content> dietLogTutorContent = [
       type: ContentType.TEXT,
       responseType: ResponseType.auto),
   Content(
-    imageUrl: 'images/dietLogTutor-3.PNG',
+    imageUrl: 'assets/images/dietLogTutor-3.PNG',
     type: ContentType.IMAGE,
     responseType: ResponseType.auto,
   ),
   Content(
-    imageUrl: 'images/dietLogTutor-4.PNG',
+    imageUrl: 'assets/images/dietLogTutor-4.PNG',
     type: ContentType.IMAGE,
     responseType: ResponseType.auto,
   ),
   Content(
-    imageUrl: 'images/dietLogTutor-5.PNG',
+    imageUrl: 'assets/images/dietLogTutor-5.PNG',
     type: ContentType.IMAGE,
     responseType: ResponseType.auto,
   ),
@@ -123,7 +123,7 @@ List<Content> dietLogTutorContent = [
       type: ContentType.TEXT,
       responseType: ResponseType.auto),
   Content(
-    imageUrl: 'images/dietLogTutor-6.PNG',
+    imageUrl: 'assets/images/dietLogTutor-6.png',
     type: ContentType.IMAGE,
     responseType: ResponseType.auto,
   ),
@@ -132,7 +132,7 @@ List<Content> dietLogTutorContent = [
       type: ContentType.TEXT,
       responseType: ResponseType.auto),
   Content(
-    imageUrl: 'images/dietLogTutor-7.PNG',
+    imageUrl: 'assets/images/dietLogTutor-7.png',
     type: ContentType.IMAGE,
     responseType: ResponseType.auto,
   ),
@@ -145,7 +145,7 @@ List<Content> dietLogTutorContent = [
       type: ContentType.TEXT,
       responseType: ResponseType.auto),
   Content(
-    imageUrl: 'images/dietLogTutor-8.PNG',
+    imageUrl: 'assets/images/dietLogTutor-8.png',
     type: ContentType.IMAGE,
     responseType: ResponseType.auto,
   ),
@@ -154,7 +154,7 @@ List<Content> dietLogTutorContent = [
       type: ContentType.TEXT,
       responseType: ResponseType.auto),
   Content(
-    imageUrl: 'images/dietLogTutor-9.PNG',
+    imageUrl: 'assets/images/dietLogTutor-9.png',
     type: ContentType.IMAGE,
     responseType: ResponseType.auto,
   ),
@@ -200,7 +200,7 @@ List<Content> dietLogTutorContent = [
       type: ContentType.TEXT,
       responseType: ResponseType.auto),
   Content(
-    imageUrl: 'images/dietLogTutor-10.PNG',
+    imageUrl: 'assets/images/dietLogTutor-10.png',
     type: ContentType.IMAGE,
     responseType: ResponseType.auto,
   ),
@@ -210,7 +210,7 @@ List<Content> dietLogTutorContent = [
       type: ContentType.TEXT,
       responseType: ResponseType.auto),
   Content(
-    imageUrl: 'images/dietLogTutor-11.PNG',
+    imageUrl: 'assets/images/dietLogTutor-11.png',
     type: ContentType.IMAGE,
     responseType: ResponseType.auto,
   ),
@@ -235,7 +235,7 @@ List<Content> impulseSurfingTutorContent = [
       type: ContentType.TEXT,
       responseType: ResponseType.auto),
   Content(
-    imageUrl: 'images/impulseSurfingTutor-1.JPEG',
+    imageUrl: 'assets/images/impulseSurfingTutor-1.JPEG',
     type: ContentType.IMAGE,
     responseType: ResponseType.auto,
   ),
