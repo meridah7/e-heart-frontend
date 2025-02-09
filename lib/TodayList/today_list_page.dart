@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
 import 'package:namer_app/utils/toast_util.dart';
 import '../Chatbot/chatbot_page.dart';
 import '../Survey/survey_page.dart';
@@ -7,13 +6,10 @@ import '../Survey/flippable_survey_page.dart';
 import '../Survey/meal_planning_page.dart';
 import '../DietMonitoring/binge_eating_record_page.dart';
 import '../DietMonitoring/diet_monitoring_page.dart';
-import 'package:intl/intl.dart';
 import '../ResponseCard/response_card_page.dart';
 import 'package:namer_app/services/dio_client.dart';
 import 'package:provider/provider.dart';
-import 'package:namer_app/utils/helper.dart';
 
-import 'package:namer_app/models/survey_models.dart';
 import 'package:namer_app/models/task_models.dart';
 
 import 'package:namer_app/providers/user_provider.dart';
