@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 
-class PracticeListPage extends StatelessWidget {
+class PracticeListPage extends StatefulWidget {
+  @override
+  State<PracticeListPage> createState() => _PracticeListPageState();
+}
+
+class _PracticeListPageState extends State<PracticeListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

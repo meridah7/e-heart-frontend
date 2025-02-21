@@ -191,6 +191,7 @@ class _TodayListPageState extends State<TodayListPage> {
                           builder: (context) => ChatbotPage(
                                 contents: task.chatbotContent!,
                                 taskId: task.id,
+                                taskTitle: task.title,
                               )));
                   break;
                 case TaskType.SURVEY:

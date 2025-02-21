@@ -37,29 +37,55 @@ Task dealingWithSetback = Task(
   chatbotContent: dealingWithSetbackContent,
 );
 
-Task task1 = Task(
-  title: "Understanding Binge Eating",
-  id: 'task1',
+Task x1 = Task(
+  title: "冲动诱因教学",
+  id: 'x1',
   type: TaskType.CHATBOT,
   isCompleted: false,
   day: 0,
-  chatbotContent: chatbotContent2,
+  chatbotContent: x1Content,
 );
 
-Task chatbotTester = Task(
-  title: "Chatbot tester day 0",
-  id: 'chatbotTester',
-  type: TaskType.CHATBOT,
-  isCompleted: false,
-  day: 0,
-  chatbotContent: chatbotTestContent,
-);
-
-Task chatbotTester1 = Task(
-  title: "Chatbot tester day 1",
-  id: 'chatbotTester1',
+Task x2 = Task(
+  title: "为什么我无法停止暴食？",
+  id: 'x2',
   type: TaskType.CHATBOT,
   isCompleted: false,
   day: 1,
-  chatbotContent: chatbotTestContent,
+  chatbotContent: x2Content,
 );
+
+Task x3 = Task(
+  title: "清除食物大百科",
+  id: 'x3',
+  type: TaskType.CHATBOT,
+  isCompleted: false,
+  day: 2,
+  chatbotContent: x3Content,
+);
+// Task task1 = Task(
+//   title: "Understanding Binge Eating",
+//   id: 'task1',
+//   type: TaskType.CHATBOT,
+//   isCompleted: false,
+//   day: 0,
+//   chatbotContent: chatbotContent2,
+// );
+
+// Task chatbotTester = Task(
+//   title: "Chatbot tester day 0",
+//   id: 'chatbotTester',
+//   type: TaskType.CHATBOT,
+//   isCompleted: false,
+//   day: 0,
+//   chatbotContent: chatbotTestContent,
+// );
+
+// Task chatbotTester1 = Task(
+//   title: "Chatbot tester day 1",
+//   id: 'chatbotTester1',
+//   type: TaskType.CHATBOT,
+//   isCompleted: false,
+//   day: 1,
+//   chatbotContent: chatbotTestContent,
+// );

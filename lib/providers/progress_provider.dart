@@ -49,6 +49,8 @@ class ProgressProvider with ChangeNotifier {
   Future<void> setProgress(int progress) async {
     try {
       _userProgress = await apiService.setProgress(progress);
+      await fetchProgress();
+      fetchDisplayTaskList();
     } catch (err) {
       print('Error in parse user progress $err');
       throw Exception(err);
@@ -72,8 +74,13 @@ class ProgressProvider with ChangeNotifier {
       List<Task> displayTasks = getTasksByIds(displayTaskIds)
           .map((e) => e.copyWith(isCompleted: finishedTaskIds.contains(e.id)))
           .toList();
-      // FIXME: 临时替换mock 数据
-      // displayTaskList = [taskMap['M1']!];
+      // // FIXME: 临时替换mock 数据
+      // displayTaskList = [
+      //   taskMap['M1']!,
+      //   taskMap['X1']!,
+      //   taskMap['X2']!,
+      //   taskMap['X3']!
+      // ];
       displayTaskList = displayTasks;
       displayTaskList.addAll(impulseRecordTaskList);
       return displayTasks;

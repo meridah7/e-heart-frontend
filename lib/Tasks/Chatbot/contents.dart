@@ -508,6 +508,235 @@ List<Content> dealingWithSetbackContent = [
       responseType: ResponseType.choices),
 ];
 
+// 冲动诱因选修 X1
+List<Content> x1Content = [
+  Content(
+    text: "相信你在第一天的饮食日志教学里已经对引起暴食/清除食物行为的诱因有了一些认识。在这里，小E也将常见的诱因分为了三类～",
+    choices: ['哪三类呢？'],
+    type: ContentType.TEXT,
+    responseType: ResponseType.choices,
+  ),
+  Content(
+    text: "A.生理诱因\nB.心理诱因\nC.外部诱因",
+    choices: ['ok!那这三类诱因具体都有什么呢？'],
+    type: ContentType.TEXT,
+    responseType: ResponseType.choices,
+  ),
+  Content(
+    text: "我们先来看看生理诱因吧",
+    type: ContentType.TEXT,
+    responseType: ResponseType.auto,
+  ),
+  Content(
+    text: "1. 吃的太少，身体能量不足\n我在除了暴食之外的时间都吃的很少。因此，身体在摄取能量不足的情况下，产生了大量进食的欲望。",
+    type: ContentType.TEXT,
+    responseType: ResponseType.auto,
+  ),
+  Content(
+    text:
+        "2. 经期及激素的影响\n我发现在月经前几天和经期控制饮食特别困难。感觉身体浮肿，经前体重增加，或感到抑郁或易怒，而且我觉得月经期间消耗大，于是经常暴食。",
+    choices: ['明白了！那心理诱因都有哪些呢？'],
+    type: ContentType.TEXT,
+    responseType: ResponseType.choices,
+  ),
+  Content(
+    text:
+        "1. 情绪\n负面情绪（比如抑郁、焦虑、紧张、愧疚、无聊、疲惫、愤怒等），正面情绪（兴奋、开心、平静等）各种情绪均有触发暴食/清除食物行为的可能性。",
+    type: ContentType.TEXT,
+    responseType: ResponseType.auto,
+  ),
+  Content(
+    text: "2. 感觉自己很胖\n感觉“胖”可能不等于真的胖，但觉得自己很胖可能会导致“破罐子破摔”的想法，从而引发一场暴食/清除食物行为。",
+    type: ContentType.TEXT,
+    responseType: ResponseType.auto,
+  ),
+  Content(
+    text:
+        "3. 以某种方式限制饮食\n你可能会限制自己进食的食物种类（比如不吃碳水），或是限制自己的进食时间（比如晚上不进食）。这样做可能会带来很大的心理压力，从而引发暴食。",
+    choices: ['好的！那么，外部诱因有什么呢？'],
+    type: ContentType.TEXT,
+    responseType: ResponseType.choices,
+  ),
+  Content(
+    text: "1. 松散的时间安排\n松散的时间安排可能会感觉无聊，从而导致暴食。",
+    type: ContentType.TEXT,
+    responseType: ResponseType.auto,
+  ),
+  Content(
+    text: "2. 一个人呆着\n暴食时别人在场会让我感到羞耻，一个人呆着的时候我常常“肆无忌惮”地吃很多食物。",
+    type: ContentType.TEXT,
+    responseType: ResponseType.auto,
+  ),
+  Content(
+    text: "3. 体重增加\n我正在控制体重，但是体重不减反增，我很生气，选择放弃控制自己的体重，进行暴饮暴食。",
+    type: ContentType.TEXT,
+    responseType: ResponseType.auto,
+  ),
+  Content(
+    text: "4. 饮酒\n酒精会降低人们抵抗自己欲望的能力，让我感到沮丧和抑郁，从而增加了暴食的风险。",
+    type: ContentType.TEXT,
+    responseType: ResponseType.auto,
+  ),
+  Content(
+    text: "想想看，上面提到的哪些诱因会引起你的暴食或是清除食物冲动呢？",
+    choices: [
+      '1. 吃的太少，身体能量不足',
+      '2. 经期及激素的影响',
+      '3. 以某种方式限制饮食',
+      '4. 情绪',
+      '5. 感觉自己很胖',
+      '6. 松散的时间安排',
+      '7. 一个人呆着',
+      '8. 体重增加',
+      '9. 饮酒'
+    ],
+    type: ContentType.TEXT,
+    responseType: ResponseType.multiChoices,
+  ),
+  // TODO 选择结果
+  Content(
+    text: "看来，XX、XX、XX（用户选择结果）更有可能引发你的暴食。觉知到它们是很重要的！",
+    type: ContentType.TEXT,
+    responseType: ResponseType.auto,
+  ),
+  Content(
+    text: "或者，你还发现了引起自己冲动的其它独特诱因吗？填写在下方，发送给小E吧～",
+    type: ContentType.TEXT,
+    responseType: ResponseType.userInput,
+  ),
+  Content(
+    text: "看来，XXXX（用户输入结果）也可能会引发你的暴食。",
+    type: ContentType.TEXT,
+    responseType: ResponseType.auto,
+  ),
+  Content(
+    text: "相信今天和小E的聊天会帮助你在饮食日志中更好地填写“诱因”一栏。\n\n今天就到这里啦，要好好消化吸收今天的知识哦。",
+    choices: ['好的，明白了！'],
+    type: ContentType.TEXT,
+    responseType: ResponseType.choices,
+  ),
+];
+
+// 为什么无法停止暴食 X2
+List<Content> x2Content = [
+  Content(
+    text: "很高兴在这里看到你！\n\n暴食&清除通常不是孤立存在的，它们与一些生理、心理因素交织形成恶性循环，让我们无法跳出这个怪圈",
+    type: ContentType.TEXT,
+    responseType: ResponseType.auto,
+  ),
+  Content(
+    text: "循环？",
+    choices: ["是的，接下来小E会通过三位朋友的日记，带你认识这三种不同的循环"],
+    type: ContentType.TEXT,
+    responseType: ResponseType.choices,
+  ),
+  Content(
+    text: "梓楚",
+    imageUrl: "assets/images/x2-person-1.JPEG",
+    type: ContentType.IMAGE,
+    responseType: ResponseType.auto,
+  ),
+  Content(
+    text: "不知道你是不是平行世界的第二个她，小E总结了梓楚的暴食模式，也是我们今天要介绍的第一种‘节食-暴食循环’。",
+    type: ContentType.TEXT,
+    responseType: ResponseType.auto,
+  ),
+  Content(
+    imageUrl: "assets/images/x2-cycle-1.PNG",
+    type: ContentType.IMAGE,
+    responseType: ResponseType.auto,
+  ),
+  Content(
+    text: "那么，我感觉自己陷在这个循环里出不来，该怎么办呢？",
+    type: ContentType.TEXT,
+    responseType: ResponseType.auto,
+  ),
+  Content(
+    text: "不用担心，我们的干预计划帮助你同时从以下几个点打破循环。",
+    imageUrl: "assets/images/x2-intervention-1.JPEG",
+    type: ContentType.IMAGE,
+    responseType: ResponseType.auto,
+  ),
+  Content(
+    text: "我知道了！那么，暴食还有什么其他的循环呢？",
+    choices: ["了解下一种循环模式"],
+    type: ContentType.TEXT,
+    responseType: ResponseType.choices,
+  ),
+  Content(
+    text: '林林',
+    imageUrl: "assets/images/x2-person-2.JPEG",
+    type: ContentType.IMAGE,
+    responseType: ResponseType.auto,
+  ),
+  Content(
+    text: "林林的情况，就是我们今天要介绍的第二种循环模式——‘节食-暴食-清除-暴食循环’：",
+    type: ContentType.TEXT,
+    responseType: ResponseType.auto,
+  ),
+  Content(
+    imageUrl: "assets/images/x2-cycle-2.PNG",
+    type: ContentType.IMAGE,
+    responseType: ResponseType.choices,
+    choices: ["‘清除’食物是什么意思呢？"],
+  ),
+  Content(
+    text: "它指的是使用催吐，泻药，利尿剂等一系列强行将摄入的食物排出体外的手段，以及采取极端运动、极端节食等极端补偿行为。",
+    type: ContentType.TEXT,
+    choices: ["我感觉清除食物行为给我带来了很大的困扰，小E能怎么帮助我？"],
+    responseType: ResponseType.choices,
+  ),
+  Content(
+    text: "别担心！我会帮助你从以下节点打破这个循环。",
+    type: ContentType.TEXT,
+    responseType: ResponseType.auto,
+  ),
+  Content(
+    imageUrl: "assets/images/x2-intervention-2.jpeg",
+    type: ContentType.IMAGE,
+    responseType: ResponseType.auto,
+  ),
+  Content(
+    text: "它指的是使用催吐，泻药，利尿剂等一系列强行将摄入的食物排出体外的手段，以及采取极端运动、极端节食等极端补偿行为。",
+    type: ContentType.TEXT,
+    choices: ["我感觉清除食物行为给我带来了很大的困扰，小E能怎么帮助我？"],
+    responseType: ResponseType.choices,
+  ),
+  Content(
+    text: "它指的是使用催吐，泻药，利尿剂等一系列强行将摄入的食物排出体外的手段，以及采取极端运动、极端节食等极端补偿行为。",
+    type: ContentType.TEXT,
+    choices: ["我感觉清除食物行为给我带来了很大的困扰，小E能怎么帮助我？"],
+    responseType: ResponseType.choices,
+  ),
+  Content(
+    imageUrl: "assets/images/person-3.PNG",
+    type: ContentType.IMAGE,
+    responseType: ResponseType.auto,
+  ),
+  Content(
+    text:
+        "心宇说，当情绪袭来时，她不知道如何用正确的方法来应对，下意识地依靠暴食来缓解，长期依赖这种方法给她带来了更严重的生理和心理问题，使调节情绪变得更难。",
+    type: ContentType.TEXT,
+    responseType: ResponseType.auto,
+  ),
+  Content(
+    imageUrl: "assets/images/cycle-3.PNG",
+    type: ContentType.IMAGE,
+    responseType: ResponseType.auto,
+  ),
+  Content(
+    text: "我已经陷入到这个循环里了，我该怎么打破它？？",
+    choices: ["别担心！我会帮助你从以下节点打破这个循环。"],
+    type: ContentType.TEXT,
+    responseType: ResponseType.choices,
+  ),
+  Content(
+    imageUrl: "assets/images/intervention-3.PNG",
+    type: ContentType.IMAGE,
+    responseType: ResponseType.auto,
+  )
+];
+
 final List<Content> chatbotContent2 = [
   Content(
       text: 'Hi, hello there, I am E-Heart assistant',
@@ -540,6 +769,79 @@ final List<Content> chatbotContent2 = [
           'Great! In addition to the above, you can continue to add other health benefits in text form. Send each benefit to me separately. When you have sent all the benefits',
       type: ContentType.TEXT,
       responseType: ResponseType.userInput),
+];
+
+// 清除食物大百科 X3
+List<Content> x3Content = [
+  Content(
+    text: "今天我们来系统地学习一下清除食物的相关知识～",
+    choices: ["好的，继续！"],
+    type: ContentType.TEXT,
+    responseType: ResponseType.choices,
+  ),
+  Content(
+    text:
+        "清除食物是什么？\n\n清除食物指的是催吐，泻药，利尿剂等一系列强行将摄入的食物排出体外的手段，以及极端运动、极端节食（比如第二天完全不进食或者液断）等对暴食的极端补偿行为。",
+    choices: ["明白了，那为什么我会想要清除食物呢？"],
+    type: ContentType.TEXT,
+    responseType: ResponseType.choices,
+  ),
+  Content(
+    text: "我为什么会想要清除食物呢？\n\n小E总结了几个原因，来看看哪些能引起你的共鸣吧。",
+    choices: ["好的！"],
+    type: ContentType.TEXT,
+    responseType: ResponseType.choices,
+  ),
+  Content(
+    text: "到你啦，现在花点时间思考一下自己清除食物的原因叭（多选）",
+    choices: [
+      "A.为了在暴食后排出摄入的热量",
+      "B.为了控制体重",
+      "C.为了摆脱‘饱胀感’，让胃感到‘空’和‘干净’",
+      "D.为了促进排便",
+      "E.为了缓解坏情绪"
+    ],
+    type: ContentType.TEXT,
+    responseType: ResponseType.multiChoices,
+  ),
+  Content(
+    text:
+        "看来，XX、XX、XX（用户选择结果）更有可能引发你的暴食。觉知到它们是很重要的！\n\n你也可以想想，自己清除食物是否还有什么其它的原因呢？填写在下方，发送给小E吧～",
+    type: ContentType.USER_INPUT,
+    responseType: ResponseType.userInput,
+  ),
+  Content(
+    text: "看来，XXXX（用户输入结果）也可能引发你的清除食物行为。觉察到它们特别棒！",
+    choices: ["那么，清除食物真的有想象中那么‘好’吗？"],
+    type: ContentType.TEXT,
+    responseType: ResponseType.choices,
+  ),
+  Content(
+    text:
+        "首先，所有形式的清除食物都会导致脱水，进而引起电解质失衡。这会影响到心脏功能；导致头晕和昏厥；极端情况下甚至可能引发心脏骤停，导致死亡。",
+    choices: ["继续了解催吐的危害"],
+    type: ContentType.TEXT,
+    responseType: ResponseType.choices,
+  ),
+  Content(
+    text: "研究表明，即使你感觉在暴食后把所有的东西都吐出来了，人体通常依旧会吸收食物中40%至75%的热量...",
+    choices: ["原来催吐危害这么大！"],
+    type: ContentType.TEXT,
+    responseType: ResponseType.choices,
+  ),
+  Content(
+    text:
+        "可是好像只有清除食物才能缓解我的‘饱胀感’。\n\n清除食物确实能在一定程度上缓解你的‘饱胀感’，但是，清除食物不是缓解你不适的唯一方式！！",
+    choices: ["我明白了！"],
+    type: ContentType.TEXT,
+    responseType: ResponseType.choices,
+  ),
+  Content(
+    text: "可是我还是没忍住清除食物了……\n\n没关系的！不要苛责自己，习惯需要慢慢改变。这里给您三个缓解的小妙招...",
+    choices: ["好的，学到啦！"],
+    type: ContentType.TEXT,
+    responseType: ResponseType.choices,
+  ),
 ];
 
 final List<Content> chatbotTestContent = [

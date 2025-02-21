@@ -13,9 +13,10 @@ import 'package:namer_app/providers/progress_provider.dart';
 class ChatbotPage extends StatefulWidget {
   final List<Content> contents;
   final String taskId;
+  String? taskTitle;
   // final bool isLastTask;
 
-  ChatbotPage({required this.contents, required this.taskId});
+  ChatbotPage({required this.contents, required this.taskId, this.taskTitle});
 
   @override
   _ChatbotPageState createState() => _ChatbotPageState();
@@ -54,7 +55,8 @@ class _ChatbotPageState extends State<ChatbotPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('认识暴食', style: TextStyle(color: Colors.black)),
+        title: Text(widget.taskTitle ?? '认识暴食',
+            style: TextStyle(color: Colors.black)),
         backgroundColor: themeColor,
       ),
       backgroundColor: Color.fromRGBO(243, 243, 243, 255),
