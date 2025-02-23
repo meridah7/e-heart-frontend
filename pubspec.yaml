@@ -49,5 +49,6 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
+    - assets/images/
 dependency_overrides:
   intl: ^0.18.0

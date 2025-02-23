@@ -105,6 +105,7 @@ class _CustomImageState extends State<CustomImage> {
       fit: BoxFit.cover,
       errorBuilder:
           (BuildContext context, Object error, StackTrace? stackTrace) {
+        print('error in image $error');
         return Center(
           child: Icon(Icons.error),
         );
