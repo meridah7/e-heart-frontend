@@ -103,23 +103,17 @@ var dietaryIntakeSurvey = Survey(title: '饮食记录', questions: [
     }
     return value.toInt().toString();
   }, leftDesc: '很不开心', rightDesc: '超开心', alias: 'moodIntensity'),
-  MultipleChoiceQuestion('情绪种类', [
-    '伤心',
-    '疲惫',
-    '紧张',
-    '无聊',
-    '兴奋',
-    '羞愧',
-    '愤怒',
-    '恐惧',
-    '平静',
-    '开心',
-    '其他'
-  ], {
-    '其他': [
-      TextQuestion('请输入其他情绪种类', false),
-    ]
-  }),
+  MultipleChoiceQuestion(
+    '情绪种类',
+    ['伤心', '疲惫', '紧张', '无聊', '兴奋', '羞愧', '愤怒', '恐惧', '平静', '开心', '其他'],
+    {
+      '其他': [
+        TextQuestion('请输入其他情绪种类', false),
+      ]
+    },
+    type: 'tag',
+    // TODO add alias
+  ),
   SingleChoiceQuestion(
       '在哪吃',
       ['家里', '宿舍', '公司', '食堂', '饭店', '车上', '其他'],
