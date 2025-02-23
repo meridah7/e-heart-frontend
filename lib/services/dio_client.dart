@@ -6,7 +6,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:namer_app/utils/toast_util.dart';
 
-const String USER_BASE_URL = 'http://121.41.30.133/api';
+const String USER_BASE_URL = 'http://47.96.108.106/api';
 const String AGENT_BASE_URL = ' http://223.4.25.37:3000/api/agent';
 
 class DioClient {
