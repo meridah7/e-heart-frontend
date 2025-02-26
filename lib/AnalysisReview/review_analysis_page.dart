@@ -1,8 +1,12 @@
 // ignore_for_file: constant_identifier_names
 
 import 'package:flutter/material.dart';
+import 'package:namer_app/models/task_models.dart';
+import 'package:namer_app/providers/progress_provider.dart';
+import 'package:provider/provider.dart';
 import '../DietReview/review_page.dart';
 import './practice_list_page.dart';
+import 'package:namer_app/widgets/task_list_widget.dart';
 
 // 饮食日志反思
 const String DIET_REVIEW_KEY = 'S2';
@@ -19,43 +23,48 @@ class ReviewAnalysisPage extends StatefulWidget {
 class _ReviewAnalysisPageState extends State {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('巩固提升',
-            style:
-                TextStyle(color: Colors.black)), // Text color changed to black
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 25.0),
-            Padding(
-              padding: const EdgeInsets.only(left: 25.0),
-              child: Text(
-                '反思分析记录',
+    return Consumer<ProgressProvider>(
+      builder: (context, progressProvider, child) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text('巩固提升',
                 style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
+                    color: Colors.black)), // Text color changed to black
+          ),
+          body: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 25.0),
+                Padding(
+                  padding: const EdgeInsets.only(left: 25.0),
+                  child: Text(
+                    '反思分析记录',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            _buildReflectionSection(),
-            SizedBox(height: 25.0),
-            Padding(
-              padding: const EdgeInsets.only(left: 25.0),
-              child: Text(
-                '选修练习',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
+                _buildReflectionSection(),
+                SizedBox(height: 25.0),
+                Padding(
+                  padding: const EdgeInsets.only(left: 25.0),
+                  child: Text(
+                    '选修练习',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
                 ),
-              ),
+                _buildPracticeOptions(
+                    progressProvider.optionalTaskList.take(2).toList()),
+              ],
             ),
-            _buildPracticeOptions(),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -90,19 +99,27 @@ class _ReviewAnalysisPageState extends State {
     );
   }
 
-  Widget _buildPracticeOptions() {
-    return Column(
-      children: [
-        _buildPracticeCard('冲动诱因教学', false),
-        _buildPracticeCard('为什么我无法停止暴食？', false),
-        _buildViewAllPracticeCard(),
-      ],
+  Widget _buildPracticeOptions(List<Task> tasks) {
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxHeight: 400, // 最大高度
+        minHeight: 340, // 最小高度
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // _buildPracticeCard('冲动诱因教学', false),
+          // _buildPracticeCard('为什么我无法停止暴食？', false),
+          Flexible(flex: 1, child: taskListWidget(tasks)),
+          Flexible(flex: 1, child: _buildViewAllPracticeCard()),
+        ],
+      ),
     );
   }
 
   Widget _buildPracticeCard(String title, bool completed) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+      padding: const EdgeInsets.symmetric(horizontal: 20.0),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -135,7 +152,7 @@ class _ReviewAnalysisPageState extends State {
 
   Widget _buildViewAllPracticeCard() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+      padding: const EdgeInsets.symmetric(horizontal: 20.0),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,

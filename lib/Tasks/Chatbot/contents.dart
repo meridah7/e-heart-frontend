@@ -595,7 +595,7 @@ List<Content> x1Content = [
   ),
   // TODO 选择结果
   Content(
-    text: "看来，XX、XX、XX（用户选择结果）更有可能引发你的暴食。觉知到它们是很重要的！",
+    text: "看来，这些诱因更有可能引发你的暴食。觉知到它们是很重要的！",
     type: ContentType.TEXT,
     responseType: ResponseType.auto,
   ),
@@ -605,7 +605,7 @@ List<Content> x1Content = [
     responseType: ResponseType.userInput,
   ),
   Content(
-    text: "看来，XXXX（用户输入结果）也可能会引发你的暴食。",
+    text: "看来，以上内容也可能会引发你的暴食。",
     type: ContentType.TEXT,
     responseType: ResponseType.auto,
   ),
@@ -709,7 +709,7 @@ List<Content> x2Content = [
     responseType: ResponseType.choices,
   ),
   Content(
-    imageUrl: "assets/images/person-3.PNG",
+    imageUrl: "assets/images/x2-person-3.jpeg",
     type: ContentType.IMAGE,
     responseType: ResponseType.auto,
   ),
@@ -720,7 +720,7 @@ List<Content> x2Content = [
     responseType: ResponseType.auto,
   ),
   Content(
-    imageUrl: "assets/images/cycle-3.PNG",
+    imageUrl: "assets/images/x2-cycle-3.png",
     type: ContentType.IMAGE,
     responseType: ResponseType.auto,
   ),
@@ -731,7 +731,7 @@ List<Content> x2Content = [
     responseType: ResponseType.choices,
   ),
   Content(
-    imageUrl: "assets/images/intervention-3.PNG",
+    imageUrl: "assets/images/x2-intervention-3.jpeg",
     type: ContentType.IMAGE,
     responseType: ResponseType.auto,
   )
@@ -787,7 +787,8 @@ List<Content> x3Content = [
     responseType: ResponseType.choices,
   ),
   Content(
-    text: "我为什么会想要清除食物呢？\n\n小E总结了几个原因，来看看哪些能引起你的共鸣吧。",
+    text:
+        "小E总结了几个原因，来看看哪些能引起你的共鸣吧。\n\n1. 补偿性清除：当我暴食或是违反了自己设定的进食规则后，我感到失控、内疚、羞愧。而我认为清除食物可以使刚刚暴食摄入的热量排出，因此我选择通过清除食物的方式来缓解羞愧和自责的负面感受。\n\n2. 非补偿性清除：无论我是否违反进食规则，无论食物的类型和摄入量是多少，为了控制体重，在每餐和零食后我都会清除食物。\n\n3. 情绪性清除：清除是我直接应对各种情绪（焦虑、痛苦、羞愧、内疚…）的方式\n\n4. 应对生理感觉：我难以忍受饱胀感，试图通过清除来摆脱这种感觉，来让胃感到“空”和“干净”。然而，有些时候的饱胀感可能仅仅是由于“焦虑”导致的，而非真的生理饱胀。",
     choices: ["好的！"],
     type: ContentType.TEXT,
     responseType: ResponseType.choices,
@@ -806,41 +807,122 @@ List<Content> x3Content = [
   ),
   Content(
     text:
-        "看来，XX、XX、XX（用户选择结果）更有可能引发你的暴食。觉知到它们是很重要的！\n\n你也可以想想，自己清除食物是否还有什么其它的原因呢？填写在下方，发送给小E吧～",
-    type: ContentType.USER_INPUT,
+        "看来，上述原因更有可能引发你的暴食。觉知到它们是很重要的！\n\n你也可以想想，自己清除食物是否还有什么其它的原因呢？填写在下方，发送给小E吧～",
+    type: ContentType.TEXT,
     responseType: ResponseType.userInput,
   ),
   Content(
-    text: "看来，XXXX（用户输入结果）也可能引发你的清除食物行为。觉察到它们特别棒！",
-    choices: ["那么，清除食物真的有想象中那么‘好’吗？"],
+    text: "看来，这也可能引发你的清除食物行为。觉察到它们特别棒! ",
+    choices: ['那么，清除食物真的有想象中那么‘好’吗？'],
     type: ContentType.TEXT,
     responseType: ResponseType.choices,
+  ),
+  Content(
+    text: "其实不是的，接下来小E会给你揭露清除食物背后不为人知的真相！",
+    type: ContentType.TEXT,
+    responseType: ResponseType.auto,
   ),
   Content(
     text:
         "首先，所有形式的清除食物都会导致脱水，进而引起电解质失衡。这会影响到心脏功能；导致头晕和昏厥；极端情况下甚至可能引发心脏骤停，导致死亡。",
-    choices: ["继续了解催吐的危害"],
     type: ContentType.TEXT,
-    responseType: ResponseType.choices,
+    responseType: ResponseType.auto,
   ),
   Content(
-    text: "研究表明，即使你感觉在暴食后把所有的东西都吐出来了，人体通常依旧会吸收食物中40%至75%的热量...",
+    text: "接下来，小E带你走进每一项清除活动，来看看他们的真面目。",
+    type: ContentType.TEXT,
+    responseType: ResponseType.auto,
+  ),
+  Content(
+    text: "首先，我们来了解关于催吐的冷知识。",
+    type: ContentType.TEXT,
+    responseType: ResponseType.auto,
+  ),
+  Content(
+    text:
+        "研究表明，即使你感觉在暴食后把所有的东西都吐出来了，人体通常依旧会吸收食物中40%至75%的热量。并且，由于知道了这一“补偿”方法，人们吃起来会更加肆无忌惮，也就会摄入更多的热量。\n\n并且，催吐会让胃酸倒流，损害食道，腐蚀牙齿，造成牙齿不可逆的损坏。\n\n同时，催吐会破坏的正常肠道功能，使您更容易出现便秘或腹泻等肠道疾病。\n\n此外，长期催吐还会引起一系列胃部疾病，比如胃胀气、胃溃疡、胃食管反流病等。",
     choices: ["原来催吐危害这么大！"],
     type: ContentType.TEXT,
     responseType: ResponseType.choices,
   ),
   Content(
+    text: "当然了，一定要意识到它噢～\n\n接着我们再来看看泻药/利尿剂的使用，是否能真的帮助到你？",
+    type: ContentType.TEXT,
+    responseType: ResponseType.choices,
+    choices: ["好的～"],
+  ),
+  Content(
     text:
-        "可是好像只有清除食物才能缓解我的‘饱胀感’。\n\n清除食物确实能在一定程度上缓解你的‘饱胀感’，但是，清除食物不是缓解你不适的唯一方式！！",
-    choices: ["我明白了！"],
+        "其实，使用泻药或利尿剂排出的主要是人体中的水，它们不能真正帮助你减重。\n\n更严重的是，频繁使用泻药可能会损害肠道正常的蠕动功能，导致在停药后无法正常排便，甚至可能产生依赖性。同时，也可能引起肠道壁黑变，甚至诱发肠道肿瘤。",
+    type: ContentType.TEXT,
+    responseType: ResponseType.choices,
+    choices: ["那么，极端运动可以吗？"],
+  ),
+  Content(
+    text:
+        "其实，极端运动会让你过度疲劳，且对心脏造成压力，尤其在电解质失衡或脱水的情况下，容易诱发一系列心脏问题甚至死亡。\n\n其次，极端运动会给你的关节、肌肉、骨骼造成严重损伤。",
+    type: ContentType.TEXT,
+    responseType: ResponseType.auto,
+  ),
+  Content(
+    text: "总之：“清除食物”有百害而无一利，它们非但不能有效缓解你暴食带来的后果，反而会给你的身体和心理带来许多额外的损害。",
+    choices: ['可是好像只有清除食物才能缓解我的“饱胀感”。'],
     type: ContentType.TEXT,
     responseType: ResponseType.choices,
   ),
   Content(
-    text: "可是我还是没忍住清除食物了……\n\n没关系的！不要苛责自己，习惯需要慢慢改变。这里给您三个缓解的小妙招...",
-    choices: ["好的，学到啦！"],
+    text:
+        "清除食物确实能在一定程度上缓解你的‘饱胀感’，但是，清除食物不是缓解你不适的唯一方式！！\n\n通过我们方案中的饮食计划，这种症状会逐渐减轻。",
+    type: ContentType.TEXT,
+    responseType: ResponseType.auto,
+  ),
+  Content(
+    text: "而且，饱胀感和暴食清除冲动一样，并不会“永远存在”、“越来越强烈”，来看这张图：",
+    type: ContentType.TEXT,
+    responseType: ResponseType.auto,
+  ),
+  Content(
+    imageUrl: "assets/images/x3-diagram.PNG",
+    type: ContentType.IMAGE,
+    responseType: ResponseType.auto,
+  ),
+  Content(
+    text: "看，人的饱胀感是会随着时间的推移波动减小的，并最终消失的。所以当产生饱胀感时，可以通过我们第一天学习的内容——“冲动冲浪”来应对哦。",
     type: ContentType.TEXT,
     responseType: ResponseType.choices,
+    choices: ['可是我还是没忍住清除食物了……'],
+  ),
+  Content(
+    text: "没关系的！不要苛责自己，习惯需要慢慢改变。这里给您三个缓解的小妙招，但根本上还是要靠停止清除食物哦。",
+    type: ContentType.TEXT,
+    responseType: ResponseType.auto,
+  ),
+  Content(
+    text: "妙招一：如果你通过催吐的方式来清除食物，请不要立即刷牙，胃酸会腐蚀牙齿，可以考虑在白开水里放上一勺苏打粉，然后用这个液体漱口。",
+    type: ContentType.TEXT,
+    responseType: ResponseType.auto,
+  ),
+  Content(
+    text:
+        "妙招二：“清除食物”后，请尽快补充体内的电解质（特别是钾元素），可以考虑饮用运动型饮料、橙汁、椰子水、牛奶，或者进食香蕉、橙子、芒果、哈密瓜、桃子等等。",
+    type: ContentType.TEXT,
+    responseType: ResponseType.auto,
+  ),
+  Content(
+    text: "妙招三：在“清除食物”后，请不要节食，努力按照正常的饮食规律去进食是最好的。",
+    type: ContentType.TEXT,
+    responseType: ResponseType.auto,
+  ),
+  Content(
+    text: "(您可以截图保存或者在清除食物后及时回看这部分内容）",
+    type: ContentType.TEXT,
+    responseType: ResponseType.choices,
+    choices: ['好的，学到啦！我也会努力停止清除食物的！'],
+  ),
+  Content(
+    text: "没事，慢慢来，不要给自己太大压力～以后有任何关于清除食物的问题，都可以回来找小E重温一下哦。",
+    type: ContentType.TEXT,
+    responseType: ResponseType.auto,
   ),
 ];
 
