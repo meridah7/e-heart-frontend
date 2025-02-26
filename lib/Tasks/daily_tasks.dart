@@ -18,6 +18,10 @@ Map<String, Task> taskMap = {
   'S4': regularDietReflection,
   'S5': task6,
   'D1': reflectiveActivity,
+  'x1': x1,
+  'x2': x2,
+  'x3': x3,
+  // 'C1': C1,
 };
 
 // 根据任务 ID 列表返回任务对象列表

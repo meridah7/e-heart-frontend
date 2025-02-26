@@ -7,7 +7,6 @@ import '../Survey/meal_planning_page.dart';
 import '../DietMonitoring/binge_eating_record_page.dart';
 import '../DietMonitoring/diet_monitoring_page.dart';
 import '../ResponseCard/response_card_page.dart';
-import 'package:namer_app/services/dio_client.dart';
 import 'package:provider/provider.dart';
 
 import 'package:namer_app/models/task_models.dart';
@@ -22,7 +21,6 @@ class TodayListPage extends StatefulWidget {
 
 class _TodayListPageState extends State<TodayListPage> {
   // 用于HTTP 请求的Dio 实例
-  final DioClient dioClient = DioClient();
 
   bool showTasks = true;
 
@@ -191,6 +189,7 @@ class _TodayListPageState extends State<TodayListPage> {
                           builder: (context) => ChatbotPage(
                                 contents: task.chatbotContent!,
                                 taskId: task.id,
+                                taskTitle: task.title,
                               )));
                   break;
                 case TaskType.SURVEY:
@@ -250,23 +249,26 @@ class _TodayListPageState extends State<TodayListPage> {
   @override
   Widget build(BuildContext context) {
     // 使用context获取UserProvider实例
-    final progressProvider = Provider.of<ProgressProvider>(context);
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Day ${progressProvider.progress}',
-            style: TextStyle(color: Colors.black)),
-        elevation: 0,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            _buildSegmentedControl(),
-            Expanded(
-                child: _buildTaskListView(progressProvider.displayTaskList)),
-          ],
-        ),
-      ),
+    return Consumer<ProgressProvider>(
+      builder: (context, progressProvider, child) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text('Day ${progressProvider.progress}',
+                style: TextStyle(color: Colors.black)),
+            elevation: 0,
+          ),
+          body: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                _buildSegmentedControl(),
+                Expanded(
+                    child: _buildTaskListView(progressProvider.dailyTaskList)),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

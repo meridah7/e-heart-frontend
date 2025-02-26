@@ -16,14 +16,16 @@ class ProgressProvider with ChangeNotifier {
 
   UserProgress? get userProgress => _userProgress;
 
-  List<Task> displayTaskList = [];
-
   int? get progress => _userProgress?.progress ?? 0;
   List<String> get finishedTaskIds => _userProgress?.finishedTaskIds ?? [];
   List<String> get allRequiredTaskIds =>
       _userProgress?.allRequiredTaskIds ?? [];
   List<String> get allOptionalTaskIds =>
       _userProgress?.allOptionalTaskIds ?? [];
+
+  List<Task> dailyTaskList = [];
+
+  List<Task> optionalTaskList = [];
 
   Future<void> fetchProgress() async {
     try {
@@ -49,6 +51,8 @@ class ProgressProvider with ChangeNotifier {
   Future<void> setProgress(int progress) async {
     try {
       _userProgress = await apiService.setProgress(progress);
+      await fetchProgress();
+      fetchDisplayTaskList();
     } catch (err) {
       print('Error in parse user progress $err');
       throw Exception(err);
@@ -56,7 +60,7 @@ class ProgressProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<List<Task>> fetchDisplayTaskList() async {
+  Future<void> fetchDisplayTaskList() async {
     try {
       if (_userProgress == null) {
         await fetchProgress();
@@ -64,25 +68,21 @@ class ProgressProvider with ChangeNotifier {
       List<Task> impulseRecordTaskList =
           await apiService.fetchImpulseReflectionRecords();
       // 聚合所有任务 并给完成的任务打上标记
-      List<String> displayTaskIds = [
-        ...allRequiredTaskIds,
-        ...allOptionalTaskIds,
-      ];
       // 已完成的任务
-      List<Task> displayTasks = getTasksByIds(displayTaskIds)
+      List<Task> requiredTasks = getTasksByIds(allRequiredTaskIds)
           .map((e) => e.copyWith(isCompleted: finishedTaskIds.contains(e.id)))
           .toList();
-      // FIXME: 临时替换mock 数据
-      // displayTaskList = [taskMap['M1']!];
-      displayTaskList = displayTasks;
-      displayTaskList.addAll(impulseRecordTaskList);
-      return displayTasks;
+      List<Task> optionalTasks = getTasksByIds(allOptionalTaskIds)
+          .map((e) => e.copyWith(isCompleted: finishedTaskIds.contains(e.id)))
+          .toList();
+      optionalTaskList = optionalTasks;
+      dailyTaskList = requiredTasks;
+      dailyTaskList.addAll(impulseRecordTaskList);
     } catch (err) {
       print('Error in fetch display task list $err');
-      // FIXME: 临时替换mock 数据
-      // return [taskMap['M1']!];
       throw Exception(err);
     }
+    notifyListeners();
   }
 
   // 更新用户进度输入值并通知监听者
