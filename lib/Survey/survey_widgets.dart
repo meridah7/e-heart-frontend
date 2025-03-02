@@ -47,6 +47,85 @@ class DescriptionText extends StatelessWidget {
   }
 }
 
+class ExpandDescriptionText extends StatefulWidget {
+  final String title;
+  final String? expandedText;
+
+  const ExpandDescriptionText(
+    this.title, {
+    this.expandedText,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<ExpandDescriptionText> createState() => _ExpandDescriptionTextState();
+}
+
+class _ExpandDescriptionTextState extends State<ExpandDescriptionText> {
+  bool _isExpanded = false;
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Flexible(
+              child: Text(
+                widget.title,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey,
+                ),
+              ),
+            ),
+            if (widget.expandedText != null)
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _isExpanded = !_isExpanded;
+                  });
+                },
+                child: Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: Icon(
+                      Icons.info_outline,
+                      color: Colors.blue,
+                      size: 20,
+                    )
+                    // child: Text(
+                    //   _isExpanded ? "收起" : "展开",
+                    //   style: TextStyle(
+                    //     fontSize: 12,
+                    //     color: Colors.blue,
+                    //   ),
+                    ),
+              ),
+          ],
+        ),
+        if (_isExpanded && widget.expandedText != null)
+          Container(
+            decoration: BoxDecoration(
+                color: Colors.white, borderRadius: BorderRadius.circular(8)),
+            margin: EdgeInsets.symmetric(vertical: 8.0),
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12.0),
+              child: Text(
+                widget.expandedText!,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
 class CustomElevatedButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;

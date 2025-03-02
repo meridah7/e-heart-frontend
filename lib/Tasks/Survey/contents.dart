@@ -143,14 +143,15 @@ var dietaryIntakeSurvey = Survey(title: '饮食记录', questions: [
       {
         'default': [
           SingleChoiceQuestion(
-              '请努力识别这次暴食的诱发因素并填写它！',
-              ['不知道', '点击填写'],
-              {
-                '点击填写': [TextQuestion('请填写诱因', false)]
-              },
-              description: '这一部分很重要！如果没有识别出来，请选择未知。\n\n'
-                  '常见的暴食诱因：\n\n'
-                  '1. 吃的太少，身体能量不足\n\n'
+            '请努力识别这次暴食的诱发因素并填写它！',
+            ['不知道', '点击填写'],
+            {
+              '点击填写': [TextQuestion('请填写诱因', false)]
+            },
+            description: '这一部分很重要！如果没有识别出来，请选择未知。\n\n',
+            expandedDescription: ExpandedDescription(
+              '常见的暴食诱因',
+              '1. 吃的太少，身体能量不足\n\n'
                   '2. 过度地节食\n\n'
                   '3. 情绪（比如抑郁、焦虑、无聊、兴奋等）\n\n'
                   '4. 松散的时间安排\n\n'
@@ -158,7 +159,9 @@ var dietaryIntakeSurvey = Survey(title: '饮食记录', questions: [
                   '6. 感觉自己很胖或者体重增加，破罐子破摔\n\n'
                   '7. 饮酒\n\n'
                   '8. 月经期间的激素影响\n\n'
-                  '9.其他任何引起你暴食的东西')
+                  '9.其他任何引起你暴食的东西',
+            ),
+          )
         ]
       },
       min: 0,

@@ -2,9 +2,17 @@ import 'package:flutter/material.dart';
 
 // 定义了用于创建survey的class和相关功能。
 
+class ExpandedDescription {
+  final String title;
+  final String description;
+
+  ExpandedDescription(this.title, this.description);
+}
+
 abstract class Question {
   final String questionText;
   final String? description;
+  final ExpandedDescription? expandedDescription;
   final String? imageUrl;
   final List<String>? imageUrls;
   final String? alias;
@@ -17,6 +25,7 @@ abstract class Question {
       this.imageUrl,
       this.imageUrls,
       this.alias,
+      this.expandedDescription,
       this.required = true});
 }
 
@@ -26,9 +35,15 @@ class SingleChoiceQuestion extends Question {
   Map<String, List<Question>> subQuestions; // Change to a map of lists
 
   SingleChoiceQuestion(String questionText, this.options, this.subQuestions,
-      {String? description, String? alias, bool required = true})
+      {String? description,
+      String? alias,
+      bool required = true,
+      ExpandedDescription? expandedDescription})
       : super(questionText,
-            description: description, alias: alias, required: required);
+            description: description,
+            alias: alias,
+            required: required,
+            expandedDescription: expandedDescription);
 
   @override
   String getAnswer() {
