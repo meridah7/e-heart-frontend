@@ -17,6 +17,10 @@ UserProgress _$UserProgressFromJson(Map<String, dynamic> json) => UserProgress(
       allOptionalTaskIds: (json['all_optional_task_ids'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
+      finishedOptionalTaskIds:
+          (json['finished_optional_task_ids'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList(),
     );
 
 Map<String, dynamic> _$UserProgressToJson(UserProgress instance) =>
@@ -25,4 +29,5 @@ Map<String, dynamic> _$UserProgressToJson(UserProgress instance) =>
       'finished_task_ids': instance.finishedTaskIds,
       'all_required_task_ids': instance.allRequiredTaskIds,
       'all_optional_task_ids': instance.allOptionalTaskIds,
+      'finished_optional_task_ids': instance.finishedOptionalTaskIds,
     };

@@ -30,11 +30,11 @@ class ProgressService implements ProgressApiService {
   }
 
   @override
-  Future<UserProgress?> updateProgress(String taskId) async {
+  Future<UserProgress?> updateProgress(String taskId,
+      {bool isRequired = true}) async {
     try {
-      Response response = await dioClient.postRequest('/users/task', {
-        'task_id': taskId,
-      });
+      Response response = await dioClient.postRequest(
+          '/users/task', {'task_id': taskId, "is_required_task": isRequired});
       if (response.statusCode == 200) {
         return UserProgress.fromJson(response.data);
       } else {

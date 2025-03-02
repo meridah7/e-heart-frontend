@@ -15,7 +15,8 @@ abstract class UserApiService {
 abstract class ProgressApiService {
   Future<UserProgress?> fetchProgress(); // 获取用户进度
 
-  Future<UserProgress?> updateProgress(String taskId); // 更新用户进度
+  Future<UserProgress?> updateProgress(String taskId,
+      {bool isRequired = true}); // 更新用户进度
 
   Future<UserProgress?> setProgress(int progress); // 设置用户进度 仅调试使用
 
