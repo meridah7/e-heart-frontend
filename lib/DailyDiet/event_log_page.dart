@@ -6,7 +6,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:namer_app/Survey/survey_page.dart';
 import 'package:namer_app/Tasks/Survey/tasks.dart';
 import 'package:namer_app/models/task_models.dart';
+import 'package:namer_app/providers/progress_provider.dart';
 import 'package:namer_app/services/dio_client.dart';
+import 'package:namer_app/utils/toast_util.dart';
+import 'package:provider/provider.dart';
 
 class EventLogPage extends StatefulWidget {
   @override
@@ -91,35 +94,44 @@ class _EventLogPageState extends State<EventLogPage>
   }
 
   Widget _buildMenuOption(String text, VoidCallback onPressed,
-      {double width = 160.0, double height = 50}) {
-    return InkWell(
-        onTap: onPressed,
-        child: Container(
-          width: width,
-          height: height,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5), // 阴影颜色和透明度
-                spreadRadius: 4, // 扩散范围
-                blurRadius: 7, // 模糊程度
-                offset: Offset(0, 3), // 阴影偏移 (水平, 垂直)
-              ),
-            ],
-            borderRadius: BorderRadius.circular(12.0),
-          ),
-          child: Center(
-            child: Text(
-              text,
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 16.0,
-              ),
-              // overflow: TextOverflow.ellipsis,
+      {double width = 160.0, double height = 50, int showDay = 0}) {
+    return Consumer<ProgressProvider>(
+        builder: (context, progressProvider, child) {
+      return InkWell(
+          onTap: progressProvider.progress < showDay
+              ? () => {ToastUtils.showToast('暂未开放')}
+              : onPressed,
+          child: Container(
+            width: width,
+            height: height,
+            decoration: BoxDecoration(
+              color: progressProvider.progress < showDay
+                  ? Colors.grey
+                  : Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5), // 阴影颜色和透明度
+                  spreadRadius: 4, // 扩散范围
+                  blurRadius: 7, // 模糊程度
+                  offset: Offset(0, 3), // 阴影偏移 (水平, 垂直)
+                ),
+              ],
+              borderRadius: BorderRadius.circular(12.0),
             ),
-          ),
-        ));
+            child: Center(
+              child: Text(
+                text,
+                style: TextStyle(
+                  color: progressProvider.progress < showDay
+                      ? Colors.black54
+                      : Colors.black,
+                  fontSize: 16.0,
+                ),
+                // overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ));
+    });
   }
 
   void _showTipsDialog(BuildContext context, VoidCallback callback) {
@@ -300,7 +312,7 @@ class _EventLogPageState extends State<EventLogPage>
             SizedBox(height: 6),
             _buildMenuOption('冲动记录', () {
               _showTipsDialog(context, () => _handleGoSurvey(impulseRecording));
-            }),
+            }, showDay: 2),
             SizedBox(height: 10),
           ],
           SizedBox(

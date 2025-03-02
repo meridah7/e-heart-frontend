@@ -65,7 +65,19 @@ Widget buildSingleChoiceQuestion(BuildContext context,
         if (question.description != null) // 检查是否有描述（副标题）
           Padding(
             padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
-            child: DescriptionText(question.description!), // 显示描述（副标题）
+            child: Column(
+              children: [
+                DescriptionText(question.description!),
+              ],
+            ), // 显示描述（副标题）
+          ),
+        if (question.expandedDescription != null)
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
+            child: ExpandDescriptionText(
+              question.expandedDescription!.title,
+              expandedText: question.expandedDescription!.description,
+            ),
           ),
         ...question.options.map((option) {
           return InkWell(
@@ -991,8 +1003,16 @@ Widget buildSubSingleChoiceQuestion(BuildContext context,
       ),
       if (question.description != null)
         Padding(
-          padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
+          padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 4.0),
           child: DescriptionText(question.description!),
+        ),
+      if (question.expandedDescription != null)
+        Padding(
+          padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
+          child: ExpandDescriptionText(
+            question.expandedDescription!.title,
+            expandedText: question.expandedDescription!.description,
+          ),
         ),
       ...question.options
           .map((option) => ListTile(
