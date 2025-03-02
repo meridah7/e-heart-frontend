@@ -39,7 +39,7 @@ Task dealingWithSetback = Task(
 
 Task x1 = Task(
   title: "冲动诱因教学",
-  id: 'x1',
+  id: 'X1',
   type: TaskType.CHATBOT,
   isCompleted: false,
   day: 0,
@@ -48,7 +48,7 @@ Task x1 = Task(
 
 Task x2 = Task(
   title: "为什么我无法停止暴食？",
-  id: 'x2',
+  id: 'X2',
   type: TaskType.CHATBOT,
   isCompleted: false,
   day: 1,
@@ -57,7 +57,7 @@ Task x2 = Task(
 
 Task x3 = Task(
   title: "清除食物大百科",
-  id: 'x3',
+  id: 'X3',
   type: TaskType.CHATBOT,
   isCompleted: false,
   day: 2,

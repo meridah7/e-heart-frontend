@@ -18,9 +18,9 @@ Map<String, Task> taskMap = {
   'S4': regularDietReflection,
   'S5': task6,
   'D1': reflectiveActivity,
-  'x1': x1,
-  'x2': x2,
-  'x3': x3,
+  'X1': x1,
+  'X2': x2,
+  'X3': x3,
   // 'C1': C1,
 };
 

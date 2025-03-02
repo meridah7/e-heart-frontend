@@ -189,7 +189,9 @@ class _ChatbotPageState extends State<ChatbotPage> {
     if (mounted) {
       var progressProvider =
           Provider.of<ProgressProvider>(context, listen: false);
-      progressProvider.updateProgress(widget.taskId);
+      bool isRequired =
+          progressProvider.allRequiredTaskIds.contains(widget.taskId);
+      progressProvider.updateProgress(widget.taskId, isRequired: isRequired);
     }
 
     setState(() {

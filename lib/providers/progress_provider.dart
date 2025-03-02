@@ -18,6 +18,9 @@ class ProgressProvider with ChangeNotifier {
 
   int get progress => _userProgress?.progress ?? 0;
   List<String> get finishedTaskIds => _userProgress?.finishedTaskIds ?? [];
+  List<String> get finishedOptionalTaskIds =>
+      _userProgress?.finishedOptionalTaskIds ?? [];
+
   List<String> get allRequiredTaskIds =>
       _userProgress?.allRequiredTaskIds ?? [];
   List<String> get allOptionalTaskIds =>
@@ -37,10 +40,12 @@ class ProgressProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updateProgress(String taskId) async {
+  Future<void> updateProgress(String taskId, {bool isRequired = true}) async {
     try {
-      _userProgress = await apiService.updateProgress(taskId);
+      _userProgress =
+          await apiService.updateProgress(taskId, isRequired: isRequired);
       await fetchProgress();
+      fetchDisplayTaskList();
     } catch (err) {
       print('Error in parse user progress $err');
       throw Exception(err);
@@ -73,7 +78,8 @@ class ProgressProvider with ChangeNotifier {
           .map((e) => e.copyWith(isCompleted: finishedTaskIds.contains(e.id)))
           .toList();
       List<Task> optionalTasks = getTasksByIds(allOptionalTaskIds)
-          .map((e) => e.copyWith(isCompleted: finishedTaskIds.contains(e.id)))
+          .map((e) =>
+              e.copyWith(isCompleted: finishedOptionalTaskIds.contains(e.id)))
           .toList();
       optionalTaskList = optionalTasks;
       dailyTaskList = requiredTasks;

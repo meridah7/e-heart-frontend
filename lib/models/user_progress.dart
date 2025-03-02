@@ -1,6 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
 
-import 'package:collection/collection.dart';
 part 'user_progress.g.dart';
 
 @JsonSerializable()
@@ -12,12 +11,15 @@ class UserProgress {
   List<String>? allRequiredTaskIds;
   @JsonKey(name: 'all_optional_task_ids')
   List<String>? allOptionalTaskIds;
+  @JsonKey(name: 'finished_optional_task_ids')
+  List<String>? finishedOptionalTaskIds;
 
   UserProgress({
     this.progress,
     this.finishedTaskIds,
     this.allRequiredTaskIds,
     this.allOptionalTaskIds,
+    this.finishedOptionalTaskIds,
   });
 
   @override
@@ -30,6 +32,8 @@ class UserProgress {
         finishedTaskIds: data['finished_task_ids'] as List<String>,
         allRequiredTaskIds: data['all_required_task_ids'] as List<String>,
         allOptionalTaskIds: data['all_optional_task_ids'] as List<String>,
+        finishedOptionalTaskIds:
+            data['finished_optional_task_ids'] as List<String>,
       );
 
   Map<String, dynamic> toMap() => {
@@ -37,6 +41,7 @@ class UserProgress {
         'finished_task_ids': finishedTaskIds,
         'all_required_task_ids': allRequiredTaskIds,
         'all_optional_task_ids': allOptionalTaskIds,
+        'finished_optional_task_ids': finishedOptionalTaskIds,
       };
 
   /// `dart:convert`
@@ -56,19 +61,4 @@ class UserProgress {
   ///
   /// Converts [UserProgress] to a JSON string.
   // String toJson() => json.encode(toMap());
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(other, this)) return true;
-    if (other is! UserProgress) return false;
-    final mapEquals = const DeepCollectionEquality().equals;
-    return mapEquals(other.toMap(), toMap());
-  }
-
-  @override
-  int get hashCode =>
-      progress.hashCode ^
-      finishedTaskIds.hashCode ^
-      allRequiredTaskIds.hashCode ^
-      allOptionalTaskIds.hashCode;
 }
