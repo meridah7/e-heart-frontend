@@ -16,7 +16,7 @@ class ProgressProvider with ChangeNotifier {
 
   UserProgress? get userProgress => _userProgress;
 
-  int? get progress => _userProgress?.progress ?? 0;
+  int get progress => _userProgress?.progress ?? 0;
   List<String> get finishedTaskIds => _userProgress?.finishedTaskIds ?? [];
   List<String> get allRequiredTaskIds =>
       _userProgress?.allRequiredTaskIds ?? [];
