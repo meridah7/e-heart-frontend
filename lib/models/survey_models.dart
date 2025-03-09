@@ -30,6 +30,7 @@ abstract class Question {
 }
 
 class SingleChoiceQuestion extends Question {
+  String type = 'default'; // 默认为 item
   final List<String> options;
   String? selectedOption;
   Map<String, List<Question>> subQuestions; // Change to a map of lists
@@ -38,12 +39,17 @@ class SingleChoiceQuestion extends Question {
       {String? description,
       String? alias,
       bool required = true,
+      String? type,
       ExpandedDescription? expandedDescription})
-      : super(questionText,
-            description: description,
-            alias: alias,
-            required: required,
-            expandedDescription: expandedDescription);
+      : super(
+          questionText,
+          description: description,
+          alias: alias,
+          required: required,
+          expandedDescription: expandedDescription,
+        ) {
+    this.type = type ?? 'default'; // 如果未传递 type，使用默认值
+  }
 
   @override
   String getAnswer() {
