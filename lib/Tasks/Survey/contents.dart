@@ -115,28 +115,27 @@ var dietaryIntakeSurvey = Survey(title: '饮食记录', questions: [
     // TODO add alias
   ),
   SingleChoiceQuestion(
-      '在哪吃',
-      ['家里', '宿舍', '公司', '食堂', '饭店', '车上', '其他'],
-      {
-        '其他': [
-          TextQuestion('请输入其他地点', false),
-        ],
-        '家里': [
-          SingleChoiceQuestion('是在家里的', [
-            '客厅',
-            '卧室',
-            '餐桌',
-            '厨房',
-            '洗手间',
-            '其他'
-          ], {
-            '其他': [
-              TextQuestion('请输入其他地点', false),
-            ],
-          })
-        ]
-      },
-      description: '选择你这次进食的所在之处。若没有对应选项，请于下方手动填写。'),
+    '在哪吃',
+    ['家里', '宿舍', '公司', '食堂', '饭店', '车上', '其他'],
+    {
+      '其他': [
+        TextQuestion('请输入其他地点', false),
+      ],
+      '家里': [
+        SingleChoiceQuestion(
+            '是在家里的',
+            ['客厅', '卧室', '餐桌', '厨房', '洗手间', '其他'],
+            {
+              '其他': [
+                TextQuestion('请输入其他地点', false),
+              ],
+            },
+            type: 'tag')
+      ]
+    },
+    description: '选择你这次进食的所在之处。若没有对应选项，请于下方手动填写。',
+    type: 'tag',
+  ),
   SingleChoiceQuestion('有没有节食', ['有', '没有'], {}),
   SliderQuestion(
       '是否暴食',

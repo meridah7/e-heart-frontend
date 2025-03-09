@@ -79,33 +79,69 @@ Widget buildSingleChoiceQuestion(BuildContext context,
               expandedText: question.expandedDescription!.description,
             ),
           ),
-        ...question.options.map((option) {
-          return InkWell(
-            onTap: () {
-              setState(() {
-                question.answer(option);
-// Trigger a state update to show/hide sub-questions
-              });
-            },
-            hoverColor: Colors.grey[200], // 鼠标悬停时的颜色
-            child: Container(
-              color: Colors.transparent, // 设置为透明以显示ink效果
-              child: ListTile(
-                title: Text(option),
-                leading: Radio<String>(
-                  value: option,
-                  groupValue: question.selectedOption,
-                  onChanged: (String? value) {
+        if (question.type == 'default')
+          Column(
+            children: [
+              ...question.options.map((option) {
+                return InkWell(
+                  onTap: () {
                     setState(() {
-                      question.answer(value!);
+                      question.answer(option);
 // Trigger a state update to show/hide sub-questions
                     });
                   },
-                ),
-              ),
+                  hoverColor: Colors.grey[200], // 鼠标悬停时的颜色
+                  child: Container(
+                    color: Colors.transparent, // 设置为透明以显示ink效果
+                    child: ListTile(
+                      title: Text(option),
+                      leading: Radio<String>(
+                        value: option,
+                        groupValue: question.selectedOption,
+                        onChanged: (String? value) {
+                          setState(() {
+                            question.answer(value!);
+// Trigger a state update to show/hide sub-questions
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
+            ],
+          ),
+        if (question.type == 'tag')
+          Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: Wrap(
+              spacing: 8.0, // Chip 之间的水平间距
+              runSpacing: 8.0, // Chip 之间的垂直间距
+              children: question.options.map((option) {
+                return Column(
+                  children: [
+                    FilterChip(
+                      label: Text(option),
+                      // visualDensity:
+                      //     VisualDensity(vertical: -2), // 减少上下间距（负值更紧凑）
+                      selected: question.selectedOption == option,
+                      onSelected: (bool? value) {
+                        setState(() {
+                          if (value ?? false) {
+                            if (question.selectedOption != option) {
+                              question.selectedOption = option;
+                            }
+                          } else {
+                            question.selectedOption = null;
+                          }
+                        });
+                      },
+                    ),
+                  ],
+                );
+              }).toList(),
             ),
-          );
-        }).toList(),
+          ),
         if (question.selectedOption != null &&
             question.subQuestions.containsKey(question.selectedOption))
           ...buildSubQuestions(context,
@@ -1014,20 +1050,56 @@ Widget buildSubSingleChoiceQuestion(BuildContext context,
             expandedText: question.expandedDescription!.description,
           ),
         ),
-      ...question.options
-          .map((option) => ListTile(
-                title: Text(option),
-                leading: Radio(
-                  value: option,
-                  groupValue: question.selectedOption,
-                  onChanged: (String? value) {
-                    setState(() {
-                      question.answer(value!);
-                    });
-                  },
-                ),
-              ))
-          .toList(),
+      if (question.type == 'default')
+        Column(
+          children: [
+            ...question.options
+                .map((option) => ListTile(
+                      title: Text(option),
+                      leading: Radio(
+                        value: option,
+                        groupValue: question.selectedOption,
+                        onChanged: (String? value) {
+                          setState(() {
+                            question.answer(value!);
+                          });
+                        },
+                      ),
+                    ))
+                .toList(),
+          ],
+        ),
+      if (question.type == 'tag')
+        Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: Wrap(
+            spacing: 8.0, // Chip 之间的水平间距
+            runSpacing: 8.0, // Chip 之间的垂直间距
+            children: question.options.map((option) {
+              return Column(
+                children: [
+                  FilterChip(
+                    label: Text(option),
+                    // visualDensity:
+                    //     VisualDensity(vertical: -2), // 减少上下间距（负值更紧凑）
+                    selected: question.selectedOption == option,
+                    onSelected: (bool? value) {
+                      setState(() {
+                        if (value ?? false) {
+                          if (question.selectedOption != option) {
+                            question.selectedOption = option;
+                          }
+                        } else {
+                          question.selectedOption = null;
+                        }
+                      });
+                    },
+                  ),
+                ],
+              );
+            }).toList(),
+          ),
+        ),
       if (question.selectedOption != null &&
           question.subQuestions.containsKey(question.selectedOption))
         ...buildSubQuestions(context,
