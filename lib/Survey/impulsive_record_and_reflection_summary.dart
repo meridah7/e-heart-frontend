@@ -204,7 +204,7 @@ class _ImpulsiveRecordAndReflectionSummary
                             fontSize: 18, fontWeight: FontWeight.bold)),
                     SizedBox(height: 8),
                     Text(
-                        '时间：${DateFormat('yyyy-mm-dd HH:mm').format(DateTime.fromMillisecondsSinceEpoch(entry['timestamp']))}'),
+                        '时间：${DateFormat('yyyy-MM-dd HH:mm').format(DateTime.fromMillisecondsSinceEpoch(entry['timestamp']))}'),
                     SizedBox(height: 8),
                     Text('应对策略：${entry['plan']}'),
                     SizedBox(height: 8),
