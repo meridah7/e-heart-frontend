@@ -16,6 +16,7 @@ class UserService implements UserApiService {
         var data = response.data['data'];
         // 每次调用接口更新 preference
         _userPref = await Preferences.getInstance(namespace: data['uuid']);
+        print('User preference namespace: ${_userPref.namespace}');
         for (var entry in data.entries) {
           await _userPref.setData(entry.key, entry.value);
         }
