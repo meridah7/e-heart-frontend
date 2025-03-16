@@ -620,18 +620,17 @@ List<Content> x1Content = [
 // 为什么无法停止暴食 X2
 List<Content> x2Content = [
   Content(
-    text: "很高兴在这里看到你！\n\n暴食&清除通常不是孤立存在的，它们与一些生理、心理因素交织形成恶性循环，让我们无法跳出这个怪圈",
+      text: "很高兴在这里看到你！\n\n暴食&清除通常不是孤立存在的，它们与一些生理、心理因素交织形成恶性循环，让我们无法跳出这个怪圈",
+      type: ContentType.TEXT,
+      responseType: ResponseType.choices,
+      choices: ['循环？']),
+  Content(
+    text: "是的，接下来小E会通过三位朋友的日记，带你认识这三种不同的循环",
     type: ContentType.TEXT,
     responseType: ResponseType.auto,
   ),
+  Content(type: ContentType.TEXT, text: "梓楚：", responseType: ResponseType.auto),
   Content(
-    text: "循环？",
-    choices: ["是的，接下来小E会通过三位朋友的日记，带你认识这三种不同的循环"],
-    type: ContentType.TEXT,
-    responseType: ResponseType.choices,
-  ),
-  Content(
-    text: "梓楚",
     imageUrl: "assets/images/x2-person-1.JPEG",
     type: ContentType.IMAGE,
     responseType: ResponseType.auto,
@@ -647,24 +646,47 @@ List<Content> x2Content = [
     responseType: ResponseType.auto,
   ),
   Content(
-    text: "那么，我感觉自己陷在这个循环里出不来，该怎么办呢？",
-    type: ContentType.TEXT,
-    responseType: ResponseType.auto,
-  ),
-  Content(
-    text: "不用担心，我们的干预计划帮助你同时从以下几个点打破循环。",
-    imageUrl: "assets/images/x2-intervention-1.JPEG",
-    type: ContentType.IMAGE,
-    responseType: ResponseType.auto,
-  ),
-  Content(
-    text: "我知道了！那么，暴食还有什么其他的循环呢？",
-    choices: ["了解下一种循环模式"],
+    text:
+        "这种循环常常表现为：环境中的诱因（比如看到体重增加，身边身材好的朋友）诱发了身材焦虑，进而节食。然而，节食带来了身体和心理压力，这些压力最终带来暴食，而暴食再次引发了身材焦虑。",
+    choices: ["那么，我感觉自己陷在这个循环里出不来，该怎么办呢？"],
     type: ContentType.TEXT,
     responseType: ResponseType.choices,
   ),
   Content(
-    text: '林林',
+    text: '不用担心，我们的干预计划帮助你同时从以下几个点打破循环。',
+    type: ContentType.TEXT,
+    responseType: ResponseType.auto,
+  ),
+  Content(
+    imageUrl: "assets/images/x2-intervention-1.JPEG",
+    type: ContentType.IMAGE,
+    responseType: ResponseType.choices,
+    choices: ['怎么阻断（A）→（B）？'],
+  ),
+  Content(
+    text: "我们的饮食日志与反思分析模块帮助你识别身材焦虑的诱因，进而你可以选择对自己的诱因进行干预，从而减少焦虑的产生。",
+    type: ContentType.TEXT,
+    responseType: ResponseType.choices,
+    choices: ['怎么阻断（B）→（C）？'],
+  ),
+  Content(
+    text: "我们的计划饮食模块帮助你在感到身材焦虑时，意识到节食与限制饮食行为的局限性和反弹性，以更长期可持续的的方式规划自己的饮食。",
+    type: ContentType.TEXT,
+    responseType: ResponseType.choices,
+    choices: ['怎么阻断（D）→（E）？'],
+  ),
+  Content(
+    text: "我们的冲动替代策略模块指导你在感受到巨大身体或心理压力的时候，应用其他友好的方式缓解自己的暴食冲动。",
+    choices: ["我知道了！那么，暴食还有什么其他的循环呢？"],
+    type: ContentType.TEXT,
+    responseType: ResponseType.choices,
+  ),
+  Content(
+    text: '林林：',
+    type: ContentType.TEXT,
+    responseType: ResponseType.auto,
+  ),
+  Content(
     imageUrl: "assets/images/x2-person-2.JPEG",
     type: ContentType.IMAGE,
     responseType: ResponseType.auto,
@@ -678,35 +700,53 @@ List<Content> x2Content = [
     imageUrl: "assets/images/x2-cycle-2.PNG",
     type: ContentType.IMAGE,
     responseType: ResponseType.choices,
-    choices: ["‘清除’食物是什么意思呢？"],
+    choices: ['“清除”食物是什么意思呢？'],
   ),
   Content(
-    text: "它指的是使用催吐，泻药，利尿剂等一系列强行将摄入的食物排出体外的手段，以及采取极端运动、极端节食等极端补偿行为。",
+    text:
+        "它指的是使用催吐，泻药，利尿剂等一系列强行将摄入的食物排出体外的手段，以及采取极端运动、极端节食（比如第二天完全不进食或者液断）等极端补偿行为。",
     type: ContentType.TEXT,
-    choices: ["我感觉清除食物行为给我带来了很大的困扰，小E能怎么帮助我？"],
-    responseType: ResponseType.choices,
+    responseType: ResponseType.auto,
   ),
+  Content(
+    text:
+        "这种循环与上一个循环不同的是，一场暴食结束后往往会引发我们的负面情绪，进而我们就会采取清除食物的措施来弥补。然而，清除食物在短期内或许缓解了焦虑，但在长期来看，因为我们知道有一些方法能够弥补，就会更肆无忌惮的暴食。",
+    type: ContentType.TEXT,
+    responseType: ResponseType.auto,
+  ),
+  Content(
+    text:
+        "但是，例如“催吐”等“清除”食物的手段真的能减轻暴食带来的负面影响吗？真相可能让你大吃一惊！在“清除食物大百科”中你会发现许多关于清除食物的有趣真相。",
+    type: ContentType.TEXT,
+    responseType: ResponseType.choices,
+    choices: ['我感觉清除食物行为给我带来了很大的困扰，小E能怎么帮助我？'],
+  ),
+  // TODO 放上清除食物chatbot 链接
   Content(
     text: "别担心！我会帮助你从以下节点打破这个循环。",
     type: ContentType.TEXT,
     responseType: ResponseType.auto,
   ),
   Content(
-    imageUrl: "assets/images/x2-intervention-2.jpeg",
-    type: ContentType.IMAGE,
+      imageUrl: "assets/images/x2-intervention-2.jpeg",
+      type: ContentType.IMAGE,
+      responseType: ResponseType.choices,
+      choices: ['怎么阻断（E）→（F）？']),
+  Content(
+    text: "在第一种循环的基础上，我们的冲动替代策略模块同样能帮助你应对清除食物的冲动。",
+    type: ContentType.TEXT,
+    choices: ["怎么阻断（F）→（E）？"],
+    responseType: ResponseType.choices,
+  ),
+  Content(
+    text: "此外，我们刚刚提到的选修模块中的“清除食物大百科”也能够让你认识到长期情况下清除食物行为的无益性，进而减少不加节制的暴食。",
+    type: ContentType.TEXT,
     responseType: ResponseType.auto,
   ),
   Content(
-    text: "它指的是使用催吐，泻药，利尿剂等一系列强行将摄入的食物排出体外的手段，以及采取极端运动、极端节食等极端补偿行为。",
+    text: "心宇：",
     type: ContentType.TEXT,
-    choices: ["我感觉清除食物行为给我带来了很大的困扰，小E能怎么帮助我？"],
-    responseType: ResponseType.choices,
-  ),
-  Content(
-    text: "它指的是使用催吐，泻药，利尿剂等一系列强行将摄入的食物排出体外的手段，以及采取极端运动、极端节食等极端补偿行为。",
-    type: ContentType.TEXT,
-    choices: ["我感觉清除食物行为给我带来了很大的困扰，小E能怎么帮助我？"],
-    responseType: ResponseType.choices,
+    responseType: ResponseType.auto,
   ),
   Content(
     imageUrl: "assets/images/x2-person-3.jpeg",
@@ -720,21 +760,41 @@ List<Content> x2Content = [
     responseType: ResponseType.auto,
   ),
   Content(
-    imageUrl: "assets/images/x2-cycle-3.png",
-    type: ContentType.IMAGE,
-    responseType: ResponseType.auto,
-  ),
+      imageUrl: "assets/images/x2-cycle-3.png",
+      type: ContentType.IMAGE,
+      responseType: ResponseType.auto),
   Content(
-    text: "我已经陷入到这个循环里了，我该怎么打破它？？",
-    choices: ["别担心！我会帮助你从以下节点打破这个循环。"],
+    text:
+        "这种循环常常表现为：环境中的诱因引起情感失调（比如焦虑、兴奋等），我们试图解决/逃避这些情感，但总是采取暴食/清除食物等问题行为。这些行为虽然短暂缓解了情绪，但长期来看非但不能解决问题，还会让我们更加依赖于它们。",
     type: ContentType.TEXT,
     responseType: ResponseType.choices,
+    choices: [
+      "我已经陷入到这个循环里了，我该怎么打破它？？",
+    ],
   ),
   Content(
-    imageUrl: "assets/images/x2-intervention-3.jpeg",
-    type: ContentType.IMAGE,
-    responseType: ResponseType.auto,
-  )
+      type: ContentType.TEXT,
+      text: "别担心！我会帮助你从以下节点打破这个循环。",
+      responseType: ResponseType.auto),
+  Content(
+      imageUrl: "assets/images/x2-intervention-3.jpeg",
+      type: ContentType.IMAGE,
+      responseType: ResponseType.choices,
+      choices: ['怎么阻断（A）→（B）？']),
+  Content(
+      type: ContentType.TEXT,
+      text: '我们的饮食日志与反思分析模块帮助你识别环境中诱发情感失调的因素，进而你可以选择对自己的诱因进行干预和控制，从而减少情感失调的产生。',
+      responseType: ResponseType.choices,
+      choices: ['怎么阻断（C）→（D）？']),
+  Content(
+      type: ContentType.TEXT,
+      text:
+          '我们的冲动应对策略模块指导你在面临情感失调的时候，应用除了暴食之外的方式来缓解或者应对自己的情绪。从长期来看，你会学到更多应对情绪的有效方式。',
+      responseType: ResponseType.auto),
+  Content(
+      type: ContentType.TEXT,
+      text: "你每天的努力都不会白费，如果你在后续的治疗中，有对课程设置的疑惑，记得来重温这一节的内容哦",
+      responseType: ResponseType.auto),
 ];
 
 final List<Content> chatbotContent2 = [
