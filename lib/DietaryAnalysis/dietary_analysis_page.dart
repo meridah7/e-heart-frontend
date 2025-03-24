@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:namer_app/DietaryAnalysis/daily.dart';
-import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:fl_chart/fl_chart.dart' as charts;
 import 'models.dart';
 
 class DietaryAnalysisPage extends StatefulWidget {
@@ -173,16 +173,17 @@ class _WeeklyViewState extends State<WeeklyView> {
     );
   }
 
+// TODO 图表迁移
   Widget _buildChart(String chartType, List<BingeEatingWeeklyData> bingeData,
       List<WeeklyData> clearanceData) {
     switch (chartType) {
-      case 'Binge Eating':
-        return WeeklyBingeEatingChart(data: bingeData);
-      case 'Food Clearance':
-        return WeeklyFoodClearanceChart(data: clearanceData); // 需要实现
-      case 'Binge Emotion':
-        return WeeklyFoodClearanceChart(data: clearanceData);
-      // 添加更多的图表类型...
+      // case 'Binge Eating':
+      //   return WeeklyBingeEatingChart(data: bingeData);
+      // case 'Food Clearance':
+      //   return WeeklyFoodClearanceChart(data: clearanceData); // 需要实现
+      // case 'Binge Emotion':
+      //   return WeeklyFoodClearanceChart(data: clearanceData);
+      // // 添加更多的图表类型...
       default:
         return Container(); // 默认空视图
     }
@@ -207,25 +208,26 @@ class BingeEatingEventList extends StatelessWidget {
   }
 }
 
-class WeeklyBingeEatingChart extends StatelessWidget {
-  final List<BingeEatingWeeklyData> data;
+// TODO 图表迁移
+// class WeeklyBingeEatingChart extends StatelessWidget {
+//   final List<BingeEatingWeeklyData> data;
 
-  WeeklyBingeEatingChart({required this.data});
+//   WeeklyBingeEatingChart({required this.data});
 
-  @override
-  Widget build(BuildContext context) {
-    List<charts.Series<BingeEatingWeeklyData, String>> series = [
-      charts.Series(
-        id: "Binge Eating",
-        data: data,
-        domainFn: (BingeEatingWeeklyData series, _) => series.dayOfWeek,
-        measureFn: (BingeEatingWeeklyData series, _) => series.count,
-      )
-    ];
+//   @override
+//   Widget build(BuildContext context) {
+//     List<charts.Series<BingeEatingWeeklyData, String>> series = [
+//       charts.Series(
+//         id: "Binge Eating",
+//         data: data,
+//         domainFn: (BingeEatingWeeklyData series, _) => series.dayOfWeek,
+//         measureFn: (BingeEatingWeeklyData series, _) => series.count,
+//       )
+//     ];
 
-    return charts.BarChart(series, animate: true);
-  }
-}
+//     return charts.BarChart(series, animate: true);
+//   }
+// }
 
 class BingeEatingWeeklyData {
   final String dayOfWeek;
@@ -234,56 +236,58 @@ class BingeEatingWeeklyData {
   BingeEatingWeeklyData(this.dayOfWeek, this.count);
 }
 
-class WeeklyFoodClearanceChart extends StatelessWidget {
-  final List<WeeklyData> data;
+// TODO 图表迁移
+// class WeeklyFoodClearanceChart extends StatelessWidget {
+//   final List<WeeklyData> data;
 
-  WeeklyFoodClearanceChart({required this.data});
+//   WeeklyFoodClearanceChart({required this.data});
 
-  @override
-  Widget build(BuildContext context) {
-    List<charts.Series<WeeklyData, String>> series = [
-      charts.Series<WeeklyData, String>(
-        id: 'Food Clearance',
-        colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
-        domainFn: (WeeklyData row, _) => row.dayOfWeek,
-        measureFn: (WeeklyData row, _) => row.count,
-        data: data,
-      )
-    ];
+//   @override
+//   Widget build(BuildContext context) {
+//     List<charts.Series<WeeklyData, String>> series = [
+//       charts.Series<WeeklyData, String>(
+//         id: 'Food Clearance',
+//         colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
+//         domainFn: (WeeklyData row, _) => row.dayOfWeek,
+//         measureFn: (WeeklyData row, _) => row.count,
+//         data: data,
+//       )
+//     ];
 
-    return charts.BarChart(
-      series,
-      animate: true,
-    );
-  }
-}
+//     return charts.BarChart(
+//       series,
+//       animate: true,
+//     );
+//   }
+// }
 
-class EatingEmotionChart extends StatelessWidget {
-  final List<EatingEmotionData> data;
+// TODO 图表迁移
+// class EatingEmotionChart extends StatelessWidget {
+//   final List<EatingEmotionData> data;
 
-  EatingEmotionChart({required this.data});
+//   EatingEmotionChart({required this.data});
 
-  @override
-  Widget build(BuildContext context) {
-    List<charts.Series<dynamic, String>> seriesList = [];
+//   @override
+//   Widget build(BuildContext context) {
+//     List<charts.Series<dynamic, String>> seriesList = [];
 
-    // 对于每种情绪，创建一个系列
-    var emotions = ["开心", "伤心", "难过"]; // 添加更多情绪类型
-    for (var emotion in emotions) {
-      seriesList.add(charts.Series<EatingEmotionData, String>(
-        id: emotion,
-        domainFn: (EatingEmotionData row, _) => row.dayOfWeek,
-        measureFn: (EatingEmotionData row, _) => row.emotions[emotion],
-        data: data,
-        labelAccessorFn: (EatingEmotionData row, _) => emotion,
-      ));
-    }
+//     // 对于每种情绪，创建一个系列
+//     var emotions = ["开心", "伤心", "难过"]; // 添加更多情绪类型
+//     for (var emotion in emotions) {
+//       seriesList.add(charts.Series<EatingEmotionData, String>(
+//         id: emotion,
+//         domainFn: (EatingEmotionData row, _) => row.dayOfWeek,
+//         measureFn: (EatingEmotionData row, _) => row.emotions[emotion],
+//         data: data,
+//         labelAccessorFn: (EatingEmotionData row, _) => emotion,
+//       ));
+//     }
 
-    return charts.BarChart(
-      seriesList,
-      animate: true,
-      barGroupingType: charts.BarGroupingType.grouped, // 分组展示
-      // 配置其他样式和属性...
-    );
-  }
-}
+//     return charts.BarChart(
+//       seriesList,
+//       animate: true,
+//       barGroupingType: charts.BarGroupingType.grouped, // 分组展示
+//       // 配置其他样式和属性...
+//     );
+//   }
+// }

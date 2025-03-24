@@ -18,72 +18,40 @@ import 'MyPage/my_page.dart';
 import 'DietaryAnalysis/dietary_analysis_page.dart';
 import 'Login/login_page.dart';
 import 'Login/register_info_page.dart';
-import 'package:provider/provider.dart' as provider;
+import 'package:provider/provider.dart';
 import 'debugButton.dart';
 import 'DailyDiet/event_log_page.dart';
 // services
 import 'package:namer_app/services/user_service.dart';
 import 'package:namer_app/services/progress_service.dart';
 
-// riverpod 状态管理
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-part 'main.g.dart';
-
-// We create a "provider", which will store a value (here "Hello world").
-// By using a provider, this allows us to mock/override the value exposed.
-@riverpod
-String helloWorld(Ref ref) {
-  return 'Hello world';
-}
-
-final userProvider = ChangeNotifierProvider<UserProvider>((ref) {
-  return UserProvider(apiService: UserService());
-});
-
-final progressProvider = ChangeNotifierProvider<ProgressProvider>((ref) {
-  return ProgressProvider(apiService: ProgressService());
-});
-
-final responseCardProvider =
-    ChangeNotifierProvider<ResponseCardModelProvider>((ref) {
-  return ResponseCardModelProvider();
-});
-
 // 用于控制全局路由
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
-void main() {
+void main() async {
   // 初始化中文 Locale 数据
   initializeDateFormatting('zh_CN', null);
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(
-    // For widgets to be able to read providers, we need to wrap the entire
-    // application in a "ProviderScope" widget.
-    // This is where the state of our providers will be stored.
-    ProviderScope(
-      child: MyApp(),
-    ),
-  );
+
+  runApp(MyApp());
 }
 
-// Extend ConsumerWidget instead of StatelessWidget, which is exposed by Riverpod
-class MyApp extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final String value = ref.watch(helloWorldProvider);
+class MyApp extends StatelessWidget {
+  MyApp();
 
-    return provider.MultiProvider(
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
       // 使用MultiProvider包裹MaterialApp
       providers: [
-        provider.ChangeNotifierProvider.value(
-            value: ref.watch(userProvider.notifier)), // 创建UserProvider实例
-        provider.ChangeNotifierProvider.value(
-            value: ref.watch(progressProvider.notifier)), // 创建UserProvider实例
-        provider.ChangeNotifierProvider.value(
-            value:
-                ref.watch(responseCardProvider.notifier)), // 创建UserProvider实例
+        ChangeNotifierProvider(
+            create: (context) =>
+                UserProvider(apiService: UserService())), // 创建UserProvider实例
+        ChangeNotifierProvider(
+            create: (context) => ProgressProvider(
+                apiService: ProgressService())), // 创建UserProvider实例
+        ChangeNotifierProvider(
+            create: (context) => ResponseCardModelProvider()),
       ],
 
       child: MaterialApp(
@@ -263,8 +231,7 @@ class _MainScreenState extends State<MainScreen> {
   void _checkLoggedIn() async {
     try {
       if (mounted) {
-        final userProvider =
-            provider.Provider.of<UserProvider>(context, listen: false);
+        final userProvider = Provider.of<UserProvider>(context, listen: false);
         userProvider.fetchUser();
       }
     } catch (e) {

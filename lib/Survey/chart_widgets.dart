@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:charts_flutter/flutter.dart' as charts;
+import 'dart:math';
+import 'package:fl_chart/fl_chart.dart' as charts;
 
 enum ChartOrientation { horizontal, vertical, pie }
 
@@ -19,27 +20,36 @@ class PieChartWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<charts.Series<PieData, String>> series = [
-      charts.Series<PieData, String>(
-        id: 'PieChart',
-        domainFn: (datum, _) => datum.category,
-        measureFn: (datum, _) => datum.value,
-        colorFn: (datum, _) => charts.ColorUtil.fromDartColor(datum.color),
-        data: data, // 确保 data 是 List<PieData> 类型
-        labelAccessorFn: (datum, _) => '${datum.category}: ${datum.value}',
-      ),
-    ];
+    double total = data.fold(0, (sum, item) => sum + item.value);
 
     return SizedBox(
       height: 300,
-      child: charts.PieChart<String>(
-        series,
-        animate: true,
-        defaultRenderer: charts.ArcRendererConfig(
-          arcRendererDecorators: [charts.ArcLabelDecorator()],
+      child: charts.PieChart(
+        charts.PieChartData(
+          sections: _getSections(total),
+          sectionsSpace: 2,
+          centerSpaceRadius: 40,
+          startDegreeOffset: -90,
         ),
       ),
     );
+  }
+
+  List<charts.PieChartSectionData> _getSections(double total) {
+    return data.map((item) {
+      final percentage = (item.value / total * 100).toStringAsFixed(1);
+      return charts.PieChartSectionData(
+        value: item.value,
+        title: '${item.category}\n$percentage%',
+        titleStyle: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+        radius: 100,
+        color: item.color,
+      );
+    }).toList();
   }
 }
 
@@ -51,39 +61,95 @@ class BarData {
   BarData(this.label, this.value, this.color);
 }
 
-// BarChartWidget：通用的条形图组件
 class BarChartWidget extends StatelessWidget {
   final List<BarData> data;
-  final bool isVertical = true;
+  final bool isVertical;
 
-  const BarChartWidget({Key? key, required this.data, isVertical = true})
-      : super(key: key);
+  const BarChartWidget({
+    Key? key,
+    required this.data,
+    this.isVertical = true,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final List<charts.Series<BarData, String>> series = [
-      charts.Series<BarData, String>(
-        id: 'BarChart',
-        domainFn: (datum, _) => datum.label,
-        measureFn: (datum, _) => datum.value,
-        colorFn: (datum, _) => charts.ColorUtil.fromDartColor(datum.color),
-        data: data,
-        labelAccessorFn: (datum, _) => '${datum.value}',
-      ),
-    ];
-
     return SizedBox(
       height: 300,
       child: charts.BarChart(
-        series,
-        animate: true,
-        vertical: isVertical,
-        barRendererDecorator: charts.BarLabelDecorator<String>(),
-        domainAxis: charts.OrdinalAxisSpec(
-          renderSpec: charts.SmallTickRendererSpec(labelRotation: 45),
+        charts.BarChartData(
+          alignment: charts.BarChartAlignment.center,
+          maxY: _getMaxValue() * 1.2, // 给最大值留出20%的空间
+          titlesData: _getTitlesData(),
+          borderData: charts.FlBorderData(show: false),
+          barGroups: _getBarGroups(),
+          gridData: charts.FlGridData(show: false),
         ),
       ),
     );
+  }
+
+  double _getMaxValue() {
+    return data.map((e) => e.value.toDouble()).reduce(max);
+  }
+
+  charts.FlTitlesData _getTitlesData() {
+    return charts.FlTitlesData(
+      show: true,
+      bottomTitles: charts.AxisTitles(
+        sideTitles: charts.SideTitles(
+          showTitles: true,
+          getTitlesWidget: (value, meta) {
+            return Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: Transform.rotate(
+                angle: pi / 4, // 45度角旋转
+                child: Text(
+                  data[value.toInt()].label,
+                  style: TextStyle(fontSize: 12),
+                ),
+              ),
+            );
+          },
+          reservedSize: 42,
+        ),
+      ),
+      leftTitles: charts.AxisTitles(
+        sideTitles: charts.SideTitles(
+          showTitles: true,
+          reservedSize: 40,
+          getTitlesWidget: (value, meta) {
+            return Text(
+              value.toInt().toString(),
+              style: TextStyle(fontSize: 12),
+            );
+          },
+        ),
+      ),
+      rightTitles: charts.AxisTitles(
+        sideTitles: charts.SideTitles(showTitles: false),
+      ),
+      topTitles: charts.AxisTitles(
+        sideTitles: charts.SideTitles(showTitles: false),
+      ),
+    );
+  }
+
+  List<charts.BarChartGroupData> _getBarGroups() {
+    return data.asMap().entries.map((entry) {
+      final index = entry.key;
+      final item = entry.value;
+      return charts.BarChartGroupData(
+        x: index,
+        barRods: [
+          charts.BarChartRodData(
+            toY: item.value.toDouble(),
+            color: item.color,
+            width: 20,
+            borderRadius: BorderRadius.circular(4),
+          ),
+        ],
+      );
+    }).toList();
   }
 }
 
