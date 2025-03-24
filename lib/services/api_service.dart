@@ -1,3 +1,4 @@
+import 'package:namer_app/models/strategy_card.dart';
 import 'package:namer_app/models/user.dart';
 import 'package:namer_app/models/user_progress.dart';
 import 'package:namer_app/models/task_models.dart';
@@ -21,4 +22,15 @@ abstract class ProgressApiService {
   Future<UserProgress?> setProgress(int progress); // 设置用户进度 仅调试使用
 
   Future<List<Task>> fetchImpulseReflectionRecords(); // 获取冲动记录回顾
+}
+
+// 冲动策略相关接口
+abstract class StrategyApiService {
+  Future<List<StrategyCard>?> fetchStrategies(); // 获取冲动策略
+
+  Future<bool> updateStrategy(StrategyCard strategy); // 更新冲动策略
+
+  Future<bool> deleteStrategy(StrategyCard strategy); // 删除冲动策略
+
+  Future<bool> addStrategy(StrategyCard strategy); // 添加冲动策略
 }

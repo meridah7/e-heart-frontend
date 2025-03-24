@@ -5,15 +5,12 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:namer_app/utils/toast_util.dart';
-
-const String USER_BASE_URL = 'http://47.96.108.106/api';
-const String AGENT_BASE_URL = ' http://223.4.25.37:3000/api/agent';
+import 'api_endpoints.dart';
 
 class DioClient {
   late final Dio _dio;
   // Token 安全存储
   final _storage = FlutterSecureStorage();
-
   static final DioClient _instance = DioClient._internal();
 
   factory DioClient() {
@@ -23,7 +20,7 @@ class DioClient {
   DioClient._internal() {
     _dio = Dio(
       BaseOptions(
-        baseUrl: USER_BASE_URL, // 全局基础 URL
+        baseUrl: ApiEndpoints.BASE_URL, // 全局基础 URL
         connectTimeout: const Duration(seconds: 10), // 连接超时时间
         receiveTimeout: const Duration(seconds: 15), // 响应超时时间
         headers: {

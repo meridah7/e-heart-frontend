@@ -222,6 +222,7 @@ class _LoginPageState extends State<LoginPage> {
               .showSnackBar(SnackBar(content: Text('Hello 新用户')));
           // Navigator.pushReplacementNamed(context, '/register');
         }
+        await _updateUserInfo();
       } else {
         // 更新用户信息接口
         await _updateUserInfo();
