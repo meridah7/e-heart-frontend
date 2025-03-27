@@ -182,7 +182,6 @@ class DioClient {
   Future<Response> getRequest(String endpoint) async {
     try {
       final response = await _dio.get(endpoint);
-      print('dio GET response: $response');
       return response;
     } catch (e) {
       throw Exception('GET请求失败: $e');

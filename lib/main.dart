@@ -21,22 +21,16 @@ import 'Login/register_info_page.dart';
 import 'package:provider/provider.dart' as provider;
 import 'debugButton.dart';
 import 'DailyDiet/event_log_page.dart';
+import 'package:namer_app/pages/response_card/index.dart';
 // services
 import 'package:namer_app/services/user_service.dart';
 import 'package:namer_app/services/progress_service.dart';
 
 // riverpod 状态管理
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
+// import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'main.g.dart';
-
-// We create a "provider", which will store a value (here "Hello world").
-// By using a provider, this allows us to mock/override the value exposed.
-@riverpod
-String helloWorld(Ref ref) {
-  return 'Hello world';
-}
+// part 'main.g.dart';
 
 final userProvider = ChangeNotifierProvider<UserProvider>((ref) {
   return UserProvider(apiService: UserService());
@@ -72,8 +66,6 @@ void main() {
 class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final String value = ref.watch(helloWorldProvider);
-
     return provider.MultiProvider(
       // 使用MultiProvider包裹MaterialApp
       providers: [

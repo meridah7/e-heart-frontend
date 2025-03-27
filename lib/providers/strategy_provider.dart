@@ -1,4 +1,3 @@
-// lib/providers/user_provider.dart
 import 'package:flutter/foundation.dart';
 import '../models/strategy_card.dart';
 import '../services/api_service.dart';
