@@ -324,7 +324,7 @@ List<Content> scheduleDietTutorContent = [
       responseType: ResponseType.choices),
   Content(
       text:
-          '首先是生理原因：一个人消化完上一餐吃的全部食物的时间大概就是3-4小时。因此，一顿吃完3-4小时后，身体会自动发出饥饿的信号，比如饥饿、无力、头',
+          '首先是生理原因：一个人消化完上一餐吃的全部食物的时间大概就是3-4小时。因此，一顿吃完3-4小时后，身体会自动发出饥饿的信号，比如饥饿、无力、头晕等。',
       type: ContentType.TEXT,
       responseType: ResponseType.auto),
   Content(
@@ -346,23 +346,29 @@ List<Content> scheduleDietTutorContent = [
       type: ContentType.TEXT,
       responseType: ResponseType.auto),
   Content(
-      text: '节食：不好！', type: ContentType.TEXT, responseType: ResponseType.auto),
+      text: '1.节食：不好！',
+      type: ContentType.TEXT,
+      responseType: ResponseType.auto),
   Content(
       text: '如果你有一顿节食了，那你很可能很快感到饥饿，并在3小时之内再次进食。这样，你就很容易打破我们饮食计划的原则了！',
       type: ContentType.TEXT,
       responseType: ResponseType.auto),
   Content(
-      text: '如果你对吃多少没有数，又害怕一下吃得太多，你可以在刚开始适当计划少一些，之后再慢慢增补。要记住，饮食计划每天都可以变动。慢',
+      text: '如果你对吃多少没有数，又害怕一下吃得太多，你可以在刚开始适当计划少一些，之后再慢慢增补。要记住，饮食计划每天都可以变动。慢慢来！',
       type: ContentType.TEXT,
       responseType: ResponseType.auto),
   Content(
-      text: '吃饱：最好！', type: ContentType.TEXT, responseType: ResponseType.auto),
-  Content(
-      text: '每一顿都能吃饱最好了！但这不容易，你很可能一不小心就吃多或者吃少了。不要急于前几',
+      text: '2.吃饱：最好！',
       type: ContentType.TEXT,
       responseType: ResponseType.auto),
   Content(
-      text: '暴食：也行！', type: ContentType.TEXT, responseType: ResponseType.auto),
+      text: '每一顿都能吃饱最好了！但这不容易，你很可能一不小心就吃多或者吃少了。不要急于前几天就能做好，慢慢来！',
+      type: ContentType.TEXT,
+      responseType: ResponseType.auto),
+  Content(
+      text: '3.暴食：也行！',
+      type: ContentType.TEXT,
+      responseType: ResponseType.auto),
   Content(
       text: '如果你一不小心暴食了，也没关系。暴食不是一下就能被克服的，每个人都会经历许多波折。因此，原谅自己，专注于之后的计划就好！',
       choices: ["我应该知道我要吃多少了，那么，我应该吃些什么呢？我吃垃圾食品可以吗？"],
@@ -374,7 +380,7 @@ List<Content> scheduleDietTutorContent = [
       type: ContentType.TEXT,
       responseType: ResponseType.choices),
   Content(
-      text: '有的！根据营养学的知识，我们为你设计了一些计划饮食的',
+      text: '有的！根据营养学的知识，我们为你设计了一些计划饮食的参考原则和推荐的具体食谱。',
       choices: ['我在计划饮食的时候有哪些参考原则呢？'],
       type: ContentType.TEXT,
       responseType: ResponseType.choices),
@@ -390,11 +396,11 @@ List<Content> scheduleDietTutorContent = [
       responseType: ResponseType.auto),
   Content(
       text:
-          '正餐：\n碳水化合物：米饭/面食/全麦面包/玉米/土豆/薯类\n蛋白质：蛋类/奶制品/豆浆/肉类（羊牛猪、鸡鸭鹅、鱼虾贝）\n维生素+膳食纤维：水果/蔬菜/果蔬汁',
+          '1.正餐：\n碳水化合物：米饭/面食/全麦面包/玉米/土豆/薯类\n蛋白质：蛋类/奶制品/豆浆/肉类（羊牛猪、鸡鸭鹅、鱼虾贝）\n维生素+膳食纤维：水果/蔬菜/果蔬汁',
       type: ContentType.TEXT,
       responseType: ResponseType.auto),
   Content(
-      text: '其他餐：\n牛奶、酸奶、水果、坚果、蔬菜',
+      text: '2.其他餐：\n牛奶、酸奶、水果、坚果、蔬菜',
       type: ContentType.TEXT,
       responseType: ResponseType.auto),
   Content(
