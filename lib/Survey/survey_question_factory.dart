@@ -2,8 +2,10 @@ import 'package:namer_app/models/survey_models.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:namer_app/Survey/survey_widgets.dart';
+import 'package:namer_app/Survey/chart_widgets.dart' as charts;
 import 'package:flutter/cupertino.dart';
-import 'package:charts_flutter/flutter.dart' as charts;
+// import 'package:fl_chart/fl_chart.dart' as charts;
+
 import 'package:namer_app/ResponseCard/swipeable_response_card.dart';
 
 Widget questionWidgetFactory(BuildContext context, Question question,
@@ -570,27 +572,21 @@ Widget buildChartQuestion(
   ];
 
   if (question.chartType == ChartType.Bar) {
-    List<charts.Series<ChartData, String>> seriesList = [
-      charts.Series<ChartData, String>(
-        id: 'ChartData',
-        domainFn: (ChartData data, _) => data.category,
-        measureFn: (ChartData data, _) => data.value,
-        data: question.chartData,
-        labelAccessorFn: (ChartData data, _) =>
-            '${data.category}: ${data.value}',
-      ),
-    ];
+    List<charts.BarData> barData = question.chartData
+        .map((data) => charts.BarData(
+              data.category,
+              data.value.toInt(),
+              Colors.blue, // Provide a default color if null
+            ))
+        .toList();
 
     children.add(
       SizedBox(
         height: 200.0,
-        child: question.orientation == ChartOrientation.vertical
-            ? charts.BarChart(seriesList, animate: true)
-            : charts.BarChart(
-                seriesList,
-                animate: true,
-                vertical: false,
-              ),
+        child: charts.BarChartWidget(
+          data: barData,
+          isVertical: question.orientation == ChartOrientation.vertical,
+        ),
       ),
     );
   } else if (question.chartType == ChartType.Bulleted) {

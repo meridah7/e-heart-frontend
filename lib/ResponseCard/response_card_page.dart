@@ -18,8 +18,8 @@ class BingeEatingResponseCard extends StatefulWidget {
 class _BingeEatingResponseCardState extends State<BingeEatingResponseCard>
     with SingleTickerProviderStateMixin {
   final _scrollController = ScrollController();
-  final DioClient dioClient = DioClient();
   late AnimationController _controller;
+  final DioClient dioClient = DioClient();
   late List<ResponseCardModel> _cardList = [];
 
   final _gridViewKey = GlobalKey();

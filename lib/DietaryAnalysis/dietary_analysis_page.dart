@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:namer_app/DietaryAnalysis/daily.dart';
-import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:fl_chart/fl_chart.dart';
 import 'models.dart';
 
 class DietaryAnalysisPage extends StatefulWidget {
@@ -182,7 +182,7 @@ class _WeeklyViewState extends State<WeeklyView> {
         return WeeklyFoodClearanceChart(data: clearanceData); // 需要实现
       case 'Binge Emotion':
         return WeeklyFoodClearanceChart(data: clearanceData);
-      // 添加更多的图表类型...
+      // // 添加更多的图表类型...
       default:
         return Container(); // 默认空视图
     }
@@ -214,16 +214,83 @@ class WeeklyBingeEatingChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<charts.Series<BingeEatingWeeklyData, String>> series = [
-      charts.Series(
-        id: "Binge Eating",
-        data: data,
-        domainFn: (BingeEatingWeeklyData series, _) => series.dayOfWeek,
-        measureFn: (BingeEatingWeeklyData series, _) => series.count,
-      )
-    ];
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: BarChart(
+        BarChartData(
+          alignment: BarChartAlignment.spaceAround,
+          maxY: _getMaxValue() * 1.2,
+          barGroups: _getBarGroups(),
+          borderData: FlBorderData(show: false),
+          gridData: FlGridData(show: false),
+          titlesData: FlTitlesData(
+            show: true,
+            bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                getTitlesWidget: (value, meta) {
+                  if (value < 0 || value >= data.length) return const Text('');
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(
+                      data[value.toInt()].dayOfWeek,
+                      style: const TextStyle(
+                        color: Colors.grey,
+                        fontSize: 12,
+                      ),
+                    ),
+                  );
+                },
+                reservedSize: 30,
+              ),
+            ),
+            leftTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                getTitlesWidget: (value, meta) {
+                  return Text(
+                    value.toInt().toString(),
+                    style: const TextStyle(
+                      color: Colors.grey,
+                      fontSize: 12,
+                    ),
+                  );
+                },
+                reservedSize: 30,
+              ),
+            ),
+            rightTitles: AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
+            topTitles: AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
-    return charts.BarChart(series, animate: true);
+  double _getMaxValue() {
+    return data.map((e) => e.count.toDouble()).reduce((a, b) => a > b ? a : b);
+  }
+
+  List<BarChartGroupData> _getBarGroups() {
+    return data.asMap().entries.map((entry) {
+      final index = entry.key;
+      final item = entry.value;
+      return BarChartGroupData(
+        x: index,
+        barRods: [
+          BarChartRodData(
+            toY: item.count.toDouble(),
+            color: Colors.purple, // Changed to match app theme
+            width: 20,
+            borderRadius: BorderRadius.circular(4),
+          ),
+        ],
+      );
+    }).toList();
   }
 }
 
@@ -241,49 +308,191 @@ class WeeklyFoodClearanceChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<charts.Series<WeeklyData, String>> series = [
-      charts.Series<WeeklyData, String>(
-        id: 'Food Clearance',
-        colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
-        domainFn: (WeeklyData row, _) => row.dayOfWeek,
-        measureFn: (WeeklyData row, _) => row.count,
-        data: data,
-      )
-    ];
-
-    return charts.BarChart(
-      series,
-      animate: true,
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: BarChart(
+        BarChartData(
+          alignment: BarChartAlignment.spaceAround,
+          maxY: _getMaxValue() * 1.2,
+          barGroups: _getBarGroups(),
+          borderData: FlBorderData(show: false),
+          gridData: FlGridData(show: false),
+          titlesData: FlTitlesData(
+            show: true,
+            bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                getTitlesWidget: (value, meta) {
+                  if (value < 0 || value >= data.length) return const Text('');
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(
+                      data[value.toInt()].dayOfWeek,
+                      style: const TextStyle(
+                        color: Colors.grey,
+                        fontSize: 12,
+                      ),
+                    ),
+                  );
+                },
+                reservedSize: 30,
+              ),
+            ),
+            leftTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                getTitlesWidget: (value, meta) {
+                  return Text(
+                    value.toInt().toString(),
+                    style: const TextStyle(
+                      color: Colors.grey,
+                      fontSize: 12,
+                    ),
+                  );
+                },
+                reservedSize: 30,
+              ),
+            ),
+            rightTitles: AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
+            topTitles: AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
+          ),
+        ),
+      ),
     );
+  }
+
+  double _getMaxValue() {
+    return data.map((e) => e.count.toDouble()).reduce((a, b) => a > b ? a : b);
+  }
+
+  List<BarChartGroupData> _getBarGroups() {
+    return data.asMap().entries.map((entry) {
+      final index = entry.key;
+      final item = entry.value;
+      return BarChartGroupData(
+        x: index,
+        barRods: [
+          BarChartRodData(
+            toY: item.count.toDouble(),
+            color: Colors.blue,
+            width: 20,
+            borderRadius: BorderRadius.circular(4),
+          ),
+        ],
+      );
+    }).toList();
   }
 }
 
 class EatingEmotionChart extends StatelessWidget {
   final List<EatingEmotionData> data;
+  final List<Color> emotionColors = [
+    Colors.green, // 开心
+    Colors.red, // 伤心
+    Colors.blue, // 难过
+  ];
 
   EatingEmotionChart({required this.data});
 
   @override
   Widget build(BuildContext context) {
-    List<charts.Series<dynamic, String>> seriesList = [];
-
-    // 对于每种情绪，创建一个系列
-    var emotions = ["开心", "伤心", "难过"]; // 添加更多情绪类型
-    for (var emotion in emotions) {
-      seriesList.add(charts.Series<EatingEmotionData, String>(
-        id: emotion,
-        domainFn: (EatingEmotionData row, _) => row.dayOfWeek,
-        measureFn: (EatingEmotionData row, _) => row.emotions[emotion],
-        data: data,
-        labelAccessorFn: (EatingEmotionData row, _) => emotion,
-      ));
-    }
-
-    return charts.BarChart(
-      seriesList,
-      animate: true,
-      barGroupingType: charts.BarGroupingType.grouped, // 分组展示
-      // 配置其他样式和属性...
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: BarChart(
+        BarChartData(
+          alignment: BarChartAlignment.spaceAround,
+          maxY: _getMaxValue() * 1.2,
+          barGroups: _getBarGroups(),
+          borderData: FlBorderData(show: false),
+          gridData: FlGridData(show: false),
+          titlesData: FlTitlesData(
+            show: true,
+            bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                getTitlesWidget: (value, meta) {
+                  if (value < 0 || value >= data.length) return const Text('');
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(
+                      data[value.toInt()].dayOfWeek,
+                      style: const TextStyle(
+                        color: Colors.grey,
+                        fontSize: 12,
+                      ),
+                    ),
+                  );
+                },
+                reservedSize: 30,
+              ),
+            ),
+            leftTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                getTitlesWidget: (value, meta) {
+                  return Text(
+                    value.toInt().toString(),
+                    style: const TextStyle(
+                      color: Colors.grey,
+                      fontSize: 12,
+                    ),
+                  );
+                },
+                reservedSize: 30,
+              ),
+            ),
+            rightTitles: AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
+            topTitles: AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
+          ),
+        ),
+      ),
     );
+  }
+
+  double _getMaxValue() {
+    double maxValue = 0;
+    for (var item in data) {
+      final sum = item.emotions.values.reduce((a, b) => a + b);
+      if (sum > maxValue) maxValue = sum.toDouble();
+    }
+    return maxValue;
+  }
+
+  List<BarChartGroupData> _getBarGroups() {
+    final emotions = ["开心", "伤心", "难过"];
+
+    return data.asMap().entries.map((entry) {
+      final index = entry.key;
+      final item = entry.value;
+
+      List<BarChartRodData> bars = [];
+      for (int i = 0; i < emotions.length; i++) {
+        final emotion = emotions[i];
+        final value = item.emotions[emotion] ?? 0;
+
+        bars.add(
+          BarChartRodData(
+            toY: value.toDouble(),
+            color: emotionColors[i],
+            width: 15,
+            borderRadius: BorderRadius.circular(4),
+          ),
+        );
+      }
+
+      return BarChartGroupData(
+        x: index,
+        barRods: bars,
+        barsSpace: 4,
+      );
+    }).toList();
   }
 }

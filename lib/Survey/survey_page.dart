@@ -218,6 +218,10 @@ class _SurveyPageState extends State<SurveyPage> {
       setState(() async {
         widget.survey.questions = await generateDietPlanReview();
       });
+    } else if (widget.taskId == 'S5') {
+      setState(() async {
+        widget.survey.questions = await generateImpulseReview();
+      });
     }
   }
 
@@ -334,6 +338,10 @@ class _SurveyPageState extends State<SurveyPage> {
                   progressProvider.allRequiredTaskIds.contains(widget.taskId);
               progressProvider.updateProgress(widget.taskId,
                   isRequired: isRequired);
+              if (['task11', 'dietaryIntake'].contains(widget.taskId)) {
+                answers[widget.taskId] = [];
+                await _userPref.setData('completedTaskAnswers', answers);
+              }
             }
           }
 
