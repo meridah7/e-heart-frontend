@@ -75,14 +75,19 @@ class BarChartWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       height: 300,
-      child: charts.BarChart(
-        charts.BarChartData(
-          alignment: charts.BarChartAlignment.center,
-          maxY: _getMaxValue() * 1.2, // 给最大值留出20%的空间
-          titlesData: _getTitlesData(),
-          borderData: charts.FlBorderData(show: false),
-          barGroups: _getBarGroups(),
-          gridData: charts.FlGridData(show: false),
+      width: 400,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: charts.BarChart(
+          charts.BarChartData(
+            alignment: charts.BarChartAlignment.spaceAround,
+            groupsSpace: 30, // 组间间隔
+            maxY: _getMaxValue() * 1.2 ?? 10, // 给最大值留出20%的空间
+            titlesData: _getTitlesData(),
+            borderData: charts.FlBorderData(show: false),
+            barGroups: _getBarGroups(),
+            gridData: charts.FlGridData(show: false),
+          ),
         ),
       ),
     );
