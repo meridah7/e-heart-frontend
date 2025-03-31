@@ -12,6 +12,11 @@ class ApiEndpoints {
   // 用户信息
   static const String PROFILE = '/users/current';
 
+  // 用户进度
+  static const String PROGRESS = '/users/progress';
+  // 更新进度
+  static const String UPDATE_PROGRESS = '/users/task';
+
   // 冲动应对 GET-获取策略 PUT-更新策略 POST-添加策略
   static const String IMPULSE_STRATEGIES = '/impulse/impulse-strategies';
   // 冲动应对 卡片排序

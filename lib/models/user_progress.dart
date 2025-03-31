@@ -1,64 +1,31 @@
-import 'package:json_annotation/json_annotation.dart';
+// To parse this JSON data, do
+//
+//     final userProgress = userProgressFromJson(jsonString);
 
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'dart:convert';
+
+part 'user_progress.freezed.dart';
 part 'user_progress.g.dart';
 
-@JsonSerializable()
-class UserProgress {
-  int? progress;
-  @JsonKey(name: 'finished_task_ids')
-  List<String>? finishedTaskIds;
-  @JsonKey(name: 'all_required_task_ids')
-  List<String>? allRequiredTaskIds;
-  @JsonKey(name: 'all_optional_task_ids')
-  List<String>? allOptionalTaskIds;
-  @JsonKey(name: 'finished_optional_task_ids')
-  List<String>? finishedOptionalTaskIds;
+UserProgress userProgressFromJson(String str) =>
+    UserProgress.fromJson(json.decode(str));
 
-  UserProgress({
-    this.progress,
-    this.finishedTaskIds,
-    this.allRequiredTaskIds,
-    this.allOptionalTaskIds,
-    this.finishedOptionalTaskIds,
-  });
+String userProgressToJson(UserProgress data) => json.encode(data.toJson());
 
-  @override
-  String toString() {
-    return 'UserProgress(progress: $progress, finishedTaskIds: $finishedTaskIds, allRequiredTaskIds: $allRequiredTaskIds, allOptionalTaskIds: $allOptionalTaskIds)';
-  }
+@freezed
+class UserProgress with _$UserProgress {
+  const factory UserProgress({
+    @JsonKey(name: "progress") required int progress,
+    @JsonKey(name: "finished_task_ids") required dynamic finishedTaskIds,
+    @JsonKey(name: "finished_optional_task_ids")
+    required dynamic finishedOptionalTaskIds,
+    @JsonKey(name: "all_required_task_ids")
+    required List<String> allRequiredTaskIds,
+    @JsonKey(name: "all_optional_task_ids")
+    required List<String> allOptionalTaskIds,
+  }) = _UserProgress;
 
-  factory UserProgress.fromMap(Map<String, dynamic> data) => UserProgress(
-        progress: data['progress'] as int?,
-        finishedTaskIds: data['finished_task_ids'] as List<String>,
-        allRequiredTaskIds: data['all_required_task_ids'] as List<String>,
-        allOptionalTaskIds: data['all_optional_task_ids'] as List<String>,
-        finishedOptionalTaskIds:
-            data['finished_optional_task_ids'] as List<String>,
-      );
-
-  Map<String, dynamic> toMap() => {
-        'progress': progress,
-        'finished_task_ids': finishedTaskIds,
-        'all_required_task_ids': allRequiredTaskIds,
-        'all_optional_task_ids': allOptionalTaskIds,
-        'finished_optional_task_ids': finishedOptionalTaskIds,
-      };
-
-  /// `dart:convert`
-  ///
-  /// Parses the string and returns the resulting Json object as [UserProgress].
-  // factory UserProgress.fromJson(String data) {
-  //   return UserProgress.fromMap(json.decode(data) as Map<String, dynamic>);
-  // }
-
-  // 自动生成的方法
   factory UserProgress.fromJson(Map<String, dynamic> json) =>
       _$UserProgressFromJson(json);
-
-  Map<String, dynamic> toJson() => _$UserProgressToJson(this);
-
-  /// `dart:convert`
-  ///
-  /// Converts [UserProgress] to a JSON string.
-  // String toJson() => json.encode(toMap());
 }
