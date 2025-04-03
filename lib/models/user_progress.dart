@@ -1,17 +1,7 @@
-// To parse this JSON data, do
-//
-//     final userProgress = userProgressFromJson(jsonString);
-
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'dart:convert';
 
 part 'user_progress.freezed.dart';
 part 'user_progress.g.dart';
-
-UserProgress userProgressFromJson(String str) =>
-    UserProgress.fromJson(json.decode(str));
-
-String userProgressToJson(UserProgress data) => json.encode(data.toJson());
 
 @freezed
 class UserProgress with _$UserProgress {

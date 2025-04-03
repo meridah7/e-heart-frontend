@@ -67,9 +67,7 @@ class ProgressProvider with ChangeNotifier {
 
   Future<void> fetchDisplayTaskList() async {
     try {
-      if (_userProgress == null) {
-        await fetchProgress();
-      }
+      await fetchProgress();
       List<Task> impulseRecordTaskList =
           await apiService.fetchImpulseReflectionRecords();
       // 聚合所有任务 并给完成的任务打上标记

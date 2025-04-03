@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:namer_app/utils/toast_util.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:namer_app/providers/progress.dart';
+import 'package:namer_app/utils/index.dart';
 import '../Chatbot/chatbot_page.dart';
 import '../Survey/survey_page.dart';
 import '../Survey/flippable_survey_page.dart';
@@ -7,20 +9,20 @@ import '../Survey/meal_planning_page.dart';
 import '../DietMonitoring/binge_eating_record_page.dart';
 import '../DietMonitoring/diet_monitoring_page.dart';
 // import '../ResponseCard/response_card_page.dart';
-import 'package:provider/provider.dart';
+// import 'package:provider/provider.dart';
 
 import 'package:namer_app/models/task_models.dart';
 
-import 'package:namer_app/providers/user_provider.dart';
-import 'package:namer_app/providers/progress_provider.dart';
+// import 'package:namer_app/providers/user_provider.dart';
+// import 'package:namer_app/providers/progress_provider.dart';
 import 'package:namer_app/pages/response_card/index.dart';
 
-class TodayListPage extends StatefulWidget {
+class TodayListPage extends ConsumerStatefulWidget {
   @override
   _TodayListPageState createState() => _TodayListPageState();
 }
 
-class _TodayListPageState extends State<TodayListPage> {
+class _TodayListPageState extends ConsumerState<TodayListPage> {
   // 用于HTTP 请求的Dio 实例
 
   bool showTasks = true;
@@ -32,21 +34,19 @@ class _TodayListPageState extends State<TodayListPage> {
 
   // List<String>? _finishedTaskIds = [];
 
+  late Progress _progressProvider;
+
   //初始化的状态
   @override
   void initState() {
     super.initState();
+    _progressProvider = ref.read(progressProvider.notifier);
     _initWidget();
   }
 
   Future<void> _initWidget() async {
     try {
-      var userProvider = Provider.of<UserProvider>(context, listen: false);
-      var progressProvider =
-          Provider.of<ProgressProvider>(context, listen: false);
-      await progressProvider.fetchProgress();
-      print('TodayListPage init ${userProvider.uuid}');
-      await progressProvider.fetchDisplayTaskList();
+      await _progressProvider.fetchProgress();
     } catch (e) {
       print('Error in _initWidget: $e');
     }
@@ -241,36 +241,34 @@ class _TodayListPageState extends State<TodayListPage> {
   }
 
   void _toggleView(bool showTaskView) async {
-    final userProvider = Provider.of<UserProvider>(context, listen: false);
-    await userProvider.fetchUser();
-    setState(() {
-      showTasks = showTaskView;
-    });
+    // final userProvider = Provider.of<UserProvider>(context, listen: false);
+    // await userProvider.fetchUser();
+    await _progressProvider.fetchProgress();
+
+    // setState(() {
+    //   showTasks = showTaskView;
+    // });
   }
 
   @override
   Widget build(BuildContext context) {
-    // 使用context获取UserProvider实例
-    return Consumer<ProgressProvider>(
-      builder: (context, progressProvider, child) {
-        return Scaffold(
-          appBar: AppBar(
-            title: Text('Day ${progressProvider.progress}',
-                style: TextStyle(color: Colors.black)),
-            elevation: 0,
-          ),
-          body: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                _buildSegmentedControl(),
-                Expanded(
-                    child: _buildTaskListView(progressProvider.dailyTaskList)),
-              ],
-            ),
-          ),
-        );
-      },
+    final progress = ref.watch(progressProvider);
+    final dailyTask = ref.watch(dailyTasksProvider);
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Day ${progress.value?.progress}',
+            style: TextStyle(color: Colors.black)),
+        elevation: 0,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            _buildSegmentedControl(),
+            Expanded(child: _buildTaskListView(dailyTask.value ?? [])),
+          ],
+        ),
+      ),
     );
   }
 }

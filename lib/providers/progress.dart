@@ -1,3 +1,4 @@
+import 'package:namer_app/models/task_models.dart';
 import 'package:namer_app/models/user_progress.dart';
 import 'package:namer_app/services/progress_service.dart';
 import 'package:namer_app/tasks/daily_tasks.dart';
@@ -5,38 +6,33 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'progress.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class Progress extends _$Progress {
   late ProgressService _progressService;
 
   @override
   FutureOr<UserProgress?> build() async {
     _progressService = ref.watch(progressServiceProvider);
-    return null;
+    return fetchProgress();
   }
 
-  // Future<UserProgress?> _fetchProgress() async {
-  //   try {
-  //     final UserProgress? progress = await _progressService.fetchProgress();
-  //     // await _fetchDisplayTaskList(progress);
-  //     return progress;
-  //   } catch (err) {
-  //     throw Exception('Error fetching progress: $err');
-  //   }
-  // }
+  Future<UserProgress?> fetchProgress() async {
+    try {
+      final UserProgress? progress = await _progressService.fetchProgress();
+      state = AsyncData(progress);
+      return progress;
+    } catch (err) {
+      throw Exception('Error fetching progress: $err');
+    }
+  }
 
-  // Future<void> updateProgress(String taskId, {bool isRequired = true}) async {
-  //   state = const AsyncLoading();
-  //   state = await AsyncValue.guard(() async {
-  //     final progress = await ref
-  //         .read(progressServiceProvider)
-  //         .updateProgress(taskId, isRequired: isRequired);
-  //     if (progress != null) {
-  //       await _fetchDisplayTaskList(progress);
-  //     }
-  //     return progress;
-  //   });
-  // }
+  Future<void> updateProgress(String taskId, {bool isRequired = true}) async {
+    state = const AsyncLoading();
+    await AsyncValue.guard(() async {
+      await _progressService.updateProgress(taskId, isRequired: isRequired);
+      await fetchProgress();
+    });
+  }
 
   Future<void> setProgress(int progress) async {
     state = const AsyncLoading();
@@ -46,44 +42,53 @@ class Progress extends _$Progress {
       return updatedProgress;
     });
   }
+}
 
-  Future<void> _fetchDisplayTaskList(UserProgress progress) async {
-    try {
-      final impulseRecordTaskList = await ref
-          .read(progressServiceProvider)
-          .fetchImpulseReflectionRecords();
+@Riverpod(keepAlive: true)
+class DailyTasks extends _$DailyTasks {
+  late ProgressService _progressService;
+  late UserProgress? _userProgress;
 
-      final requiredTasks = getTasksByIds(progress.allRequiredTaskIds)
-          .map((e) =>
-              e.copyWith(isCompleted: progress.finishedTaskIds?.contains(e.id)))
-          .toList();
-
-      final optionalTasks = getTasksByIds(progress.allOptionalTaskIds)
-          .map((e) => e.copyWith(
-              isCompleted: progress.finishedOptionalTaskIds?.contains(e.id)))
-          .toList();
-
-      // state = AsyncData(progress.copyWith(
-      //   dailyTasks: [...requiredTasks, ...impulseRecordTaskList],
-      //   optionalTasks: optionalTasks,
-      // ));
-    } catch (err) {
-      throw Exception('Error fetching task list: $err');
-    }
+  @override
+  Future<List<Task>> build() async {
+    _progressService = ref.watch(progressServiceProvider);
+    _userProgress = await ref.watch(progressProvider.future);
+    return _processTasks();
   }
 
-// @riverpod
-// List<Task> dailyTaskList(DailyTaskListRef ref) {
-//   return ref.watch(progressProvider).whenOrNull(
-//             data: (progress) => progress.dailyTasks ?? [],
-//           ) ??
-//       [];
-// }
+  Future<List<Task>> _processTasks() async {
+    final List<Task> impulseRecordTasks =
+        await _progressService.fetchImpulseReflectionRecords();
+    final List<Task> requiredTasks = getTasksByIds(
+      _userProgress?.allRequiredTaskIds ?? [],
+    ).map((e) {
+      return e.copyWith(
+        isCompleted: _userProgress?.finishedTaskIds.contains(e.id) ?? false,
+      );
+    }).toList();
+    // final List<Task> requiredTasks = _userProgress.;
+    // final List<Task> optionalTasks = tasks.where((task) => !task.isRequired).toList();
 
-// @riverpod
-// List<Task> optionalTaskList(OptionalTaskListRef ref) {
-//   return ref.watch(progressProvider).whenOrNull(
-//             data: (progress) => progress.optionalTasks ?? [],
-//           ) ??
-//       [];
+    // 处理 requiredTasks 和 optionalTasks
+    // ...
+
+    return [
+      ...requiredTasks,
+      ...impulseRecordTasks,
+    ];
+  }
+}
+
+@Riverpod(keepAlive: true)
+class OptionalTasks extends _$OptionalTasks {
+  late final UserProgress? _userProgress;
+  @override
+  Future<List<Task>> build() async {
+    _userProgress = await ref.watch(progressProvider.future);
+    return getTasksByIds(_userProgress?.allOptionalTaskIds ?? []).map((e) {
+      return e.copyWith(
+          isCompleted:
+              _userProgress?.finishedOptionalTaskIds.contains(e.id) ?? false);
+    }).toList();
+  }
 }

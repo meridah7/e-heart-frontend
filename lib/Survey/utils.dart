@@ -74,6 +74,9 @@ Future<Response?> handleSubmitData(String taskId, Map<String, dynamic> answers,
       Map<String, dynamic> refined = refineAnswers(taskId, answers);
       return await dioClient.postRequest(
           '/impulse/impulse-reflection/', refined);
+    case 'S4':
+      Map<String, dynamic> refined = refineAnswers(taskId, answers);
+      return await dioClient.postRequest('/meal_plan_reflections', refined);
     default:
       return null;
   }
@@ -131,6 +134,7 @@ Map<String, dynamic> refineAnswers(
           refined[entry.key] = entry.value;
         }
       }
+      break;
     case 'S5':
       for (var entry in answers.entries) {
         if (entry.key == 'record_impulses_immediately') {
@@ -145,6 +149,39 @@ Map<String, dynamic> refineAnswers(
       }
       refined['reflection_date'] =
           DateFormat('yyyy-MM-dd').format(DateTime.now());
+      break;
+    case 'S4':
+      for (var entry in answers.entries) {
+        switch (entry.key) {
+          case 'is_planned':
+            refined[entry.key] = entry.value.contains('是的') ? true : false;
+            break;
+          case 'reason_not_planned':
+            refined[entry.key] = entry.value[0];
+            break;
+          case 'countermeasure_not_planned':
+            refined[entry.key] = entry.value[0];
+            break;
+          case 'is_time_controlled':
+            refined[entry.key] = entry.value.contains('是的') ? true : false;
+            break;
+          case 'is_effortted':
+            refined[entry.key] = entry.value.contains('是的') ? true : false;
+            break;
+          case 'is_different_plan':
+            refined[entry.key] = entry.value.contains('是的') ? true : false;
+            break;
+          case 'is_improved':
+            refined[entry.key] = entry.value.contains('是的') ? true : false;
+            break;
+          case 'improvement_content':
+            refined[entry.key] = entry.value[0];
+            break;
+          default:
+        }
+      }
+      refined['reflection_date'] = DateTime.now().millisecondsSinceEpoch;
+      break;
     default:
       break;
   }
@@ -542,8 +579,10 @@ Future<List<Question>> generateDietPlanReview() async {
             TextQuestion(
                 '小E知道坚持完成这个任务是个不容易的事情，因此没有每天进行饮食计划也完全没关系～\n\n您只需要想想干扰自己进行饮食日志记录的原因，并提出一些可能的改善策略就好啦。\n\n'
                 '有什么困难阻碍着我',
-                false),
-            TextQuestion('想想办法，怎样才能做的更好呢', false)
+                false,
+                alias: 'reason_not_planned'),
+            TextQuestion('想想办法，怎样才能做的更好呢', false,
+                alias: 'countermeasure_not_planned')
           ];
         } else {
           return [
@@ -571,8 +610,15 @@ Future<List<Question>> generateDietPlanReview() async {
             [],
             ChartType.Bar,
             description: "展示您在过去一周内提前做好饮食计划的天数以及未提前做好计划的天数。"),
-        SingleChoiceQuestion("我每天有提前做好饮食计划吗？", [], {},
-            description: '小E看到您已经做了$plannedDays天的计划', required: false),
+        SingleChoiceQuestion(
+            "我每天有提前做好饮食计划吗？",
+            [
+              '是',
+              '否',
+            ],
+            {},
+            description: '小E看到您已经做了$plannedDays天的计划',
+            required: false),
         ...missingDayQuestion(),
         ChartQuestion(
             "我的饮食计划中的每餐间隔时间",
@@ -608,6 +654,7 @@ Future<List<Question>> generateDietPlanReview() async {
                 })
               ],
             },
+            alias: 'is_time_controlled',
             description: "小E看到您本周有$unreasonableCount天仅仅计划了3餐或3餐以下"),
         // description: "您计划进食的时间共有x次不在3- 4 小时之间"),
         SingleChoiceQuestion(
@@ -619,10 +666,12 @@ Future<List<Question>> generateDietPlanReview() async {
                 TextQuestion(
                     '按照计划进食真的是一件不容易的事情，需要我们一起慢慢努力。那么，你可以想想干扰自己按照饮食计划进食的原因，并提出一些可能的改善策略就好啦。\n\n'
                     '干扰原因',
-                    false),
-                TextQuestion('对策', false)
+                    false,
+                    alias: 'reason_not_efforted'),
+                TextQuestion('对策', false, alias: 'countermeasure_not_efforted')
               ]
             },
+            alias: 'is_effortted',
             description: ""),
         SingleChoiceQuestion(
             "如果我没有遵循饮食计划，我会努力重新专注于下一次计划吗？",
@@ -642,6 +691,7 @@ Future<List<Question>> generateDietPlanReview() async {
                     {})
               ]
             },
+            alias: 'is_focused_next',
             description: ""),
         SingleChoiceQuestion(
             "我每天的饮食计划是否可以完全不一样？",
@@ -657,6 +707,7 @@ Future<List<Question>> generateDietPlanReview() async {
                     {})
               ]
             },
+            alias: 'is_different_plan',
             description: ""),
         SingleChoiceQuestion(
             "我做的饮食计划还有什么可以调整改善的地方吗？",
@@ -666,12 +717,11 @@ Future<List<Question>> generateDietPlanReview() async {
                 SingleChoiceQuestion("真棒！继续努力哦～", ['好的！'], {})
               ],
               "有一些可以调整的地方": [
-                TextQuestion(
-                  "请写下您认为可以调整的地方，您可以在明天的计划中努力做到~",
-                  false,
-                )
+                TextQuestion("请写下您认为可以调整的地方，您可以在明天的计划中努力做到~", false,
+                    alias: 'improvement_content')
               ]
             },
+            alias: 'is_improved',
             description: ""),
         SingleChoiceQuestion(
             '真棒，你已经完成今天全部的反思内容啦，您可以再整体回顾一下您的成果，是不是有不一样的收获呢', [], {},

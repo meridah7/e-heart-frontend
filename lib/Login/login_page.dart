@@ -1,18 +1,19 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:namer_app/providers/user_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:namer_app/providers/user.dart';
 import 'package:namer_app/services/dio_client.dart';
+import 'package:namer_app/services/api_endpoints.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:namer_app/utils/toast_util.dart';
+import 'package:namer_app/utils/index.dart';
 import 'dart:async';
-import 'package:provider/provider.dart';
 
-class LoginPage extends StatefulWidget {
+class LoginPage extends ConsumerStatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends ConsumerState<LoginPage> {
   // 用于HTTP 请求的Dio 实例
   final DioClient dioClient = DioClient();
 
@@ -157,8 +158,8 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
     try {
-      var response = await dioClient.postRequest(
-          '/auth/sendCode', {'phone_number': _phoneNumberController.text});
+      var response = await dioClient.postRequest(ApiEndpoints.SEND_CODE,
+          {'phone_number': _phoneNumberController.text});
       if (response.statusCode == 200) {
         ToastUtils.showToast('验证码已发送');
         _startCountdown();
@@ -179,8 +180,8 @@ class _LoginPageState extends State<LoginPage> {
   // 更新UserPreference
   Future<void> _updateUserInfo() async {
     try {
-      final userProvider = Provider.of<UserProvider>(context, listen: false);
-      await userProvider.fetchUser();
+      final user = ref.read(userProvider.notifier);
+      await user.fetchUser();
     } catch (err) {
       print('Error in update preference $err');
       throw Exception(err);

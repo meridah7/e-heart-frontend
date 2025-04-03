@@ -14,11 +14,12 @@ import 'utils.dart';
 import 'package:dio/dio.dart';
 
 class SurveyPage extends StatefulWidget {
-  SurveyPage(
-      {required this.survey,
-      required this.taskId,
-      this.handleSubmit,
-      this.presetAnswers});
+  SurveyPage({
+    required this.survey,
+    required this.taskId,
+    this.handleSubmit,
+    this.presetAnswers,
+  });
 
   // final bool isLastTask;
   final Function? handleSubmit;
@@ -330,7 +331,7 @@ class _SurveyPageState extends State<SurveyPage> {
             print('[uploadSurveyData] error $e');
           });
 
-          if (res?.statusCode == 200) {
+          if (res?.statusCode == 200 || res?.statusCode == 201) {
             if (mounted) {
               var progressProvider =
                   Provider.of<ProgressProvider>(context, listen: false);

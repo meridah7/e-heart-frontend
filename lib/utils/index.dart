@@ -20,3 +20,12 @@ class ToastUtils {
         fontSize: 16.0); //文本字号
   }
 }
+
+Widget customLoading() {
+  return Center(
+    child: CircularProgressIndicator(
+      valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+      strokeWidth: 2.0,
+    ),
+  );
+}

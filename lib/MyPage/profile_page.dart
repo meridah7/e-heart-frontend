@@ -1,23 +1,23 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:namer_app/services/dio_client.dart';
-import 'package:dio/dio.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:namer_app/providers/user.dart';
 import 'package:namer_app/utils/helper.dart';
-import 'package:provider/provider.dart';
-import 'package:namer_app/providers/user_provider.dart';
+import 'package:namer_app/models/user.dart' as user_model;
+import 'package:namer_app/utils/index.dart';
 
-class ProfilePage extends StatefulWidget {
+class ProfilePage extends ConsumerStatefulWidget {
   const ProfilePage({super.key});
 
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
+  _ProfilePageState createState() => _ProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
-  final DioClient dioClient = DioClient();
+class _ProfilePageState extends ConsumerState<ProfilePage> {
+  // final DioClient dioClient = DioClient();
 
   // 更新生日数据
-  void _editBirthdayField(DateTime currentValue) {
+  void _editBirthdayField(DateTime? currentValue) {
     showCupertinoModalPopup(
       context: context,
       builder: (_) => Container(
@@ -30,9 +30,9 @@ class _ProfilePageState extends State<ProfilePage> {
               child: CupertinoDatePicker(
                 mode: CupertinoDatePickerMode.date,
                 initialDateTime: currentValue,
-                onDateTimeChanged: (DateTime newDateTime) {
+                onDateTimeChanged: (DateTime? newDateTime) {
                   setState(() {
-                    currentValue = newDateTime;
+                    currentValue = newDateTime ?? DateTime.now();
                   });
                 },
               ),
@@ -41,8 +41,10 @@ class _ProfilePageState extends State<ProfilePage> {
               child: Text('保存'),
               onPressed: () {
                 Navigator.pop(context); // Close picker
-                _updateUser('birthday',
-                    currentValue.toIso8601String()); // Update user birthday
+                _updateUser(
+                    'birthday',
+                    (currentValue ?? DateTime.now())
+                        .toIso8601String()); // Update user birthday
               },
             )
           ],
@@ -167,78 +169,18 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void _logOut() async {
-    if (mounted) {
-      var userProvider = Provider.of<UserProvider>(context, listen: false);
-      await userProvider.logOut();
-    }
+    final userController = ref.read(userProvider.notifier);
+    userController.logOut();
   }
 
   void _updateUser(String property, dynamic target) async {
     try {
-      Response response = await dioClient.putRequest('/users/current', {
-        property: target,
-      });
-      if (response.statusCode == 200) {
-        if (mounted) {
-          final userProvider =
-              Provider.of<UserProvider>(context, listen: false);
-          userProvider.fetchUser();
-        }
-      }
+      final userController = ref.read(userProvider.notifier);
+      userController.updateUser({property: target});
     } catch (err) {
       print('Error in update user info $err');
       throw Exception(err);
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('个人基本信息'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
-      body: Consumer<UserProvider>(
-        builder: (context, user, child) {
-          return ListView(
-            children: <Widget>[
-              // TODO 编辑手机号
-              _buildListTile('手机号', '${user.phoneNumber}', () => {}),
-              _buildListTile('名称', '${user.name}',
-                  () => _editTextField('name', user.name ?? '')),
-              _buildListTile('邮箱', '${user.email}',
-                  () => _editTextField('email', user.email ?? '')),
-              // TODO 编辑性别
-              _buildListTile('性别', '男', () => {}),
-              _buildListTile('生日', Helper.formatDateTime(user.birthday),
-                  () => _editBirthdayField(user.birthday)),
-              _buildListTile('身高', '${user.height.toInt()}cm',
-                  () => _editHeightField(user.height.toInt())),
-              _buildListTile('体重', '${user.weight.toInt()}kg',
-                  () => _editWeightField(user.weight.toInt())),
-              SizedBox(
-                height: 20,
-              ),
-              SizedBox(
-                  width: 80,
-                  height: 40,
-                  child: ElevatedButton(
-                    onPressed: () => _logOut(),
-                    style: ElevatedButton.styleFrom(maximumSize: Size(80, 40)),
-                    child: Text(
-                      '退出登录',
-                    ),
-                  ))
-            ],
-          );
-        },
-      ),
-    );
   }
 
   ListTile _buildListTile(String title, String subtitle, VoidCallback onTap) {
@@ -253,5 +195,66 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       onTap: onTap,
     );
+  }
+
+  Widget _buildUserInfo(AsyncValue<user_model.User?> user) {
+    return user.when(data: (user) {
+      return user != null
+          ? ListView(
+              children: <Widget>[
+                // TODO 编辑手机号
+                _buildListTile('手机号', '${user.phoneNumber}', () => {}),
+                _buildListTile('名称', '${user.name}',
+                    () => _editTextField('name', user.name ?? '')),
+                _buildListTile('邮箱', '${user.email}',
+                    () => _editTextField('email', user.email ?? '')),
+                // TODO 编辑性别
+                _buildListTile('性别', '男', () => {}),
+                _buildListTile(
+                    '生日',
+                    Helper.formatDateTime(user.birthday?.toLocal()),
+                    () => _editBirthdayField(user.birthday?.toLocal())),
+                _buildListTile('身高', '${user.height?.toInt()}cm',
+                    () => _editHeightField((user.height ?? 0).toInt())),
+                _buildListTile('体重', '${user.weight?.toInt()}kg',
+                    () => _editWeightField((user.weight ?? 0).toInt())),
+                SizedBox(
+                  height: 20,
+                ),
+                SizedBox(
+                    width: 80,
+                    height: 40,
+                    child: ElevatedButton(
+                      onPressed: () => _logOut(),
+                      style:
+                          ElevatedButton.styleFrom(maximumSize: Size(80, 40)),
+                      child: Text(
+                        '退出登录',
+                      ),
+                    ))
+              ],
+            )
+          : customLoading();
+    }, error: (error, StackTrace trace) {
+      return customLoading();
+    }, loading: () {
+      return customLoading();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final user = ref.watch(userProvider);
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text('个人基本信息'),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ),
+        body: _buildUserInfo(user));
   }
 }

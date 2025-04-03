@@ -4,7 +4,7 @@ import 'package:namer_app/main.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
-import 'package:namer_app/utils/toast_util.dart';
+import 'package:namer_app/utils/index.dart';
 import 'api_endpoints.dart';
 
 class DioClient {
@@ -190,7 +190,7 @@ class DioClient {
 
   // POST 请求方法
   Future<Response> postRequest(
-      String endpoint, Map<String, dynamic> data) async {
+      String endpoint, Map<String, dynamic>? data) async {
     try {
       print('dio request $data');
       final response = await _dio.post(endpoint, data: data);

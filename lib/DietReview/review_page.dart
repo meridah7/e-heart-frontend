@@ -1,30 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:namer_app/providers/user_provider.dart';
+import 'package:namer_app/providers/user.dart';
+// import 'package:namer_app/models/user.dart' as user_model;
 import 'package:namer_app/user_preference.dart';
-import 'package:provider/provider.dart';
 import './review_template_page.dart';
 import './models.dart';
 
-class ReviewPage extends StatefulWidget {
+class ReviewPage extends ConsumerStatefulWidget {
   const ReviewPage({required this.surveyKey, required this.reviewTitle});
 
   final String reviewTitle;
   final String surveyKey;
 
   @override
-  State<ReviewPage> createState() => _ReviewPageState();
+  _ReviewPageState createState() => _ReviewPageState();
 }
 
-class _ReviewPageState extends State<ReviewPage> {
+class _ReviewPageState extends ConsumerState<ReviewPage> {
   List<ReviewModel> reviewLogs = [];
-
+  late final User user;
   late Preferences _userPref;
 
   @override
   void initState() {
     super.initState();
-    _initializePreferences();
+    // _initializePreferences();
   }
 
   // FIXME: 清除缓存 仅调试使用
@@ -79,10 +80,11 @@ class _ReviewPageState extends State<ReviewPage> {
     await _loadLog();
   }
 
-  Future<void> _initializePreferences() async {
+  Future<void> _initializePreferences(String uuid) async {
     if (mounted) {
-      var userProvider = Provider.of<UserProvider>(context, listen: false);
-      _userPref = await Preferences.getInstance(namespace: userProvider.uuid);
+      // var userProvider = Provider.of<UserProvider>(context, listen: false);
+      // user = ref.watch(userProvider);
+      _userPref = await Preferences.getInstance(namespace: uuid);
       await _loadLog();
     }
   }
@@ -165,6 +167,8 @@ class _ReviewPageState extends State<ReviewPage> {
 
   @override
   Widget build(BuildContext context) {
+    final user = ref.watch(userProvider);
+    _initializePreferences(user.value?.uuid ?? '');
     return Scaffold(
         appBar: AppBar(
           title: Text(widget.reviewTitle),

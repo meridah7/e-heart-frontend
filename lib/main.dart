@@ -8,8 +8,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 // models
 import 'package:namer_app/ResponseCard/response_card_model.dart';
 // providers
-import 'package:namer_app/providers/user_provider.dart';
-import 'package:namer_app/providers/progress_provider.dart';
+// import 'package:namer_app/providers/user_provider.dart';
 
 // pages
 import 'TodayList/today_list_page.dart';
@@ -21,24 +20,12 @@ import 'Login/register_info_page.dart';
 import 'package:provider/provider.dart' as provider;
 import 'debugButton.dart';
 import 'DailyDiet/event_log_page.dart';
-import 'package:namer_app/pages/response_card/index.dart';
-// services
-import 'package:namer_app/services/user_service.dart';
-import 'package:namer_app/services/progress_service.dart';
 
 // riverpod 状态管理
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 // part 'main.g.dart';
-
-final userProvider = ChangeNotifierProvider<UserProvider>((ref) {
-  return UserProvider(apiService: UserService());
-});
-
-final progressProvider = ChangeNotifierProvider<ProgressProvider>((ref) {
-  return ProgressProvider(apiService: ProgressService());
-});
 
 final responseCardProvider =
     ChangeNotifierProvider<ResponseCardModelProvider>((ref) {
@@ -70,12 +57,7 @@ class MyApp extends ConsumerWidget {
       // 使用MultiProvider包裹MaterialApp
       providers: [
         provider.ChangeNotifierProvider.value(
-            value: ref.watch(userProvider.notifier)), // 创建UserProvider实例
-        provider.ChangeNotifierProvider.value(
-            value: ref.watch(progressProvider.notifier)), // 创建UserProvider实例
-        provider.ChangeNotifierProvider.value(
-            value:
-                ref.watch(responseCardProvider.notifier)), // 创建UserProvider实例
+            value: ref.watch(responseCardProvider.notifier)), // 创建冲动响应卡实例
       ],
 
       child: MaterialApp(
@@ -249,18 +231,18 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     super.initState();
     _selectedIndex = widget.initialTabIndex;
-    _checkLoggedIn();
+    // _checkLoggedIn();
   }
 
-  void _checkLoggedIn() async {
-    try {
-      if (mounted) {
-        final userProvider =
-            provider.Provider.of<UserProvider>(context, listen: false);
-        userProvider.fetchUser();
-      }
-    } catch (e) {
-      print('请求用户信息出错: $e');
-    }
-  }
+  // void _checkLoggedIn() async {
+  //   try {
+  //     if (mounted) {
+  //       final userProvider =
+  //           provider.Provider.of<UserProvider>(context, listen: false);
+  //       userProvider.fetchUser();
+  //     }
+  //   } catch (e) {
+  //     print('请求用户信息出错: $e');
+  //   }
+  // }
 }

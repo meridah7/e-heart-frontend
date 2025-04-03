@@ -8,6 +8,7 @@ class ApiEndpoints {
   // 用户认证
   static const String SEND_CODE = '/auth/sendCode';
   static const String VERIFY_CODE = '/auth/verifyCode';
+  static const String LOG_OUT = '/auth/logout';
 
   // 用户信息
   static const String PROFILE = '/users/current';

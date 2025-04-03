@@ -1,9 +1,9 @@
 // ignore_for_file: constant_identifier_names
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:namer_app/models/task_models.dart';
-import 'package:namer_app/providers/progress_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:namer_app/providers/progress.dart';
 import '../DietReview/review_page.dart';
 import './practice_list_page.dart';
 import 'package:namer_app/widgets/task_list_widget.dart';
@@ -15,56 +15,52 @@ const String DIET_PLAN_REVIEW_KEY = 'S4';
 // 冲动记录反思
 const String IMPULSE_REVIEW_KEY = 'S5';
 
-class ReviewAnalysisPage extends StatefulWidget {
+class ReviewAnalysisPage extends ConsumerStatefulWidget {
   @override
   _ReviewAnalysisPageState createState() => _ReviewAnalysisPageState();
 }
 
-class _ReviewAnalysisPageState extends State {
+class _ReviewAnalysisPageState extends ConsumerState<ReviewAnalysisPage> {
   @override
   Widget build(BuildContext context) {
-    return Consumer<ProgressProvider>(
-      builder: (context, progressProvider, child) {
-        return Scaffold(
-          appBar: AppBar(
-            title: Text('巩固提升',
+    final optionalTasks = ref.watch(optionalTasksProvider);
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('巩固提升',
+            style:
+                TextStyle(color: Colors.black)), // Text color changed to black
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 25.0),
+            Padding(
+              padding: const EdgeInsets.only(left: 25.0),
+              child: Text(
+                '反思分析记录',
                 style: TextStyle(
-                    color: Colors.black)), // Text color changed to black
-          ),
-          body: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: 25.0),
-                Padding(
-                  padding: const EdgeInsets.only(left: 25.0),
-                  child: Text(
-                    '反思分析记录',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                    ),
-                  ),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
                 ),
-                _buildReflectionSection(),
-                SizedBox(height: 25.0),
-                Padding(
-                  padding: const EdgeInsets.only(left: 25.0),
-                  child: Text(
-                    '选修练习',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                    ),
-                  ),
-                ),
-                _buildPracticeOptions(
-                    progressProvider.optionalTaskList.take(2).toList()),
-              ],
+              ),
             ),
-          ),
-        );
-      },
+            _buildReflectionSection(),
+            SizedBox(height: 25.0),
+            Padding(
+              padding: const EdgeInsets.only(left: 25.0),
+              child: Text(
+                '选修练习',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+            ),
+            _buildPracticeOptions((optionalTasks.value ?? []).take(2).toList()),
+          ],
+        ),
+      ),
     );
   }
 

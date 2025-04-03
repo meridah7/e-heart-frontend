@@ -1,28 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:namer_app/providers/progress_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:namer_app/providers/progress.dart';
 import 'package:namer_app/widgets/task_list_widget.dart';
-import 'package:provider/provider.dart';
 
-class PracticeListPage extends StatefulWidget {
+class PracticeListPage extends ConsumerStatefulWidget {
   @override
-  State<PracticeListPage> createState() => _PracticeListPageState();
+  _PracticeListPageState createState() => _PracticeListPageState();
 }
 
-class _PracticeListPageState extends State<PracticeListPage> {
+class _PracticeListPageState extends ConsumerState<PracticeListPage> {
   @override
   Widget build(BuildContext context) {
-    return Consumer<ProgressProvider>(
-        builder: (context, progressProvider, child) {
-      return Scaffold(
-          appBar: AppBar(
-            title: Text(
-              '选修练习',
-              style: TextStyle(color: Colors.black),
-            ),
-            iconTheme:
-                IconThemeData(color: Colors.black), // Change back button color
+    final optionalTasks = ref.watch(optionalTasksProvider);
+    return Scaffold(
+        appBar: AppBar(
+          title: Text(
+            '选修练习',
+            style: TextStyle(color: Colors.black),
           ),
-          body: taskListWidget(progressProvider.optionalTaskList));
-    });
+          iconTheme:
+              IconThemeData(color: Colors.black), // Change back button color
+        ),
+        body: taskListWidget(optionalTasks.value ?? []));
   }
 }

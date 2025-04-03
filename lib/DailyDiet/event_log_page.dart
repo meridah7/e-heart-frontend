@@ -8,7 +8,7 @@ import 'package:namer_app/Tasks/Survey/tasks.dart';
 import 'package:namer_app/models/task_models.dart';
 import 'package:namer_app/providers/progress_provider.dart';
 import 'package:namer_app/services/dio_client.dart';
-import 'package:namer_app/utils/toast_util.dart';
+import 'package:namer_app/utils/index.dart';
 import 'package:provider/provider.dart';
 
 class EventLogPage extends StatefulWidget {
