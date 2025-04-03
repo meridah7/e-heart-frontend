@@ -12,7 +12,7 @@
 
 ### 项目运行
 
-1. 配置fvm环境，指定flutter执行版本 3.19.5
+1. 配置fvm环境，指定flutter执行版本 3.22.1
 2. 使用VSCode 进行开发，安装Flutter 相关插件
 3. 安卓模拟器/真机调试：
 
@@ -27,13 +27,18 @@
 
 ### 推荐插件
 
-* Json To Dart Model： 用于将接口返回的响应JSON，直接自动生成带fromJson、toJson、toString方法的Dart class。
-* build runner: 用于一键生成model相关的操作代码。
+* freezed： 用于将接口返回的响应JSON，直接自动生成带fromJson、toJson、toString方法的Dart class
+* build runner: 用于生成Freezed和Riverpod等模板代码
+* Flutter
+* Dart
+* Github Copilot: 提供AI代码补全
+* Code Spell Checker： 检查单词拼写
+* Flutter Riverpod Snippets： 补全Riverpod 的代码脚本
+......
 
 ### 模型生成
 
-在VSCode 中使用Json To Dart 插件，直接将接口的响应转换成dart class，命名后存放在/lib/models 目录下。
-在项目中使用@JsonSerializable 生成所需的toJson 和fromJson 方法。
+在获取到接口的数据之后，将接口返回值的data的JSON内容复制，去quickType 网站上选择将JSON转换成dart class，并勾选freezed，命名并复制代码内容存放在/lib/models 目录下。
 
 * **user**
 * **user_progress**
@@ -44,11 +49,11 @@
 
 在项目中可以直接于代码中使用 lib/services/dio_client.dart 里对应的getRequest 和postRequest 来处理接口。
 
-建议的做法是在service/api_service.dart 的抽象类中创建需要的接口，在对应的service 文件中去实现接口。
+建议的做法是在lib/service 下的抽象类中创建需要的接口class，在对应的service 文件中去实现接口。
 
 ### 状态管理
 
-目前使用provider 做响应式的状态管理。目前实现的功能有用户信息的user provider和用户进度相关的progress provider。
+目前使用provider（逐步迁移至Riverpod） 做响应式的状态管理。目前实现的功能有用户信息的user provider和用户进度相关的progress provider。
 
 ### 问卷提交
 
