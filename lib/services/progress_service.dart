@@ -103,7 +103,9 @@ class ProgressService {
         }).toList();
       }
     } catch (e) {
-      throw Exception('Error in fetch impulse record list $e');
+      // throw Exception('Error in fetch impulse record list $e');
+      print('Error in fetch impulse record list $e');
+      return impulseRecordTaskList;
     }
     return impulseRecordTaskList;
   }

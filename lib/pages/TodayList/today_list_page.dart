@@ -239,7 +239,11 @@ class _TodayListPageState extends ConsumerState<TodayListPage> {
   void _toggleView(bool showTaskView) async {
     // final userProvider = Provider.of<UserProvider>(context, listen: false);
     // await userProvider.fetchUser();
-    await _progressProvider.fetchProgress();
+    try {
+      await _progressProvider.fetchProgress();
+    } catch (e) {
+      print('Error in _toggleView: $e');
+    }
 
     // setState(() {
     //   showTasks = showTaskView;
@@ -252,7 +256,7 @@ class _TodayListPageState extends ConsumerState<TodayListPage> {
     final dailyTask = ref.watch(dailyTasksProvider);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Day ${progress.value?.progress}',
+        title: Text('Day ${progress.value?.progress ?? 0}',
             style: TextStyle(color: Colors.black)),
         elevation: 0,
       ),

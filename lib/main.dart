@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 // utils
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:namer_app/providers/user_data.dart';
 
 // pages
 import 'pages/TodayList/today_list_page.dart';
@@ -95,16 +96,16 @@ class MyApp extends ConsumerWidget {
   }
 }
 
-class MainScreen extends StatefulWidget {
+class MainScreen extends ConsumerStatefulWidget {
+  MainScreen({this.initialTabIndex = 0});
+
   final int initialTabIndex;
 
-  MainScreen({this.initialTabIndex = 0});
   @override
   _MainScreenState createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
-  int _selectedIndex = 0;
+class _MainScreenState extends ConsumerState<MainScreen> {
   static List<Widget> _widgetOptions = <Widget>[
     TodayListPage(),
     EventLogPage(),
@@ -115,50 +116,17 @@ class _MainScreenState extends State<MainScreen> {
   // ==== debugButton config
   // Variables for managing debug button display logic
   int _clickCount = 0;
-  DateTime? _firstClickTime;
-  bool _showDebugButton = false;
+
   Offset _debugButtonOffset = Offset(0, 500);
-  // ==== debugButton config
+  DateTime? _firstClickTime;
+  int _selectedIndex = 0;
+  bool _showDebugButton = false;
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          Center(
-            child: _widgetOptions.elementAt(_selectedIndex),
-          ),
-          DebugButton(
-            offset: _debugButtonOffset,
-            onDrag: _updateDebugButtonPosition,
-            isVisible: _showDebugButton, // Control visibility
-          ),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: ('每日任务'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.event_note),
-            label: ('行为记录'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.rocket_launch_outlined),
-            label: ('巩固提升'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            label: ('我的'),
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        type: BottomNavigationBarType.fixed, // 重要
-      ),
-    );
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.initialTabIndex;
+    // _checkLoggedIn();
   }
 
   void _onItemTapped(int index) {
@@ -206,22 +174,53 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _selectedIndex = widget.initialTabIndex;
-    // _checkLoggedIn();
-  }
+  // ==== debugButton config
 
-  // void _checkLoggedIn() async {
-  //   try {
-  //     if (mounted) {
-  //       final userProvider =
-  //           provider.Provider.of<UserProvider>(context, listen: false);
-  //       userProvider.fetchUser();
-  //     }
-  //   } catch (e) {
-  //     print('请求用户信息出错: $e');
-  //   }
-  // }
+  @override
+  Widget build(BuildContext context) {
+    ref.listen(userDataProvider, (previous, next) {
+      next.whenData((user) {
+        if (user == null) {
+          Navigator.pushReplacementNamed(context, '/login');
+        }
+      });
+    });
+    return Scaffold(
+      body: Stack(
+        children: [
+          Center(
+            child: _widgetOptions.elementAt(_selectedIndex),
+          ),
+          DebugButton(
+            offset: _debugButtonOffset,
+            onDrag: _updateDebugButtonPosition,
+            isVisible: _showDebugButton, // Control visibility
+          ),
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.list),
+            label: ('每日任务'),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.event_note),
+            label: ('行为记录'),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.rocket_launch_outlined),
+            label: ('巩固提升'),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined),
+            label: ('我的'),
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        type: BottomNavigationBarType.fixed, // 重要
+      ),
+    );
+  }
 }
