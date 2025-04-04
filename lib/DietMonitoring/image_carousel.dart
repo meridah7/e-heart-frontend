@@ -5,7 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 class ImageCarousel extends StatefulWidget {
   final List<String> imageUrls;
 
-  ImageCarousel({required this.imageUrls});
+  const ImageCarousel({Key? key, required this.imageUrls}) : super(key: key);
 
   @override
   _ImageCarouselState createState() => _ImageCarouselState();
@@ -20,6 +20,11 @@ class _ImageCarouselState extends State<ImageCarousel> {
   void initState() {
     super.initState();
     _startAutoScroll();
+    
+    // Preload images
+    for (String url in widget.imageUrls) {
+      precacheImage(NetworkImage(url), context);
+    }
   }
 
   void _startAutoScroll() {
@@ -84,20 +89,15 @@ class _ImageCarouselState extends State<ImageCarousel> {
         ),
         Positioned(
           bottom: 10.0,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: widget.imageUrls.map((url) {
-              int index = widget.imageUrls.indexOf(url);
-              return Container(
-                width: 8.0,
-                height: 8.0,
-                margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: _currentPage == index ? Colors.white : Colors.grey,
-                ),
-              );
-            }).toList(),
+          child: AnimatedSmoothIndicator(
+            activeIndex: _currentPage,
+            count: widget.imageUrls.length,
+            effect: WormEffect(
+              dotHeight: 8,
+              dotWidth: 8,
+              activeDotColor: Colors.white,
+              dotColor: Colors.grey,
+            ),
           ),
         ),
       ],

@@ -3,12 +3,32 @@ import 'package:namer_app/models/survey_models.dart'; // Import the location of 
 import 'package:namer_app/Survey/survey_page.dart'; // Import your SurveyPage widget if reusable
 
 class FoodPurgePage extends StatelessWidget {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  void _handleSubmit(Map<String, dynamic> answers) {
+    // Check for required fields
+    if (answers['清除食物的具体时间'] == null || 
+        answers['你采取了哪种方式清除食物？'] == null ||
+        (answers['你采取了哪种方式清除食物？'] as String).isEmpty) {
+      
+      ScaffoldMessenger.of(_scaffoldKey.currentContext!).showSnackBar(
+        SnackBar(content: Text('请填写所有必填项'))
+      );
+      return;
+    }
+    
+    // Process and submit data
+    // ...
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       body: SurveyPage(
         survey: foodPurgeSurvey,
         taskId: 'foodPurgeSurvey',
+        handleSubmit: _handleSubmit,
       ),
     );
   }

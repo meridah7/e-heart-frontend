@@ -36,6 +36,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // 添加必要的导入
 import 'package:namer_app/pages/api_analytics_page.dart';  
 import 'package:namer_app/pages/cache_manager_page.dart';
+import 'package:namer_app/analytics/analytics_hub.dart';
 
 final userProvider = ChangeNotifierProvider<UserProvider>((ref) {
   return UserProvider(apiService: UserService());
@@ -145,6 +146,7 @@ class MyApp extends ConsumerWidget {
             '/register_info': (context) => RegisterInfoPage(),
             '/api_analytics': (context) => ApiAnalyticsPage(),
             '/cache_manager': (context) => CacheManagerPage(),
+            '/analytics_hub': (context) => AnalyticsHub(),
           },
           navigatorKey: navigatorKey),
     );

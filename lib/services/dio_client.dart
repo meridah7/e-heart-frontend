@@ -88,7 +88,7 @@ class DioClient {
         return handler.next(response);
       },
       onError: (DioException exception, handler) async {
-        // 记录API错误
+        // Record API error (keep existing code)
         final startTime = exception.requestOptions.extra['startTime'] as DateTime?;
         if (startTime != null) {
           ApiAnalytics.recordRequest(
@@ -99,6 +99,7 @@ class DioClient {
           );
         }
         
+        // Handle different error scenarios with user-friendly messages
         if (exception.response?.statusCode == 401) {
           // 刷新 Token
           final isRefreshed = await _refreshAccessToken();
@@ -125,16 +126,60 @@ class DioClient {
           }
         } else if (exception.response?.statusCode == 403) {
           handleRedirectLogin();
+        } else if (exception.response?.statusCode == 500) {
+          // Convert 500 errors to user-friendly exceptions
+          final userFriendlyException = UserFriendlyException(
+            '服务器出现错误，请稍后再试',
+            technicalDetails: exception.toString(),
+            errorCode: 500
+          );
+          
+          // Log for debugging
+          print('Server error: ${exception.message}');
+          
+          // Replace the exception with our user-friendly version
+          return handler.reject(
+            DioException(
+              requestOptions: exception.requestOptions,
+              error: userFriendlyException,
+              type: exception.type,
+              response: exception.response,
+            )
+          );
+        } else if (exception.type == DioExceptionType.connectionTimeout) {
+          // Handle timeout errors
+          return handler.reject(
+            DioException(
+              requestOptions: exception.requestOptions,
+              error: UserFriendlyException(
+                '请求超时，请检查网络连接',
+                technicalDetails: exception.toString(),
+              ),
+              type: exception.type,
+              response: exception.response,
+            )
+          );
         } else {
-          // 判断是否为 debug 模式
+          // Handle general errors
           if (kDebugMode) {
-            // 显示 Toast 提示
-
-            ToastUtils.showToast(
-              "接口请求失败：${exception.message}",
-            );
+            ToastUtils.showToast("接口请求失败：${exception.message}");
           }
+          
+          // Convert generic errors to user-friendly ones
+          return handler.reject(
+            DioException(
+              requestOptions: exception.requestOptions,
+              error: UserFriendlyException(
+                '请求失败，请稍后重试',
+                technicalDetails: exception.toString(),
+                errorCode: exception.response?.statusCode,
+              ),
+              type: exception.type,
+              response: exception.response,
+            )
+          );
         }
+        
         handler.next(exception);
       },
     );
@@ -404,5 +449,17 @@ class DioClient {
       supportOffline,
     );
   }
+}
+
+// Create a user-friendly exception class
+class UserFriendlyException implements Exception {
+  final String message;
+  final String? technicalDetails;
+  final int? errorCode;
+  
+  UserFriendlyException(this.message, {this.technicalDetails, this.errorCode});
+  
+  @override
+  String toString() => message;
 }
 

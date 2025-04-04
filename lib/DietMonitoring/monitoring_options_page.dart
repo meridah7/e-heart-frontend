@@ -17,14 +17,11 @@ class MonitoringOptionsPage extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 // 导航到饮食监控页面
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => DietMonitoringPage()));
+                Navigator.pushNamed(context, '/diet_monitoring');
               }, // 增加字体大小
               style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: Color.fromARGB(255, 174, 86, 165), // 按钮文字颜色
+                foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                backgroundColor: Theme.of(context).colorScheme.primary,
                 padding: EdgeInsets.symmetric(
                     horizontal: 32, vertical: 16), // 增加按钮的padding来增大按钮
               ),
@@ -41,8 +38,8 @@ class MonitoringOptionsPage extends StatelessWidget {
                             FoodPurgePage())); // 假设FoodPurgePage是食物清除页面的Widget
               }, // 增加字体大小
               style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: Color.fromARGB(255, 217, 156, 211), // 按钮文字颜色
+                foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                backgroundColor: Theme.of(context).colorScheme.primary,
                 padding: EdgeInsets.symmetric(
                     horizontal: 32, vertical: 16), // 增加按钮的padding来增大按钮
               ),

@@ -2,67 +2,54 @@ import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 class NetworkStatusBar extends StatefulWidget {
-  const NetworkStatusBar({Key? key}) : super(key: key);
-
   @override
-  State<NetworkStatusBar> createState() => _NetworkStatusBarState();
+  _NetworkStatusBarState createState() => _NetworkStatusBarState();
 }
 
 class _NetworkStatusBarState extends State<NetworkStatusBar> {
-  ConnectivityResult _connectionStatus = ConnectivityResult.none;
-  final Connectivity _connectivity = Connectivity();
-  late StreamSubscription<ConnectivityResult> _connectivitySubscription;
-
+  bool _isOnline = true;
+  
   @override
   void initState() {
     super.initState();
-    _initConnectivity();
-    _connectivitySubscription = 
-        _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+    _checkConnectivity();
+    Connectivity().onConnectivityChanged.listen(_updateConnectionStatus);
   }
-
-  @override
-  void dispose() {
-    _connectivitySubscription.cancel();
-    super.dispose();
+  
+  Future<void> _checkConnectivity() async {
+    final result = await Connectivity().checkConnectivity();
+    _updateConnectionStatus(result);
   }
-
-  Future<void> _initConnectivity() async {
-    late ConnectivityResult result;
-    try {
-      result = await _connectivity.checkConnectivity();
-    } catch (e) {
-      print('无法获取网络状态: $e');
-      return;
-    }
-    
-    if (!mounted) {
-      return;
-    }
-
+  
+  void _updateConnectionStatus(ConnectivityResult result) {
     setState(() {
-      _connectionStatus = result;
+      _isOnline = result != ConnectivityResult.none;
     });
   }
-
-  Future<void> _updateConnectionStatus(ConnectivityResult result) async {
-    setState(() {
-      _connectionStatus = result;
-    });
-  }
-
+  
   @override
   Widget build(BuildContext context) {
-    return _connectionStatus == ConnectivityResult.none
-        ? Container(
-            color: Colors.red,
-            padding: const EdgeInsets.symmetric(vertical: 2.0),
-            child: const Text(
-              '当前处于离线模式，部分功能可能不可用',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white, fontSize: 12),
-            ),
-          )
-        : const SizedBox.shrink(); // 在线时不显示
+    if (_isOnline) {
+      return SizedBox.shrink(); // No widget when online
+    }
+    
+    return Container(
+      color: Colors.red,
+      padding: EdgeInsets.symmetric(vertical: 4),
+      child: Center(
+        child: Text(
+          '当前处于离线模式',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
   }
-} 
+}
+
+// Add this to the top of your scaffold in the main app:
+// body: Column(
+//   children: [
+//     NetworkStatusBar(),
+//     Expanded(child: YourMainContent()),
+//   ],
+// ), 

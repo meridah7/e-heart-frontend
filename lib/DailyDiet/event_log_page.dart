@@ -10,6 +10,7 @@ import 'package:namer_app/providers/progress_provider.dart';
 import 'package:namer_app/services/dio_client.dart';
 import 'package:namer_app/utils/toast_util.dart';
 import 'package:provider/provider.dart';
+import 'package:namer_app/utils/error_handler.dart';
 
 class EventLogPage extends StatefulWidget {
   @override
@@ -23,18 +24,22 @@ class _EventLogPageState extends State<EventLogPage>
   DioClient dioClient = DioClient();
   List<MealPlan> mealPlans = [];
   List<Diet> dietLogs = [];
+  bool _isLoading = false;
+  dynamic _error;
 
   Future<void> _loadDiet() async {
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+    
     try {
       final now = DateTime.now();
-      // final now = DateTime.fromMillisecondsSinceEpoch(1733702400000);
-      int startTime =
-          DateTime(now.year, now.month, now.day).millisecondsSinceEpoch;
-      // 当天 23:59:59 的时间戳
-      int endTime = DateTime(now.year, now.month, now.day, 23, 59, 59, 999)
-          .millisecondsSinceEpoch;
-      Response response = await dioClient
-          .getRequest('/diet_logs/todayDiet/$startTime/$endTime');
+      int startTime = DateTime(now.year, now.month, now.day).millisecondsSinceEpoch;
+      int endTime = DateTime(now.year, now.month, now.day, 23, 59, 59, 999).millisecondsSinceEpoch;
+      
+      Response response = await dioClient.getRequest('/diet_logs/todayDiet/$startTime/$endTime');
+      
       if (response.statusCode == 200) {
         setState(() {
           mealPlans = (response.data['mealPlans'] as List)
@@ -43,12 +48,16 @@ class _EventLogPageState extends State<EventLogPage>
           dietLogs = (response.data['dietLogs'] as List)
               .map((item) => Diet.fromJson(item))
               .toList();
-          print(dietLogs);
+          _isLoading = false;
         });
       }
-    } catch (e) {
-      print('Error in load diet $e');
-      throw Exception(e);
+    } catch (e, stackTrace) {
+      ErrorHandler.logError(e, stackTrace: stackTrace);
+      
+      setState(() {
+        _error = e;
+        _isLoading = false;
+      });
     }
   }
 
@@ -142,7 +151,7 @@ class _EventLogPageState extends State<EventLogPage>
           content: SizedBox(
             width: 340,
             child: Text(
-              '''   食物清除记录/冲动记录 的结果不会直接呈现在当前“今日饮食”的界面。\n\n    它将会被作为宝贵的数据用于之后的分析反思中！''',
+              '''   食物清除记录/冲动记录 的结果不会直接呈现在当前"今日饮食"的界面。\n\n    它将会被作为宝贵的数据用于之后的分析反思中！''',
               style: GoogleFonts.aBeeZee(fontSize: 20),
             ),
           ),
@@ -168,7 +177,7 @@ class _EventLogPageState extends State<EventLogPage>
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('您有按照“${plan.type}”计划进食吗？', style: TextStyle(fontSize: 20)),
+              Text('您有按照"${plan.type}"计划进食吗？', style: TextStyle(fontSize: 20)),
               SizedBox(height: 20),
               SizedBox(
                 width: double.infinity,
@@ -258,7 +267,11 @@ class _EventLogPageState extends State<EventLogPage>
           ),
         ],
       ),
-      body: Container(
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator())
+          : _error != null
+              ? ErrorHandler.buildErrorWidget(_error, _loadDiet)
+              : Container(
         decoration: BoxDecoration(color: Color.fromRGBO(240, 229, 231, 1)),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
