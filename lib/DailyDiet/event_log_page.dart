@@ -460,11 +460,13 @@ class _EventLogPageState extends State<EventLogPage>
                             "时间：",
                             style: TextStyle(fontSize: 16, color: Colors.black),
                           ),
+                          // FIXME: 时间展示
                           Text(
-                            DateFormat('HH:mm').format(
-                              DateTime.fromMillisecondsSinceEpoch(
-                                  plan.targetDate),
-                            ),
+                            // DateFormat('HH:mm').format(
+                            //   DateTime.fromMillisecondsSinceEpoch(
+                            //       plan.targetDate),
+                            // ),
+                            plan.time,
                             style: GoogleFonts.aBeeZee(
                               fontSize: 16,
                               color: Colors.black,

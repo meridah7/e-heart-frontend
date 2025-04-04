@@ -6,7 +6,7 @@ part of 'progress.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$progressHash() => r'fde60fa06ed843b5ff0b8c67fd206a39f389fc9e';
+String _$progressHash() => r'12d475b36028b44beb8efc50cb763fe77418835a';
 
 /// See also [Progress].
 @ProviderFor(Progress)
@@ -21,7 +21,7 @@ final progressProvider =
 );
 
 typedef _$Progress = AsyncNotifier<UserProgress?>;
-String _$dailyTasksHash() => r'1868f5d221ac298cf9a0a9386ab28bc0d3fad66d';
+String _$dailyTasksHash() => r'1e474aa1bfb948f62d9d3e893fdf0d941e3a084c';
 
 /// See also [DailyTasks].
 @ProviderFor(DailyTasks)
@@ -36,7 +36,7 @@ final dailyTasksProvider =
 );
 
 typedef _$DailyTasks = AsyncNotifier<List<Task>>;
-String _$optionalTasksHash() => r'e801ad0703d15cfdd322dbed4c055e541ca67095';
+String _$optionalTasksHash() => r'8ccb1b17c7629a70990f27e6266da13d0a1404a4';
 
 /// See also [OptionalTasks].
 @ProviderFor(OptionalTasks)

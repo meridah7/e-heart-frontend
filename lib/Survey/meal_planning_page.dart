@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:namer_app/providers/progress.dart';
 import 'package:namer_app/services/dio_client.dart';
 import 'package:dio/dio.dart';
 
-class MealPlanningPage extends StatefulWidget {
+class MealPlanningPage extends ConsumerStatefulWidget {
   final String taskId;
   final Function? handleSubmit;
 
@@ -13,7 +15,7 @@ class MealPlanningPage extends StatefulWidget {
   _MealPlanningPageState createState() => _MealPlanningPageState();
 }
 
-class _MealPlanningPageState extends State<MealPlanningPage> {
+class _MealPlanningPageState extends ConsumerState<MealPlanningPage> {
   @override
   void initState() {
     super.initState();
@@ -44,15 +46,26 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
     );
   }
 
+  Map<String, int> getMealPlanDate() {
+    final now = DateTime.now();
+    int startTime = now.hour > 12
+        ? DateTime(now.year, now.month, now.day + 1).millisecondsSinceEpoch
+        : DateTime(now.year, now.month, now.day).millisecondsSinceEpoch;
+    int endTime = now.hour > 12
+        ? DateTime(now.year, now.month, now.day + 1, 23, 59, 59, 999)
+            .millisecondsSinceEpoch
+        : DateTime(now.year, now.month, now.day, 23, 59, 59, 999)
+            .millisecondsSinceEpoch;
+    return {
+      'startTime': startTime,
+      'endTime': endTime,
+    };
+  }
+
   // 获取今天的每日饮食计划
   getAllMealPlans() async {
     try {
-      final now = DateTime.now();
-      int startTime =
-          DateTime(now.year, now.month, now.day + 1).millisecondsSinceEpoch;
-      // 当天 23:59:59 的时间戳
-      int endTime = DateTime(now.year, now.month, now.day + 1, 23, 59, 59, 999)
-          .millisecondsSinceEpoch;
+      var {'startTime': startTime, 'endTime': endTime} = getMealPlanDate();
       Response response =
           await dioClient.getRequest('/meal_plans/$startTime/$endTime');
       if (response.statusCode == 200) {
@@ -163,21 +176,24 @@ class _MealPlanningPageState extends State<MealPlanningPage> {
                       if (mealName != null &&
                           timeController.text.isNotEmpty &&
                           food != null) {
-                        String planningDate = getMealPlanningDate('yyyy-MM-dd');
                         // 改动：用户在中午12点前提交的计划为当天的计划，12点后是明天的计划
                         try {
-                          await dioClient.postRequest('/meal_plans/create', {
+                          var {'startTime': startTime} = getMealPlanDate();
+
+                          Response res = await dioClient
+                              .postRequest('/meal_plans/create', {
                             "type": mealName,
                             "food_details": food,
                             "time": "${timeController.text}:00",
                             "date": DateTime.now().millisecondsSinceEpoch,
                             // 12点后日期➕1
-                            "target_date": DateTime.now().hour > 12
-                                ? DateTime.now()
-                                    .add(Duration(days: 1))
-                                    .millisecondsSinceEpoch
-                                : DateTime.now().millisecondsSinceEpoch
+                            "target_date": startTime
                           });
+                          if (res.statusCode == 200 || res.statusCode == 201) {
+                            ref
+                                .read(progressProvider.notifier)
+                                .updateProgress(widget.taskId);
+                          }
                           await getAllMealPlans();
                         } catch (e) {
                           print('request meal_plans err: $e');

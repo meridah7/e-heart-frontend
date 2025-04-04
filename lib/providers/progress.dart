@@ -2,6 +2,7 @@ import 'package:namer_app/models/task_models.dart';
 import 'package:namer_app/models/user_progress.dart';
 import 'package:namer_app/services/progress_service.dart';
 import 'package:namer_app/tasks/daily_tasks.dart';
+import 'package:namer_app/utils/index.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'progress.g.dart';
@@ -29,6 +30,10 @@ class Progress extends _$Progress {
   Future<void> updateProgress(String taskId, {bool isRequired = true}) async {
     state = const AsyncLoading();
     await AsyncValue.guard(() async {
+      if ((state.value?.finishedTaskIds ?? [])?.contains(taskId) ?? false) {
+        ToastUtils.showToast('当前任务已完成');
+        return;
+      }
       await _progressService.updateProgress(taskId, isRequired: isRequired);
       await fetchProgress();
     });
@@ -63,14 +68,10 @@ class DailyTasks extends _$DailyTasks {
       _userProgress?.allRequiredTaskIds ?? [],
     ).map((e) {
       return e.copyWith(
-        isCompleted: _userProgress?.finishedTaskIds.contains(e.id) ?? false,
+        isCompleted:
+            (_userProgress?.finishedTaskIds ?? []).contains(e.id) ?? false,
       );
     }).toList();
-    // final List<Task> requiredTasks = _userProgress.;
-    // final List<Task> optionalTasks = tasks.where((task) => !task.isRequired).toList();
-
-    // 处理 requiredTasks 和 optionalTasks
-    // ...
 
     return [
       ...requiredTasks,
@@ -88,7 +89,8 @@ class OptionalTasks extends _$OptionalTasks {
     return getTasksByIds(_userProgress?.allOptionalTaskIds ?? []).map((e) {
       return e.copyWith(
           isCompleted:
-              _userProgress?.finishedOptionalTaskIds.contains(e.id) ?? false);
+              (_userProgress?.finishedOptionalTaskIds ?? []).contains(e.id) ??
+                  false);
     }).toList();
   }
 }

@@ -8,13 +8,9 @@ import '../Survey/flippable_survey_page.dart';
 import '../Survey/meal_planning_page.dart';
 import '../DietMonitoring/binge_eating_record_page.dart';
 import '../DietMonitoring/diet_monitoring_page.dart';
-// import '../ResponseCard/response_card_page.dart';
-// import 'package:provider/provider.dart';
 
 import 'package:namer_app/models/task_models.dart';
 
-// import 'package:namer_app/providers/user_provider.dart';
-// import 'package:namer_app/providers/progress_provider.dart';
 import 'package:namer_app/pages/response_card/index.dart';
 
 class TodayListPage extends ConsumerStatefulWidget {
