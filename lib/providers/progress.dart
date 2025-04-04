@@ -23,8 +23,10 @@ class Progress extends _$Progress {
       state = AsyncData(progress);
       return progress;
     } catch (err) {
-      throw Exception('Error fetching progress: $err');
+      // throw Exception('Error fetching progress: $err');
+      print('Error in fetchProgress: $err');
     }
+    return null;
   }
 
   Future<void> updateProgress(String taskId) async {
