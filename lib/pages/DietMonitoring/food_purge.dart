@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:namer_app/models/survey_models.dart'; // Import the location of your Survey models
-import 'package:namer_app/Survey/survey_page.dart'; // Import your SurveyPage widget if reusable
+import 'package:namer_app/pages/Survey/survey_page.dart'; // Import your SurveyPage widget if reusable
 
 class FoodPurgePage extends StatelessWidget {
   @override

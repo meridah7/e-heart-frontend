@@ -4,8 +4,8 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:namer_app/services/dio_client.dart';
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
-import './utils.dart';
-import './chart_widgets.dart';
+import 'utils.dart';
+import 'chart_widgets.dart';
 
 class ImpulsiveRecordAndReflectionSummary extends StatefulWidget {
   @override

@@ -7,13 +7,13 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 // pages
-import 'TodayList/today_list_page.dart';
+import 'pages/TodayList/today_list_page.dart';
 import 'pages/AnalysisReview/review_analysis_page.dart';
 import 'pages/MyPage/my_page.dart';
-import 'DietaryAnalysis/dietary_analysis_page.dart';
+import 'pages/DietaryAnalysis/dietary_analysis_page.dart';
 import 'pages/Login/login_page.dart';
 import 'pages/Login/register_info_page.dart';
-import 'debugButton.dart';
+import 'widgets/debugButton.dart';
 import 'pages/DailyDiet/event_log_page.dart';
 
 // riverpod 状态管理

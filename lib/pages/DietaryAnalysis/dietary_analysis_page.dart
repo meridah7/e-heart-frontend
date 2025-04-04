@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:namer_app/DietaryAnalysis/daily.dart';
+import 'package:namer_app/pages/DietaryAnalysis/daily.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'models.dart';
 

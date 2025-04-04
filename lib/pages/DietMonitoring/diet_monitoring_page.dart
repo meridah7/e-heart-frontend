@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 // Import the location of your Survey models
-import 'package:namer_app/Survey/survey_page.dart'; // Import your SurveyPage widget
+import 'package:namer_app/pages/Survey/survey_page.dart'; // Import your SurveyPage widget
 import 'package:namer_app/models/task_models.dart';
 import 'package:namer_app/constants/tasks/Survey/tasks.dart'; // Import tasks related to surveys
 

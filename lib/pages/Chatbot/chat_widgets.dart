@@ -3,7 +3,7 @@
 // 在Bubble部件的build方法中，它可以选择包含一个TypeWriterText小部件，用于逐字显示文本消息。
 
 import 'package:flutter/material.dart';
-import './custom_image.dart';
+import 'custom_image.dart';
 
 // TypeWriterText 用于实现文本逐字显示的效果
 class TypeWriterText extends StatefulWidget {

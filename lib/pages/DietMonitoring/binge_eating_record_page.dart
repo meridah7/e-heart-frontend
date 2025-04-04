@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:namer_app/Survey/survey_page.dart'; // Assuming SurveyPage can be reused or adapted
+import 'package:namer_app/pages/Survey/survey_page.dart'; // Assuming SurveyPage can be reused or adapted
 import 'package:namer_app/constants/tasks/Survey/tasks.dart';
 import 'package:namer_app/services/dio_client.dart';
 

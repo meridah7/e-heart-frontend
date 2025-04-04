@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:namer_app/Chatbot/chatbot_page.dart';
-import 'package:namer_app/Survey/flippable_survey_page.dart';
-import 'package:namer_app/Survey/survey_page.dart';
+import 'package:namer_app/pages/Chatbot/chatbot_page.dart';
+import 'package:namer_app/pages/Survey/flippable_survey_page.dart';
+import 'package:namer_app/pages/Survey/survey_page.dart';
 import 'package:namer_app/models/task_models.dart';
 import 'package:namer_app/utils/index.dart';
 

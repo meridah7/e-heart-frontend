@@ -1,8 +1,8 @@
 import 'package:namer_app/models/survey_models.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:namer_app/Survey/survey_widgets.dart';
-import 'package:namer_app/Survey/chart_widgets.dart' as charts;
+import 'package:namer_app/pages/Survey/survey_widgets.dart';
+import 'package:namer_app/pages/Survey/chart_widgets.dart' as charts;
 import 'package:flutter/cupertino.dart';
 
 import 'package:namer_app/pages/ResponseCard/widgets/swipeable_response_card.dart';

@@ -4,8 +4,8 @@ import 'package:intl/intl.dart';
 import 'package:namer_app/providers/user_data.dart';
 import 'package:namer_app/models/user.dart';
 import 'package:namer_app/providers/user_preference.dart';
-import './review_template_page.dart';
-import './models.dart';
+import 'review_template_page.dart';
+import 'models.dart';
 
 class ReviewPage extends ConsumerStatefulWidget {
   const ReviewPage({required this.surveyKey, required this.reviewTitle});
