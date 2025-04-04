@@ -10,11 +10,11 @@ import 'package:namer_app/ResponseCard/response_card_model.dart';
 
 // pages
 import 'TodayList/today_list_page.dart';
-import 'AnalysisReview/review_analysis_page.dart';
+import 'pages/AnalysisReview/review_analysis_page.dart';
 import 'MyPage/my_page.dart';
 import 'DietaryAnalysis/dietary_analysis_page.dart';
-import 'Login/login_page.dart';
-import 'Login/register_info_page.dart';
+import 'pages/Login/login_page.dart';
+import 'pages/Login/register_info_page.dart';
 import 'package:provider/provider.dart' as provider;
 import 'debugButton.dart';
 import 'DailyDiet/event_log_page.dart';

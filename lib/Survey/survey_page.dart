@@ -5,6 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:namer_app/main.dart';
 import 'package:namer_app/models/survey_models.dart';
 import 'package:namer_app/providers/progress.dart';
+// import 'package:namer_app/providers/survey_data.dart';
+import 'package:namer_app/services/survey_service.dart';
+import 'package:namer_app/utils/index.dart';
 import 'survey_summary_page.dart';
 import 'survey_question_factory.dart';
 import 'impulsive_record_and_reflection_summary.dart';
@@ -34,11 +37,13 @@ class SurveyPage extends ConsumerStatefulWidget {
 class _SurveyPageState extends ConsumerState<SurveyPage> {
   // Map<String, String> _customAnswers = {};
   late final Preferences _userPref;
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
     _initWidget();
+    isLoading = true;
     _initializeQuestions();
   }
 
@@ -209,20 +214,32 @@ class _SurveyPageState extends ConsumerState<SurveyPage> {
 
   Future<void> _initializeQuestions() async {
     // 如果有预设回答
-    if (widget.presetAnswers != null && widget.presetAnswers!.isNotEmpty) {
-      widget.survey.questions = fillSurveyWithPresetAnswer(
-          widget.survey.questions, widget.presetAnswers);
-    }
+    List<Question>? questions =
+        await SurveyService.generateSurveyQuestions(widget.taskId);
+    setState(() {
+      if (questions != null) {
+        widget.survey.questions = questions;
+      }
+      if (widget.presetAnswers != null && widget.presetAnswers!.isNotEmpty) {
+        widget.survey.questions = fillSurveyWithPresetAnswer(
+            widget.survey.questions, widget.presetAnswers);
+      }
+      isLoading = false;
+    });
 
-    if (widget.taskId == 'S4') {
-      setState(() async {
-        widget.survey.questions = await generateDietPlanReview();
-      });
-    } else if (widget.taskId == 'S5') {
-      setState(() async {
-        widget.survey.questions = await generateImpulseReview();
-      });
-    }
+    // setState(() async {
+    //   widget.survey.questions = await SurveyService.generateSurveyQuestions(widget.taskId) ?? [];
+    // });
+
+    // if (widget.taskId == 'S4') {
+    //   setState(() async {
+    //     widget.survey.questions = await generateDietPlanReview();
+    //   });
+    // } else if (widget.taskId == 'S5') {
+    //   setState(() async {
+    //     widget.survey.questions = await generateImpulseReview();
+    //   });
+    // }
   }
 
   Future<void> _initializePreferences() async {
@@ -247,35 +264,37 @@ class _SurveyPageState extends ConsumerState<SurveyPage> {
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.only(bottom: 40.0),
-          child: Column(
-            children: [
-              // 根据条件显示顶部区域
-              isNeedTopArea
-                  ? SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.45,
-                      child: ImpulsiveRecordAndReflectionSummary(),
-                    )
-                  : Container(),
+          child: isLoading
+              ? customLoading()
+              : Column(
+                  children: [
+                    // 根据条件显示顶部区域
+                    isNeedTopArea
+                        ? SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.45,
+                            child: ImpulsiveRecordAndReflectionSummary(),
+                          )
+                        : Container(),
 
-              // 渲染问卷的列表
-              Column(
-                children:
-                    List.generate(widget.survey.questions.length, (index) {
-                  final question = widget.survey.questions[index];
-                  Widget questionWidget =
-                      questionWidgetFactory(context, question, setState);
+                    // 渲染问卷的列表
+                    Column(
+                      children: List.generate(widget.survey.questions.length,
+                          (index) {
+                        final question = widget.survey.questions[index];
+                        Widget questionWidget =
+                            questionWidgetFactory(context, question, setState);
 
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 5.0,
-                      horizontal: 16.0,
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 5.0,
+                            horizontal: 16.0,
+                          ),
+                          child: questionWidget,
+                        );
+                      }),
                     ),
-                    child: questionWidget,
-                  );
-                }),
-              ),
-            ],
-          ),
+                  ],
+                ),
         ),
       ),
       floatingActionButton: FloatingActionButton(

@@ -1,7 +1,7 @@
 import 'package:namer_app/models/task_models.dart';
 import 'package:namer_app/models/user_progress.dart';
 import 'package:namer_app/services/progress_service.dart';
-import 'package:namer_app/tasks/daily_tasks.dart';
+import 'package:namer_app/constants/tasks/daily_tasks.dart';
 import 'package:namer_app/utils/index.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

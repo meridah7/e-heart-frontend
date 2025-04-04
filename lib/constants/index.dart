@@ -1,4 +1,6 @@
 // 维护餐食类型枚举
+// ignore_for_file: constant_identifier_names
+
 enum MealType {
   breakfast('早餐', 'Breakfast'),
   morningSnack('上午点心', 'Morning Snack'),
@@ -29,4 +31,11 @@ enum MealType {
 
   String get name => english;
   String get displayName => chinese;
+}
+
+// 需要接口生成的问卷TaskId
+class SurveyTask {
+  static const List<String> NEED_GENERATED_TASK_IDS = ['S4', 'S5'];
+  // 需要展示总结页面的任务id
+  static const List<String> SUMMARY_TASK_IDS = ['S3', 'S4', 'S5', 'D1'];
 }

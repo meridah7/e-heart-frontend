@@ -1,6 +1,6 @@
 import 'package:namer_app/models/task_models.dart';
 
-import './contents.dart';
+import 'contents.dart';
 
 Task dietLogTutor = Task(
   title: "饮食日志教学",

@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:namer_app/models/task_models.dart';
 import 'package:namer_app/providers/progress.dart';
-import '../DietReview/review_page.dart';
-import './practice_list_page.dart';
+import '../../DietReview/review_page.dart';
+import 'practice_list_page.dart';
 import 'package:namer_app/widgets/task_list_widget.dart';
 
 // 饮食日志反思

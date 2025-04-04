@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:namer_app/Survey/survey_page.dart';
-import 'package:namer_app/Tasks/Survey/tasks.dart';
+import 'package:namer_app/constants/tasks/Survey/tasks.dart';
 import 'package:namer_app/constants/index.dart';
 import 'package:namer_app/models/event_log_model.dart';
 import 'package:namer_app/models/task_models.dart';
