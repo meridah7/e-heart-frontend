@@ -1,19 +1,18 @@
 // 定义了survey界面，和创建不同类型问题的功能
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:namer_app/main.dart';
 import 'package:namer_app/models/survey_models.dart';
+import 'package:namer_app/providers/progress.dart';
 import 'survey_summary_page.dart';
 import 'survey_question_factory.dart';
 import 'impulsive_record_and_reflection_summary.dart';
-import 'package:namer_app/user_preference.dart';
-import 'package:provider/provider.dart';
-import 'package:namer_app/providers/user_provider.dart';
-import 'package:namer_app/providers/progress_provider.dart';
+import 'package:namer_app/providers/user_preference.dart';
 import 'utils.dart';
 import 'package:dio/dio.dart';
 
-class SurveyPage extends StatefulWidget {
+class SurveyPage extends ConsumerStatefulWidget {
   SurveyPage({
     required this.survey,
     required this.taskId,
@@ -32,9 +31,9 @@ class SurveyPage extends StatefulWidget {
   _SurveyPageState createState() => _SurveyPageState();
 }
 
-class _SurveyPageState extends State<SurveyPage> {
-  Map<String, String> _customAnswers = {};
-  late Preferences _userPref;
+class _SurveyPageState extends ConsumerState<SurveyPage> {
+  // Map<String, String> _customAnswers = {};
+  late final Preferences _userPref;
 
   @override
   void initState() {
@@ -227,17 +226,14 @@ class _SurveyPageState extends State<SurveyPage> {
   }
 
   Future<void> _initializePreferences() async {
-    if (mounted) {
-      var userProvider = Provider.of<UserProvider>(context, listen: false);
-      _userPref = await Preferences.getInstance(namespace: userProvider.uuid);
-    }
+    _userPref = await ref.read(preferencesProvider.future);
   }
 
-  void _updateCustomAnswer(String questionKey, String answer) {
-    setState(() {
-      _customAnswers[questionKey] = answer;
-    });
-  }
+  // void _updateCustomAnswer(String questionKey, String answer) {
+  //   setState(() {
+  //     _customAnswers[questionKey] = answer;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -307,14 +303,6 @@ class _SurveyPageState extends State<SurveyPage> {
           // 本地保存问卷记录
           await _userPref.updateSurveyData(widget.taskId, summary);
 
-          // if (widget.isLastTask) {
-          //   int? userProgress = _userPref.getData('progress');
-          //   await _userPref.setData(
-          //       'progress', userProgress == null ? 1 : userProgress + 1);
-          //   await _userPref.setData('progressLastUpdatedDate',
-          //       DateFormat('yyyyMMdd').format(DateTime.now()));
-          // }
-
           if (_userPref.hasKey('finishedTaskIds')) {
             List taskIds = _userPref.getData('finishedTaskIds');
             taskIds.add(widget.taskId);
@@ -333,12 +321,7 @@ class _SurveyPageState extends State<SurveyPage> {
 
           if (res?.statusCode == 200 || res?.statusCode == 201) {
             if (mounted) {
-              var progressProvider =
-                  Provider.of<ProgressProvider>(context, listen: false);
-              bool isRequired =
-                  progressProvider.allRequiredTaskIds.contains(widget.taskId);
-              progressProvider.updateProgress(widget.taskId,
-                  isRequired: isRequired);
+              ref.read(progressProvider.notifier).updateProgress(widget.taskId);
               if (['task11', 'dietaryIntake'].contains(widget.taskId)) {
                 answers[widget.taskId] = [];
                 await _userPref.setData('completedTaskAnswers', answers);

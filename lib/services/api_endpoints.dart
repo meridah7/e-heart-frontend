@@ -32,5 +32,12 @@ class ApiEndpoints {
   // 饮食计划反思 GET
   static const String MEAL_PLAN_REFLECTIONS =
       '/meal_plan_reflections/reflection_data';
+  // 创建饮食计划
   static const String CREATE_MEAL_PLAN = '/meal_plans/create';
+
+  // 更新饮食计划 PUT id
+  static const String UPDATE_MEAL_PLAN = '/meal_plans/';
+
+  // 行为记录
+  static const String EVENT_LOG = '/diet_logs/todayDiet/';
 }

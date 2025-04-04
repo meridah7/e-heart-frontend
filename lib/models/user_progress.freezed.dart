@@ -160,13 +160,13 @@ class __$$UserProgressImplCopyWithImpl<$Res>
 class _$UserProgressImpl implements _UserProgress {
   const _$UserProgressImpl(
       {@JsonKey(name: "progress") required this.progress,
-      @JsonKey(name: "finished_task_ids") required this.finishedTaskIds,
+      @JsonKey(name: "finished_task_ids") this.finishedTaskIds = const [],
       @JsonKey(name: "finished_optional_task_ids")
-      required this.finishedOptionalTaskIds,
+      this.finishedOptionalTaskIds = const [],
       @JsonKey(name: "all_required_task_ids")
-      required final List<String> allRequiredTaskIds,
+      final List<String> allRequiredTaskIds = const [],
       @JsonKey(name: "all_optional_task_ids")
-      required final List<String> allOptionalTaskIds})
+      final List<String> allOptionalTaskIds = const []})
       : _allRequiredTaskIds = allRequiredTaskIds,
         _allOptionalTaskIds = allOptionalTaskIds;
 
@@ -251,14 +251,13 @@ class _$UserProgressImpl implements _UserProgress {
 abstract class _UserProgress implements UserProgress {
   const factory _UserProgress(
       {@JsonKey(name: "progress") required final int progress,
-      @JsonKey(name: "finished_task_ids")
-      required final dynamic finishedTaskIds,
+      @JsonKey(name: "finished_task_ids") final dynamic finishedTaskIds,
       @JsonKey(name: "finished_optional_task_ids")
-      required final dynamic finishedOptionalTaskIds,
+      final dynamic finishedOptionalTaskIds,
       @JsonKey(name: "all_required_task_ids")
-      required final List<String> allRequiredTaskIds,
+      final List<String> allRequiredTaskIds,
       @JsonKey(name: "all_optional_task_ids")
-      required final List<String> allOptionalTaskIds}) = _$UserProgressImpl;
+      final List<String> allOptionalTaskIds}) = _$UserProgressImpl;
 
   factory _UserProgress.fromJson(Map<String, dynamic> json) =
       _$UserProgressImpl.fromJson;

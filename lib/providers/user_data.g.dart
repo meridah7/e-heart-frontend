@@ -1,24 +1,24 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'user.dart';
+part of 'user_data.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$userHash() => r'1529d2cac0144d4386a2cbf12526ef6111a683bd';
+String _$userDataHash() => r'3e898cb52c32bb095f2c00e072d925286b4ab987';
 
-/// See also [User].
-@ProviderFor(User)
-final userProvider = AsyncNotifierProvider<User, user_model.User?>.internal(
-  User.new,
-  name: r'userProvider',
+/// See also [UserData].
+@ProviderFor(UserData)
+final userDataProvider = AsyncNotifierProvider<UserData, User?>.internal(
+  UserData.new,
+  name: r'userDataProvider',
   debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$userHash,
+      const bool.fromEnvironment('dart.vm.product') ? null : _$userDataHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$User = AsyncNotifier<user_model.User?>;
+typedef _$UserData = AsyncNotifier<User?>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

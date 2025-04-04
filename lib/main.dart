@@ -7,8 +7,6 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 // models
 import 'package:namer_app/ResponseCard/response_card_model.dart';
-// providers
-// import 'package:namer_app/providers/user_provider.dart';
 
 // pages
 import 'TodayList/today_list_page.dart';
@@ -23,7 +21,6 @@ import 'DailyDiet/event_log_page.dart';
 
 // riverpod 状态管理
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 // part 'main.g.dart';
 

@@ -1,19 +1,18 @@
 import 'package:json_annotation/json_annotation.dart';
 
-class StringToDoubleConverter implements JsonConverter<double, Object> {
+// 转换器需要单独实现或在 Converter 类中定义
+class StringToDoubleConverter implements JsonConverter<double?, dynamic> {
   const StringToDoubleConverter();
 
   @override
-  double fromJson(Object json) {
-    print('covert json to double $json');
-    if (json is String) {
-      return double.tryParse(json) ?? 0.0; // 字符串转换为 double
-    } else if (json is num) {
-      return json.toDouble(); // 如果是数字，直接转换
-    }
-    throw FormatException('Invalid type for double: $json');
+  double? fromJson(dynamic json) {
+    if (json == null) return null;
+    if (json is double) return json;
+    if (json is int) return json.toDouble();
+    if (json is String) return double.tryParse(json);
+    return null;
   }
 
   @override
-  Object toJson(double object) => object; // double 转回 JSON
+  dynamic toJson(double? object) => object;
 }

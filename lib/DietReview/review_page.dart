@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:namer_app/providers/user.dart';
-// import 'package:namer_app/models/user.dart' as user_model;
-import 'package:namer_app/user_preference.dart';
+import 'package:namer_app/providers/user_data.dart';
+import 'package:namer_app/models/user.dart';
+import 'package:namer_app/providers/user_preference.dart';
 import './review_template_page.dart';
 import './models.dart';
 
@@ -167,7 +167,7 @@ class _ReviewPageState extends ConsumerState<ReviewPage> {
 
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(userProvider);
+    final user = ref.watch(userDataProvider);
     _initializePreferences(user.value?.uuid ?? '');
     return Scaffold(
         appBar: AppBar(

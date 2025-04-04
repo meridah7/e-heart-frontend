@@ -7,13 +7,16 @@ part 'user_progress.g.dart';
 class UserProgress with _$UserProgress {
   const factory UserProgress({
     @JsonKey(name: "progress") required int progress,
-    @JsonKey(name: "finished_task_ids") required dynamic finishedTaskIds,
+    @JsonKey(name: "finished_task_ids") @Default([]) dynamic finishedTaskIds,
     @JsonKey(name: "finished_optional_task_ids")
-    required dynamic finishedOptionalTaskIds,
+    @Default([])
+    dynamic finishedOptionalTaskIds,
     @JsonKey(name: "all_required_task_ids")
-    required List<String> allRequiredTaskIds,
+    @Default([])
+    List<String> allRequiredTaskIds,
     @JsonKey(name: "all_optional_task_ids")
-    required List<String> allOptionalTaskIds,
+    @Default([])
+    List<String> allOptionalTaskIds,
   }) = _UserProgress;
 
   factory UserProgress.fromJson(Map<String, dynamic> json) =>

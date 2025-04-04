@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:namer_app/user_preference.dart';
-import 'package:provider/provider.dart';
-import 'package:namer_app/providers/user_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:namer_app/providers/user_preference.dart';
 import 'package:namer_app/main.dart';
 
-class SurveySummaryPage extends StatefulWidget {
+class SurveySummaryPage extends ConsumerStatefulWidget {
   final List<String> summary;
   final String taskId;
 
@@ -16,29 +15,30 @@ class SurveySummaryPage extends StatefulWidget {
   _SurveySummaryPageState createState() => _SurveySummaryPageState();
 }
 
-class _SurveySummaryPageState extends State<SurveySummaryPage> {
+class _SurveySummaryPageState extends ConsumerState<SurveySummaryPage> {
   late Preferences _userPref;
   bool showRestart = true;
 
   @override
-  void initState() {
+  void initState() async {
     super.initState();
-    _initWidget();
+    // _initWidget();
+    _userPref = await ref.read(preferencesProvider.future);
   }
 
-  Future<void> _initWidget() async {
-    // if (NotRestartTaskIds.contains(widget.taskId)) {
-    //   setState(() {
-    //     showRestart = false;
-    //   });
-    // }
-    await _initializePreferences();
-  }
+  // Future<void> _initWidget() async {
+  // if (NotRestartTaskIds.contains(widget.taskId)) {
+  //   setState(() {
+  //     showRestart = false;
+  //   });
+  // }
+  // await _initializePreferences();
+  // }
 
-  Future<void> _initializePreferences() async {
-    var userProvider = Provider.of<UserProvider>(context, listen: false);
-    _userPref = await Preferences.getInstance(namespace: userProvider.uuid);
-  }
+  // Future<void> _initializePreferences() async {
+  //   var userProvider = Provider.of<UserProvider>(context, listen: false);
+  //   _userPref = await Preferences.getInstance(namespace: userProvider.uuid);
+  // }
 
   @override
   Widget build(BuildContext context) {

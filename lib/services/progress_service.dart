@@ -9,9 +9,6 @@ import 'package:namer_app/models/survey_models.dart';
 import 'package:namer_app/models/task_models.dart';
 import 'package:namer_app/models/user_progress.dart';
 
-import 'package:namer_app/services/api_service.dart';
-// import 'package:namer_app/user_preference.dart';
-
 part 'progress_service.g.dart';
 
 @riverpod
@@ -19,11 +16,10 @@ ProgressService progressService(ProgressServiceRef ref) {
   return ProgressService();
 }
 
-class ProgressService implements ProgressApiService {
+class ProgressService {
   // late Preferences _userPref;
   final DioClient dioClient = DioClient();
 
-  @override
   Future<UserProgress?> fetchProgress() async {
     try {
       Response response = await dioClient.getRequest(ApiEndpoints.PROGRESS);
@@ -38,7 +34,6 @@ class ProgressService implements ProgressApiService {
     }
   }
 
-  @override
   Future<UserProgress?> updateProgress(String taskId,
       {bool isRequired = true}) async {
     try {
@@ -56,7 +51,6 @@ class ProgressService implements ProgressApiService {
     }
   }
 
-  @override
   Future<UserProgress?> setProgress(int progress) async {
     try {
       Response response = await dioClient.postRequest(ApiEndpoints.PROGRESS, {
@@ -74,7 +68,6 @@ class ProgressService implements ProgressApiService {
   }
 
   // 获取冲动记录回顾
-  @override
   Future<List<Task>> fetchImpulseReflectionRecords() async {
     List<Task> impulseRecordTaskList = [];
     try {

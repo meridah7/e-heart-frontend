@@ -1,8 +1,20 @@
 // This class maintains a singleton about user preferences
+import 'package:namer_app/providers/user_data.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
+part 'user_preference.g.dart';
+
 const String COMPLETED_SURVEY_KEY = 'completedSurveys';
+
+@Riverpod(keepAlive: true)
+Future<Preferences> preferences(PreferencesRef ref) {
+  // Use the namespace to distinguish between different user data
+  String namespace =
+      ref.watch(userDataProvider).value?.uuid.toString() ?? 'default';
+  return Preferences.getInstance(namespace: namespace);
+}
 
 class Preferences {
   // Private constructor with an asynchronous initialization
@@ -11,7 +23,7 @@ class Preferences {
   // Use UserName to distinguish between different user data
   final String namespace;
 
-  // Static variable to hold the instance
+  // Static variable9io0 to hold the instance
   static Preferences? _instance;
 
   SharedPreferences? _prefs;

@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:namer_app/providers/user.dart';
+import 'package:namer_app/providers/user_data.dart';
 import 'package:namer_app/utils/helper.dart';
-import 'package:namer_app/models/user.dart' as user_model;
+import 'package:namer_app/models/user.dart';
 import 'package:namer_app/utils/index.dart';
 
 class ProfilePage extends ConsumerStatefulWidget {
@@ -169,13 +169,13 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
   }
 
   void _logOut() async {
-    final userController = ref.read(userProvider.notifier);
+    final userController = ref.read(userDataProvider.notifier);
     userController.logOut();
   }
 
   void _updateUser(String property, dynamic target) async {
     try {
-      final userController = ref.read(userProvider.notifier);
+      final userController = ref.read(userDataProvider.notifier);
       userController.updateUser({property: target});
     } catch (err) {
       print('Error in update user info $err');
@@ -197,7 +197,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     );
   }
 
-  Widget _buildUserInfo(AsyncValue<user_model.User?> user) {
+  Widget _buildUserInfo(AsyncValue<User?> user) {
     return user.when(data: (user) {
       return user != null
           ? ListView(
@@ -244,7 +244,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(userProvider);
+    final user = ref.watch(userDataProvider);
     return Scaffold(
         appBar: AppBar(
           title: const Text('个人基本信息'),

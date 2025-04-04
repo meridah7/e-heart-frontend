@@ -1,21 +1,21 @@
 import 'package:namer_app/services/user_service.dart';
 import 'package:namer_app/utils/index.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import '../models/user.dart' as user_model;
+import '../models/user.dart';
 
-part 'user.g.dart';
+part 'user_data.g.dart';
 
 @Riverpod(keepAlive: true)
-class User extends _$User {
+class UserData extends _$UserData {
   late UserService _userService;
 
   @override
-  FutureOr<user_model.User?> build() {
+  FutureOr<User?> build() {
     _userService = ref.watch(userServiceProvider);
     return fetchUser();
   }
 
-  Future<user_model.User?> fetchUser() async {
+  Future<User?> fetchUser() async {
     try {
       final user = await _userService.fetchUser();
       state = AsyncData(user);

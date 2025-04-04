@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:namer_app/models/strategy_card.dart';
 import 'package:namer_app/pages/response_card/widgets/response_card.dart';
-import 'package:namer_app/providers/strategy_list.dart';
+import 'package:namer_app/providers/strategy_list_data.dart';
 import 'package:flutter_reorderable_grid_view/widgets/widgets.dart';
 
 import 'hero_dialog_route.dart';
@@ -20,6 +20,7 @@ class _ResponseCardPageState extends ConsumerState<ResponseCardPage>
   final _gridViewKey = GlobalKey();
   bool _isEditing = false;
   final _scrollController = ScrollController();
+  late final StrategyListData _strategyListController;
 
   @override
   void didChangeDependencies() {
@@ -40,6 +41,7 @@ class _ResponseCardPageState extends ConsumerState<ResponseCardPage>
   @override
   void initState() {
     super.initState();
+    _strategyListController = ref.read(strategyListDataProvider.notifier);
     _controller = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
@@ -84,8 +86,7 @@ class _ResponseCardPageState extends ConsumerState<ResponseCardPage>
             TextButton(
               child: Text('删除'),
               onPressed: () async {
-                final controller = ref.read(strategyListProvider.notifier);
-                await controller.deleteStrategy(card);
+                await _strategyListController.deleteStrategy(card);
                 Navigator.of(context).pop(); // 关闭对话框
               },
             ),
@@ -105,7 +106,7 @@ class _ResponseCardPageState extends ConsumerState<ResponseCardPage>
           onSave: (saveCard) async {
             try {
               await ref
-                  .read(strategyListProvider.notifier)
+                  .read(strategyListDataProvider.notifier)
                   .updateStrategy(saveCard);
               if (mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -131,15 +132,13 @@ class _ResponseCardPageState extends ConsumerState<ResponseCardPage>
   // 列表重新排序
   void _handleReorder(ReorderedListFunction reorderedListFunction) async {
     try {
-      final cardList = ref.watch(strategyListProvider);
+      final cardList = ref.watch(strategyListDataProvider);
 
       // Handle the AsyncValue state properly
       cardList.whenData((currentList) async {
         final reorderedList =
             reorderedListFunction(currentList) as List<StrategyCard>;
-        await ref
-            .read(strategyListProvider.notifier)
-            .reorderStrategies(reorderedList);
+        await _strategyListController.reorderStrategies(reorderedList);
       });
     } catch (e) {
       debugPrint('Error in reorder: $e');
@@ -152,7 +151,7 @@ class _ResponseCardPageState extends ConsumerState<ResponseCardPage>
 
   // 应对卡列表容器
   Widget _getReorderableWidget() {
-    final cardList = ref.watch(strategyListProvider);
+    final cardList = ref.watch(strategyListDataProvider);
     return cardList.when(
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (error, stackTrace) => Center(child: Text('Error: $error')),
@@ -201,10 +200,9 @@ class _ResponseCardPageState extends ConsumerState<ResponseCardPage>
           child: IconButton(
             key: ValueKey('add-button-$index'), // Unique key for button
             onPressed: () async {
-              final controller = ref.read(strategyListProvider.notifier);
-              bool res = await controller.addNewStrategy();
+              bool res = await _strategyListController.addNewStrategy();
               if (res) {
-                final cardList = ref.read(strategyListProvider);
+                final cardList = ref.read(strategyListDataProvider);
                 cardList.whenData((value) {
                   StrategyCard card = value.last;
                   _openEditDialog(context, card, DetailScene.edit);
@@ -242,7 +240,7 @@ class _ResponseCardPageState extends ConsumerState<ResponseCardPage>
           },
           child: GestureDetector(
             onTap: () {
-              ref.read(strategyListProvider).whenData((list) {
+              ref.read(strategyListDataProvider).whenData((list) {
                 if (index < list.length) {
                   _openEditDialog(context, list[index], DetailScene.check);
                 }

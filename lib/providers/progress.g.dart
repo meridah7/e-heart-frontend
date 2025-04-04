@@ -6,7 +6,7 @@ part of 'progress.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$progressHash() => r'12d475b36028b44beb8efc50cb763fe77418835a';
+String _$progressHash() => r'74c58d173f13c5f38c9dd5bad10a10c469f8c383';
 
 /// See also [Progress].
 @ProviderFor(Progress)

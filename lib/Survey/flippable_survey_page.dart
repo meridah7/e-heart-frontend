@@ -1,18 +1,17 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:namer_app/providers/user_provider.dart';
-import 'package:namer_app/user_preference.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:namer_app/providers/progress.dart';
+import 'package:namer_app/providers/user_preference.dart';
 import 'package:namer_app/models/survey_models.dart';
 import 'survey_question_factory.dart';
 import 'survey_summary_page.dart';
 import 'package:namer_app/services/dio_client.dart';
-import 'package:namer_app/providers/progress_provider.dart';
 
 /// @desc 可翻页的问券
 ///
 /// @note 当前需求只要求给问题全部分页 / 全部不分页，所以这个组件粗暴的把全部问题分页了，后续如果有混合诉求的话，则考虑把这个跟 SurveyPage 一起重构了
-class FlippableSurveyPage extends StatefulWidget {
+class FlippableSurveyPage extends ConsumerStatefulWidget {
   FlippableSurveyPage({required this.survey, required this.taskId});
 
   // final bool isLastTask;
@@ -23,23 +22,26 @@ class FlippableSurveyPage extends StatefulWidget {
   _FlippableSurveyPageState createState() => _FlippableSurveyPageState();
 }
 
-class _FlippableSurveyPageState extends State<FlippableSurveyPage> {
+class _FlippableSurveyPageState extends ConsumerState<FlippableSurveyPage> {
   final DioClient dioClient = DioClient();
-  late Preferences _userPref;
+  late final Preferences _userPref;
+  late final Progress _progress;
+  late final Progress _progressController;
 
   int _curStep = 0;
 
-  Future<void> _initializePreferences() async {
-    if (mounted) {
-      var userProvider = Provider.of<UserProvider>(context, listen: false);
-      _userPref = await Preferences.getInstance(namespace: userProvider.uuid);
-    }
-  }
+  // Future<void> _initializePreferences() async {
+  //   if (mounted) {
+  //     var userProvider = Provider.of<UserProvider>(context, listen: false);
+  //     _userPref = await Preferences.getInstance(namespace: userProvider.uuid);
+  //   }
+  // }
 
   @override
-  void initState() {
+  void initState() async {
     super.initState();
-    _initializePreferences();
+    _progressController = ref.read(progressProvider.notifier);
+    _userPref = await ref.read(preferencesProvider.future);
   }
 
   Map<String, dynamic> extractAnswer(Survey survey, int step,
@@ -197,12 +199,8 @@ class _FlippableSurveyPageState extends State<FlippableSurveyPage> {
         // 更新用户进度
 
         if (mounted) {
-          var progressProvider =
-              Provider.of<ProgressProvider>(context, listen: false);
-          bool isRequired =
-              progressProvider.allRequiredTaskIds.contains(widget.taskId);
-          progressProvider.updateProgress(widget.taskId,
-              isRequired: isRequired);
+          _progressController.updateProgress(widget.taskId);
+
           Navigator.pushNamedAndRemoveUntil(
               context, '/home', (Route<dynamic> route) => false);
         }
@@ -237,9 +235,8 @@ class _FlippableSurveyPageState extends State<FlippableSurveyPage> {
 
         // TODO 提交问卷添加进度接口
         // 更新用户进度
-        var progressProvider =
-            Provider.of<ProgressProvider>(context, listen: false);
-        progressProvider.updateProgress(widget.taskId);
+        _progress.updateProgress(widget.taskId);
+
         if (widget.survey.navigateToSummary) {
 // 导航到问卷摘要页面
           Navigator.push(

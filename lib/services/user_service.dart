@@ -3,7 +3,7 @@ import 'package:namer_app/models/user.dart';
 import 'package:namer_app/services/api_endpoints.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'dio_client.dart';
-import 'package:namer_app/user_preference.dart';
+import 'package:namer_app/providers/user_preference.dart';
 
 part 'user_service.g.dart';
 

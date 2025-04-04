@@ -1,16 +1,15 @@
 // 这个文件定义了chatbot的核心功能部分，包括聊天页面和不同对话方式的相关逻辑。
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:namer_app/global_setting.dart';
 import 'package:namer_app/models/chat_models.dart';
+import 'package:namer_app/providers/progress.dart';
 import 'chat_widgets.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import '../user_preference.dart';
-import 'package:provider/provider.dart';
-import 'package:namer_app/providers/user_provider.dart';
-import 'package:namer_app/providers/progress_provider.dart';
+import '../providers/user_preference.dart';
 
 // ChatbotPage class是chatbot的主页面，负责显示聊天界面和处理用户输入。
-class ChatbotPage extends StatefulWidget {
+class ChatbotPage extends ConsumerStatefulWidget {
   final List<Content> contents;
   final String taskId;
   String? taskTitle;
@@ -23,7 +22,7 @@ class ChatbotPage extends StatefulWidget {
 }
 
 // _ChatbotPageState类是ChatbotPage的状态类，负责管理聊天页面的状态和逻辑。
-class _ChatbotPageState extends State<ChatbotPage> {
+class _ChatbotPageState extends ConsumerState<ChatbotPage> {
   final ScrollController _scrollController = ScrollController();
   int _currentContentIndex = 0;
   // 判断展示用户交互画面的时机
@@ -91,8 +90,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
   }
 
   Future<void> _initializePreferences() async {
-    var userProvider = Provider.of<UserProvider>(context, listen: false);
-    _userPref = await Preferences.getInstance(namespace: userProvider.uuid);
+    _userPref = await ref.watch(preferencesProvider.future);
   }
 
   // _displayNextContent函数用于显示下一个聊天内容。
@@ -171,14 +169,6 @@ class _ChatbotPageState extends State<ChatbotPage> {
     answers[widget.taskId] = userResponses;
     await _userPref.setData('completedTaskAnswers', answers);
 
-    // if (widget.isLastTask) {
-    //   int? userProgress = _userPref.getData('progress');
-    //   await _userPref.setData(
-    //       'progress', userProgress == null ? 1 : userProgress + 1);
-    //   await _userPref.setData('progressLastUpdatedDate',
-    //       DateFormat('yyyyMMdd').format(DateTime.now()));
-    // }
-
     if (_userPref.hasKey('finishedTaskIds')) {
       List taskIds = _userPref.getData('finishedTaskIds');
       taskIds.add(widget.taskId);
@@ -186,13 +176,9 @@ class _ChatbotPageState extends State<ChatbotPage> {
       await _userPref.setData('finishedTaskIds', taskIds);
     }
 
-    if (mounted) {
-      var progressProvider =
-          Provider.of<ProgressProvider>(context, listen: false);
-      bool isRequired =
-          progressProvider.allRequiredTaskIds.contains(widget.taskId);
-      progressProvider.updateProgress(widget.taskId, isRequired: isRequired);
-    }
+    // 更新进度
+    final progressController = ref.read(progressProvider.notifier);
+    progressController.updateProgress(widget.taskId);
 
     setState(() {
       _userFinished = true;

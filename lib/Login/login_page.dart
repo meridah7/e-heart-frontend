@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:namer_app/providers/user.dart';
+import 'package:namer_app/providers/user_data.dart';
 import 'package:namer_app/services/dio_client.dart';
 import 'package:namer_app/services/api_endpoints.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -180,7 +180,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   // 更新UserPreference
   Future<void> _updateUserInfo() async {
     try {
-      final user = ref.read(userProvider.notifier);
+      final user = ref.read(userDataProvider.notifier);
       await user.fetchUser();
     } catch (err) {
       print('Error in update preference $err');

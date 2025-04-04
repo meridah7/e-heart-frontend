@@ -1,69 +1,34 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:namer_app/DailyDiet/diet_models.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:namer_app/Survey/survey_page.dart';
 import 'package:namer_app/Tasks/Survey/tasks.dart';
+import 'package:namer_app/constants/index.dart';
+import 'package:namer_app/models/event_log_model.dart';
 import 'package:namer_app/models/task_models.dart';
-import 'package:namer_app/providers/progress_provider.dart';
-import 'package:namer_app/services/dio_client.dart';
+import 'package:namer_app/providers/event_log.dart';
+import 'package:namer_app/providers/progress.dart';
 import 'package:namer_app/utils/index.dart';
-import 'package:provider/provider.dart';
 
-class EventLogPage extends StatefulWidget {
+class EventLogPage extends ConsumerStatefulWidget {
   @override
   _EventLogPageState createState() => _EventLogPageState();
 }
 
-class _EventLogPageState extends State<EventLogPage>
+class _EventLogPageState extends ConsumerState<EventLogPage>
     with SingleTickerProviderStateMixin {
   bool isExpanded = false;
+
   late AnimationController _animationController;
-  DioClient dioClient = DioClient();
-  List<MealPlan> mealPlans = [];
-  List<Diet> dietLogs = [];
+  // List<Diet> dietLogs = [];
+  // List<MealPlan> mealPlans = [];
+  late final EventLog _eventLogController;
 
-  Future<void> _loadDiet() async {
-    try {
-      final now = DateTime.now();
-      // final now = DateTime.fromMillisecondsSinceEpoch(1733702400000);
-      int startTime =
-          DateTime(now.year, now.month, now.day).millisecondsSinceEpoch;
-      // 当天 23:59:59 的时间戳
-      int endTime = DateTime(now.year, now.month, now.day, 23, 59, 59, 999)
-          .millisecondsSinceEpoch;
-      Response response = await dioClient
-          .getRequest('/diet_logs/todayDiet/$startTime/$endTime');
-      if (response.statusCode == 200) {
-        setState(() {
-          mealPlans = (response.data['mealPlans'] as List)
-              .map((item) => MealPlan.fromJson(item))
-              .toList();
-          dietLogs = (response.data['dietLogs'] as List)
-              .map((item) => Diet.fromJson(item))
-              .toList();
-          print(dietLogs);
-        });
-      }
-    } catch (e) {
-      print('Error in load diet $e');
-      throw Exception(e);
-    }
-  }
-
-  Future<void> _updatePlanStatus(int id, bool status) async {
-    try {
-      Response response =
-          await dioClient.putRequest('/meal_plans/$id', {'state': !status});
-      if (response.statusCode == 200) {
-        _handleGoSurvey(dietaryIntake);
-        await _loadDiet();
-      }
-    } catch (e) {
-      print('Error in setting plan status $e');
-      throw Exception(e);
-    }
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
   }
 
   @override
@@ -73,13 +38,52 @@ class _EventLogPageState extends State<EventLogPage>
       vsync: this,
       duration: Duration(milliseconds: 200),
     );
-    _loadDiet();
+    _eventLogController = ref.read(eventLogProvider.notifier);
+    _eventLogController.fetchEventLog();
   }
 
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
+// 暴食字体颜色
+  Color getColorFromInt(int value) {
+    // 确保 value 在 1 到 9 之间
+    value = value.clamp(1, 10);
+
+    // 起始和终止颜色的 RGBA 值
+    int startR = 0, startG = 132, startB = 11;
+    int endR = 132, endG = 0, endB = 0;
+
+    // 计算插值因子 (0 到 1 之间)
+    double t = (value - 1) / (9 - 1);
+
+    // 计算每个通道的线性插值值
+    int r = ((1 - t) * startR + t * endR).round();
+    int g = ((1 - t) * startG + t * endG).round();
+    int b = ((1 - t) * startB + t * endB).round();
+
+    return Color.fromRGBO(r, g, b, 1);
+  }
+
+  Future<void> _loadDiet() async {
+    try {
+      _eventLogController.fetchEventLog();
+    } catch (e) {
+      print('Error in load diet $e');
+      // throw Exception(e);
+    }
+  }
+
+  Future<void> _updatePlanStatus(int id, bool status) async {
+    try {
+      bool res = await _eventLogController.updatePlanStatus(id, !status);
+      if (res) {
+        _handleGoSurvey(dietaryIntake);
+        await _loadDiet();
+      } else {
+        ToastUtils.showToast('操作失败');
+      }
+    } catch (e) {
+      print('Error in setting plan status $e');
+      // throw Exception(e);
+    }
   }
 
   void _toggleMenu() {
@@ -95,43 +99,41 @@ class _EventLogPageState extends State<EventLogPage>
 
   Widget _buildMenuOption(String text, VoidCallback onPressed,
       {double width = 160.0, double height = 50, int showDay = 0}) {
-    return Consumer<ProgressProvider>(
-        builder: (context, progressProvider, child) {
-      return InkWell(
-          onTap: progressProvider.progress < showDay
-              ? () => {ToastUtils.showToast('暂未开放')}
-              : onPressed,
-          child: Container(
-            width: width,
-            height: height,
-            decoration: BoxDecoration(
-              color: progressProvider.progress < showDay
-                  ? Colors.grey
-                  : Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.5), // 阴影颜色和透明度
-                  spreadRadius: 4, // 扩散范围
-                  blurRadius: 7, // 模糊程度
-                  offset: Offset(0, 3), // 阴影偏移 (水平, 垂直)
-                ),
-              ],
-              borderRadius: BorderRadius.circular(12.0),
-            ),
-            child: Center(
-              child: Text(
-                text,
-                style: TextStyle(
-                  color: progressProvider.progress < showDay
-                      ? Colors.black54
-                      : Colors.black,
-                  fontSize: 16.0,
-                ),
-                // overflow: TextOverflow.ellipsis,
+    final progress = ref.watch(progressProvider);
+    return InkWell(
+        onTap: (progress.value?.progress ?? 0) < showDay
+            ? () => {ToastUtils.showToast('暂未开放')}
+            : onPressed,
+        child: Container(
+          width: width,
+          height: height,
+          decoration: BoxDecoration(
+            color: (progress.value?.progress ?? 0) < showDay
+                ? Colors.grey
+                : Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5), // 阴影颜色和透明度
+                spreadRadius: 4, // 扩散范围
+                blurRadius: 7, // 模糊程度
+                offset: Offset(0, 3), // 阴影偏移 (水平, 垂直)
               ),
+            ],
+            borderRadius: BorderRadius.circular(12.0),
+          ),
+          child: Center(
+            child: Text(
+              text,
+              style: TextStyle(
+                color: (progress.value?.progress ?? 0) < showDay
+                    ? Colors.black54
+                    : Colors.black,
+                fontSize: 16.0,
+              ),
+              // overflow: TextOverflow.ellipsis,
             ),
-          ));
-    });
+          ),
+        ));
   }
 
   void _showTipsDialog(BuildContext context, VoidCallback callback) {
@@ -183,8 +185,8 @@ class _EventLogPageState extends State<EventLogPage>
                       'attention': '好的！',
                       'time':
                           DateTime.fromMillisecondsSinceEpoch(plan.targetDate),
-                      'foodList': plan.foodList,
-                      'mealType': plan.mealType.displayName,
+                      // 'foodList': plan.foodList,
+                      'mealType': plan.type,
                     };
                     _handleGoSurvey(dietaryIntake,
                         presetAnswers: presetAnswers);
@@ -202,9 +204,9 @@ class _EventLogPageState extends State<EventLogPage>
                   ),
                   onPressed: () {
                     Navigator.of(context).pop();
-                    // if (!plan.state) {
-                    _updatePlanStatus(plan.id, plan.state);
-                    // }
+                    if (!plan.state) {
+                      _updatePlanStatus(plan.id, plan.state);
+                    }
                   },
                   child: Text('没有'),
                 ),
@@ -230,8 +232,278 @@ class _EventLogPageState extends State<EventLogPage>
     );
   }
 
+  Widget _buildDietListView(List<DietLog> diets, {bool shrinkWrap = true}) {
+    return ListView.builder(
+        shrinkWrap: shrinkWrap, // 根据内容自适应高度
+        physics: NeverScrollableScrollPhysics(), // 禁用列表自身的滚动
+        // padding: EdgeInsets.only(bottom: 64),
+        itemCount: diets.length,
+        itemBuilder: (context, index) {
+          final diet = diets[index];
+          return _buildDietTail(diet);
+        });
+  }
+
+  Widget _buildMealPlanListView(List<MealPlan> diets,
+      {bool shrinkWrap = true}) {
+    return ListView.builder(
+        shrinkWrap: shrinkWrap, // 根据内容自适应高度
+        physics: NeverScrollableScrollPhysics(), // 禁用列表自身的滚动
+        itemCount: diets.length,
+        itemBuilder: (context, index) {
+          final diet = diets[index];
+          return _buildMealPlanTail(diet);
+        });
+  }
+
+// 暴食指数
+  Widget _buildLevelIndicator(DietLog diet) {
+    return Row(
+      children: [
+        Container(
+          width: 24, // 圆圈的宽度
+          height: 24, // 圆圈的高度
+          decoration: BoxDecoration(
+            color: Colors.transparent, // 圆圈背景色
+            shape: BoxShape.circle,
+            border: Border.all(
+                color: getColorFromInt(diet.emotionIntensity),
+                width: 1), // 圆圈边框
+          ),
+          alignment: Alignment.center,
+          child: Text(
+            '暴',
+            style: TextStyle(
+                color: getColorFromInt(diet.emotionIntensity), fontSize: 16),
+          ),
+        ),
+        Text(
+          ':${(diet.emotionIntensity).toString()}',
+          style: GoogleFonts.aBeeZee(
+              fontStyle: FontStyle.italic,
+              color: getColorFromInt(diet.emotionIntensity)),
+        )
+      ],
+    );
+  }
+
+  Widget _buildMealPlanTail(MealPlan plan) {
+    return Card(
+      margin: EdgeInsets.all(12),
+      child: Container(
+        clipBehavior: Clip.hardEdge,
+        decoration: BoxDecoration(
+          color: plan.state ? Colors.grey : Colors.white70,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          children: [
+            Container(
+              padding: EdgeInsets.all(12.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                // color: Colors.white,
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          // 用餐类型
+                          Text(
+                            plan.type,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(
+                            width: 24,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  // 第二栏：显示进食时间 内容 编辑按钮
+                  Row(
+                    mainAxisAlignment:
+                        MainAxisAlignment.spaceBetween, // 确保时间和按钮在两端
+                    children: [
+                      // 时间部分，靠左显示
+                      Row(
+                        children: [
+                          Text(
+                            "时间：",
+                            style: TextStyle(fontSize: 16, color: Colors.black),
+                          ),
+                          //  时间展示
+                          Text(
+                            plan.time,
+                            style: GoogleFonts.aBeeZee(
+                              fontSize: 16,
+                              color: Colors.black,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      // 使用 Flexible 确保文本内容居中
+                      Flexible(
+                        child: Container(
+                          alignment: Alignment.center, // 文本居中对齐
+                          child: Text(
+                            plan.foodDetails,
+                            style: GoogleFonts.aBeeZee(
+                              fontSize: 16,
+                              color: Colors.black,
+                            ),
+                            overflow: TextOverflow.ellipsis, // 文本过长时省略
+                            maxLines: 1,
+                          ),
+                        ),
+                      ),
+
+                      // 编辑按钮，靠右显示
+                      if (!plan.state)
+                        SizedBox(
+                          width: 32,
+                          height: 32,
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.edit,
+                              color: Colors.black,
+                              size: 16,
+                            ),
+                            onPressed: () {
+                              _showConfirmationDialog(context, plan);
+                            },
+                          ),
+                        ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDietTail(
+    DietLog diet,
+  ) {
+    return Card(
+      color: Colors.white70,
+      margin: EdgeInsets.all(12),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Container(
+        clipBehavior: Clip.hardEdge,
+        decoration: BoxDecoration(
+          color: Color.fromRGBO(255, 255, 255, 0.5),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          children: [
+            Container(
+              padding: EdgeInsets.all(12.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                color: Colors.white,
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            // diet.food,
+                            // FIXME: 添加序列
+                            // diet.mealType.displayName ?? '早餐',
+                            // diet.mealType,
+                            MealType.fromEnglish(diet.mealType).displayName,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(
+                            width: 24,
+                          ),
+                          // 暴食指数
+                          _buildLevelIndicator(diet),
+                        ],
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  // 第二栏：显示进食时间 内容 编辑按钮
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Row(
+                            children: [
+                              Text("时间：",
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.black)),
+                              Text(
+                                DateFormat('HH:mm').format(
+                                    DateTime.fromMillisecondsSinceEpoch(
+                                        diet.eatingTime)),
+                                style: GoogleFonts.aBeeZee(
+                                    fontSize: 16,
+                                    color: Colors.black,
+                                    fontStyle: FontStyle.italic),
+                              )
+                            ],
+                          ),
+
+                          SizedBox(
+                            width: 32,
+                          ),
+                          //  暴食指数
+                          Text(
+                            diet.foodDetails
+                                .trim()
+                                .replaceAll('[', '')
+                                .replaceAll(']', ''),
+                            style: GoogleFonts.aBeeZee(
+                              fontSize: 16,
+                              color: Colors.black,
+                            ),
+                          ),
+                          SizedBox(width: 4),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final eventLog = ref.watch(eventLogProvider);
+    final mealPlans = eventLog.value?.mealPlans ?? [];
+    final dietLogs = eventLog.value?.dietLogs ?? [];
     return Scaffold(
       appBar: AppBar(
         title: Text('今日饮食', style: TextStyle(color: Colors.black)),
@@ -328,293 +600,6 @@ class _EventLogPageState extends State<EventLogPage>
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-    );
-  }
-
-  // 暴食字体颜色
-  Color getColorFromInt(int value) {
-    // 确保 value 在 1 到 9 之间
-    value = value.clamp(1, 10);
-
-    // 起始和终止颜色的 RGBA 值
-    int startR = 0, startG = 132, startB = 11;
-    int endR = 132, endG = 0, endB = 0;
-
-    // 计算插值因子 (0 到 1 之间)
-    double t = (value - 1) / (9 - 1);
-
-    // 计算每个通道的线性插值值
-    int r = ((1 - t) * startR + t * endR).round();
-    int g = ((1 - t) * startG + t * endG).round();
-    int b = ((1 - t) * startB + t * endB).round();
-
-    return Color.fromRGBO(r, g, b, 1);
-  }
-
-  Widget _buildDietListView(List<Diet> diets, {bool shrinkWrap = true}) {
-    return ListView.builder(
-        shrinkWrap: shrinkWrap, // 根据内容自适应高度
-        physics: NeverScrollableScrollPhysics(), // 禁用列表自身的滚动
-        // padding: EdgeInsets.only(bottom: 64),
-        itemCount: diets.length,
-        itemBuilder: (context, index) {
-          final diet = diets[index];
-          return _buildDietTail(diet);
-        });
-  }
-
-  Widget _buildMealPlanListView(List<MealPlan> diets,
-      {bool shrinkWrap = true}) {
-    return ListView.builder(
-        shrinkWrap: shrinkWrap, // 根据内容自适应高度
-        physics: NeverScrollableScrollPhysics(), // 禁用列表自身的滚动
-        itemCount: diets.length,
-        itemBuilder: (context, index) {
-          final diet = diets[index];
-          return _buildMealPlanTail(diet);
-        });
-  }
-
-  // 暴食指数
-  Widget _buildLevelIndicator(Diet diet) {
-    return Row(
-      children: [
-        Container(
-          width: 24, // 圆圈的宽度
-          height: 24, // 圆圈的高度
-          decoration: BoxDecoration(
-            color: Colors.transparent, // 圆圈背景色
-            shape: BoxShape.circle,
-            border: Border.all(
-                color: getColorFromInt(diet.emotionIntensity),
-                width: 1), // 圆圈边框
-          ),
-          alignment: Alignment.center,
-          child: Text(
-            '暴',
-            style: TextStyle(
-                color: getColorFromInt(diet.emotionIntensity), fontSize: 16),
-          ),
-        ),
-        Text(
-          ':${(diet.emotionIntensity).toString()}',
-          style: GoogleFonts.aBeeZee(
-              fontStyle: FontStyle.italic,
-              color: getColorFromInt(diet.emotionIntensity)),
-        )
-      ],
-    );
-  }
-
-  Widget _buildMealPlanTail(MealPlan plan) {
-    return Card(
-      margin: EdgeInsets.all(12),
-      child: Container(
-        clipBehavior: Clip.hardEdge,
-        decoration: BoxDecoration(
-          color: plan.state ? Colors.grey : Colors.white70,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          children: [
-            Container(
-              padding: EdgeInsets.all(12.0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-                // color: Colors.white,
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          // 用餐类型
-                          Text(
-                            plan.type,
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(
-                            width: 24,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  // 第二栏：显示进食时间 内容 编辑按钮
-                  Row(
-                    mainAxisAlignment:
-                        MainAxisAlignment.spaceBetween, // 确保时间和按钮在两端
-                    children: [
-                      // 时间部分，靠左显示
-                      Row(
-                        children: [
-                          Text(
-                            "时间：",
-                            style: TextStyle(fontSize: 16, color: Colors.black),
-                          ),
-                          // FIXME: 时间展示
-                          Text(
-                            // DateFormat('HH:mm').format(
-                            //   DateTime.fromMillisecondsSinceEpoch(
-                            //       plan.targetDate),
-                            // ),
-                            plan.time,
-                            style: GoogleFonts.aBeeZee(
-                              fontSize: 16,
-                              color: Colors.black,
-                              fontStyle: FontStyle.italic,
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      // 使用 Flexible 确保文本内容居中
-                      Flexible(
-                        child: Container(
-                          alignment: Alignment.center, // 文本居中对齐
-                          child: Text(
-                            plan.foodDetails,
-                            style: GoogleFonts.aBeeZee(
-                              fontSize: 16,
-                              color: Colors.black,
-                            ),
-                            overflow: TextOverflow.ellipsis, // 文本过长时省略
-                            maxLines: 1,
-                          ),
-                        ),
-                      ),
-
-                      // 编辑按钮，靠右显示
-                      // FIXME: 展示时机
-                      // if (!plan.state)
-                      SizedBox(
-                        width: 32,
-                        height: 32,
-                        child: IconButton(
-                          icon: Icon(
-                            Icons.edit,
-                            color: Colors.black,
-                            size: 16,
-                          ),
-                          onPressed: () {
-                            _showConfirmationDialog(context, plan);
-                          },
-                        ),
-                      ),
-                    ],
-                  )
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDietTail(
-    Diet diet,
-  ) {
-    return Card(
-      color: Colors.white70,
-      margin: EdgeInsets.all(12),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Container(
-        clipBehavior: Clip.hardEdge,
-        decoration: BoxDecoration(
-          color: Color.fromRGBO(255, 255, 255, 0.5),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          children: [
-            Container(
-              padding: EdgeInsets.all(12.0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-                color: Colors.white,
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            // diet.food,
-                            // FIXME: 添加序列
-                            diet.mealType?.displayName ?? '早餐',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(
-                            width: 24,
-                          ),
-                          // 暴食指数
-                          _buildLevelIndicator(diet),
-                        ],
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  // 第二栏：显示进食时间 内容 编辑按钮
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Row(
-                            children: [
-                              Text("时间：",
-                                  style: TextStyle(
-                                      fontSize: 16, color: Colors.black)),
-                              Text(
-                                DateFormat('HH:mm').format(
-                                    DateTime.fromMillisecondsSinceEpoch(
-                                        diet.eatingTime)),
-                                style: GoogleFonts.aBeeZee(
-                                    fontSize: 16,
-                                    color: Colors.black,
-                                    fontStyle: FontStyle.italic),
-                              )
-                            ],
-                          ),
-
-                          SizedBox(
-                            width: 32,
-                          ),
-                          //  暴食指数
-                          Text(
-                            diet.foodDetails,
-                            style: GoogleFonts.aBeeZee(
-                              fontSize: 16,
-                              color: Colors.black,
-                            ),
-                          ),
-                          SizedBox(width: 4),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

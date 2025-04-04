@@ -9,14 +9,16 @@ part of 'user_progress.dart';
 _$UserProgressImpl _$$UserProgressImplFromJson(Map<String, dynamic> json) =>
     _$UserProgressImpl(
       progress: (json['progress'] as num).toInt(),
-      finishedTaskIds: json['finished_task_ids'],
-      finishedOptionalTaskIds: json['finished_optional_task_ids'],
-      allRequiredTaskIds: (json['all_required_task_ids'] as List<dynamic>)
-          .map((e) => e as String)
-          .toList(),
-      allOptionalTaskIds: (json['all_optional_task_ids'] as List<dynamic>)
-          .map((e) => e as String)
-          .toList(),
+      finishedTaskIds: json['finished_task_ids'] ?? const [],
+      finishedOptionalTaskIds: json['finished_optional_task_ids'] ?? const [],
+      allRequiredTaskIds: (json['all_required_task_ids'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
+      allOptionalTaskIds: (json['all_optional_task_ids'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
     );
 
 Map<String, dynamic> _$$UserProgressImplToJson(_$UserProgressImpl instance) =>

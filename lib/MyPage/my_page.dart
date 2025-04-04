@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:namer_app/providers/progress.dart';
-import 'package:namer_app/providers/user.dart';
+import 'package:namer_app/providers/user_data.dart';
 import 'package:namer_app/services/dio_client.dart';
 import 'package:namer_app/utils/index.dart';
-import 'package:namer_app/models/user.dart' as user_model;
-// import 'package:namer_app/providers/user_provider.dart';
-// import 'package:namer_app/providers/progress_provider.dart';
+import 'package:namer_app/models/user.dart';
 import './profile_page.dart';
 
 class MyPage extends ConsumerWidget {
@@ -36,9 +34,6 @@ class MyPage extends ConsumerWidget {
             ElevatedButton(
               onPressed: () {
                 // 更新状态
-                // context
-                //     .read<ProgressProvider>()
-                //     .updateInputValue(textController.text);
                 ref
                     .read(progressProvider.notifier)
                     .setProgress(int.parse(textController.text));
@@ -52,7 +47,7 @@ class MyPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildUserInfoContent(BuildContext context, user_model.User user) {
+  Widget _buildUserInfoContent(BuildContext context, User user) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -69,8 +64,7 @@ class MyPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildUserInfo(
-      BuildContext context, AsyncValue<user_model.User?> user) {
+  Widget _buildUserInfo(BuildContext context, AsyncValue<User?> user) {
     return user.when(
       data: (user) {
         print('My Page user: $user');
@@ -107,7 +101,7 @@ class MyPage extends ConsumerWidget {
       title: Text(title),
       onTap: () {
         // 使用context获取UserProvider实例
-        final user = ref.watch(userProvider);
+        final user = ref.watch(userDataProvider);
 
         switch (title) {
           case '设置':
@@ -156,7 +150,7 @@ class MyPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(userProvider);
+    final user = ref.watch(userDataProvider);
     return Scaffold(
         appBar: AppBar(
           title: Text('我的页面',

@@ -2,10 +2,10 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:namer_app/services/strategy_service.dart';
 import 'package:namer_app/models/strategy_card.dart';
 
-part 'strategy_list.g.dart';
+part 'strategy_list_data.g.dart';
 
 @riverpod
-class StrategyList extends _$StrategyList {
+class StrategyListData extends _$StrategyListData {
   @override
   Future<List<StrategyCard>> build() async {
     return await StrategyService.fetchStrategies() ?? [];
