@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:namer_app/providers/user_provider.dart';
 import 'package:namer_app/providers/progress_provider.dart';
 import './profile_page.dart';
+import 'package:namer_app/pages/api_analytics_page.dart';
+import 'package:namer_app/pages/cache_manager_page.dart';
 
 class MyPage extends StatelessWidget {
   Future<void> _showNumberInputDialog(BuildContext context) async {
@@ -164,6 +166,22 @@ class MyPage extends StatelessWidget {
 
               // 当我不在暴食后选项
               _buildOption('当我不在暴食后', Icons.healing, context),
+
+              // 新增选项
+              ListTile(
+                leading: Icon(Icons.analytics_outlined),
+                title: Text('API 性能分析'),
+                onTap: () {
+                  Navigator.pushNamed(context, '/api_analytics');
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.storage_outlined),
+                title: Text('缓存管理'),
+                onTap: () {
+                  Navigator.pushNamed(context, '/cache_manager');
+                },
+              ),
             ],
           ),
         );

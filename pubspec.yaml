@@ -39,6 +39,8 @@ dependencies:
   flutter_riverpod: ^2.4.11
   riverpod_annotation: ^2.3.12
   freezed_annotation: ^2.4.4
+  connectivity_plus: ^4.0.2
+  async: ^2.11.0
 
 dev_dependencies:
   flutter_test:

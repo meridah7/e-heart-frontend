@@ -25,12 +25,17 @@ import 'package:namer_app/pages/response_card/index.dart';
 // services
 import 'package:namer_app/services/user_service.dart';
 import 'package:namer_app/services/progress_service.dart';
+import 'package:namer_app/services/dio_client.dart';
 
 // riverpod 状态管理
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 // part 'main.g.dart';
+
+// 添加必要的导入
+import 'package:namer_app/pages/api_analytics_page.dart';  
+import 'package:namer_app/pages/cache_manager_page.dart';
 
 final userProvider = ChangeNotifierProvider<UserProvider>((ref) {
   return UserProvider(apiService: UserService());
@@ -48,10 +53,21 @@ final responseCardProvider =
 // 用于控制全局路由
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // 初始化网络监听
+  try {
+    final dioClient = DioClient();
+    dioClient.setupNetworkListener();
+    print('网络监听器已初始化');
+  } catch (e) {
+    print('初始化网络监听器时出错: $e');
+  }
+  
   // 初始化中文 Locale 数据
   initializeDateFormatting('zh_CN', null);
-  WidgetsFlutterBinding.ensureInitialized();
+  
   runApp(
     // For widgets to be able to read providers, we need to wrap the entire
     // application in a "ProviderScope" widget.
@@ -123,11 +139,11 @@ class MyApp extends ConsumerWidget {
             ),
             scaffoldBackgroundColor: Color(0xFFF0E5E7), // 设置整体背景色
           ),
-          initialRoute: '/',
           routes: {
-            '/login': (context) => LoginPage(), // 登录页面
-            '/home': (context) => MainScreen(), // 主屏幕，登录成功后跳转的页面
-            '/register': (context) => RegisterInfoPage(), // 添加注册页面的路由
+            '/login': (context) => LoginPage(),
+            '/register_info': (context) => RegisterInfoPage(),
+            '/api_analytics': (context) => ApiAnalyticsPage(),
+            '/cache_manager': (context) => CacheManagerPage(),
           },
           navigatorKey: navigatorKey),
     );
