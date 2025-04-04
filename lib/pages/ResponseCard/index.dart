@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:namer_app/models/strategy_card.dart';
-import 'package:namer_app/pages/response_card/widgets/response_card.dart';
+import 'package:namer_app/pages/ResponseCard/widgets/response_card.dart';
 import 'package:namer_app/providers/strategy_list_data.dart';
 import 'package:flutter_reorderable_grid_view/widgets/widgets.dart';
 

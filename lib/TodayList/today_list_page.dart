@@ -11,7 +11,7 @@ import '../DietMonitoring/diet_monitoring_page.dart';
 
 import 'package:namer_app/models/task_models.dart';
 
-import 'package:namer_app/pages/response_card/index.dart';
+import 'package:namer_app/pages/ResponseCard/index.dart';
 
 class TodayListPage extends ConsumerStatefulWidget {
   @override

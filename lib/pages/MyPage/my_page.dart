@@ -5,7 +5,7 @@ import 'package:namer_app/providers/user_data.dart';
 import 'package:namer_app/services/dio_client.dart';
 import 'package:namer_app/utils/index.dart';
 import 'package:namer_app/models/user.dart';
-import './profile_page.dart';
+import 'profile_page.dart';
 
 class MyPage extends ConsumerWidget {
   Future<void> _showNumberInputDialog(

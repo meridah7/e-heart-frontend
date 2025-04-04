@@ -502,6 +502,7 @@ class _EventLogPageState extends ConsumerState<EventLogPage>
   @override
   Widget build(BuildContext context) {
     final eventLog = ref.watch(eventLogProvider);
+    final progress = ref.watch(progressProvider);
     final mealPlans = eventLog.value?.mealPlans ?? [];
     final dietLogs = eventLog.value?.dietLogs ?? [];
     return Scaffold(
@@ -538,20 +539,22 @@ class _EventLogPageState extends ConsumerState<EventLogPage>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 待完成计划标题
-                Padding(
-                  padding:
-                      const EdgeInsets.only(left: 8, top: 12.0, bottom: 8.0),
-                  child: Text(
-                    '待完成计划',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                // 待完成计划
+                if ((progress.value?.progress ?? 0) > 8)
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(left: 8, top: 12.0, bottom: 8.0),
+                    child: Text(
+                      '待完成计划',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                ),
-                _buildMealPlanListView(mealPlans),
-                // 当日饮食标题
+                if ((progress.value?.progress ?? 0) > 8)
+                  _buildMealPlanListView(mealPlans),
+                // 当日饮食
                 Padding(
                   padding:
                       const EdgeInsets.only(left: 8.0, top: 12.0, bottom: 8.0),

@@ -4,7 +4,7 @@ import 'package:namer_app/models/strategy_card.dart';
 
 part 'strategy_list_data.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class StrategyListData extends _$StrategyListData {
   @override
   Future<List<StrategyCard>> build() async {

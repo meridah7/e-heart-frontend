@@ -4,9 +4,8 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:namer_app/Survey/survey_widgets.dart';
 import 'package:namer_app/Survey/chart_widgets.dart' as charts;
 import 'package:flutter/cupertino.dart';
-// import 'package:fl_chart/fl_chart.dart' as charts;
 
-import 'package:namer_app/ResponseCard/swipeable_response_card.dart';
+import 'package:namer_app/pages/ResponseCard/widgets/swipeable_response_card.dart';
 
 Widget questionWidgetFactory(BuildContext context, Question question,
     void Function(void Function()) setState) {
