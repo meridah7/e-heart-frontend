@@ -36,15 +36,22 @@ class SurveyPage extends ConsumerStatefulWidget {
 
 class _SurveyPageState extends ConsumerState<SurveyPage> {
   // Map<String, String> _customAnswers = {};
+  late final PreferencesData _userPrefController;
   late final Preferences _userPref;
   bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
+    _initializePreferences();
     _initWidget();
     isLoading = true;
     _initializeQuestions();
+  }
+
+  Future<void> _initializePreferences() async {
+    _userPrefController = await ref.read(preferencesDataProvider.notifier);
+    _userPref = await ref.watch(preferencesDataProvider.future);
   }
 
   // 递归填入预设回答
@@ -240,10 +247,6 @@ class _SurveyPageState extends ConsumerState<SurveyPage> {
     //     widget.survey.questions = await generateImpulseReview();
     //   });
     // }
-  }
-
-  Future<void> _initializePreferences() async {
-    _userPref = await ref.read(preferencesProvider.future);
   }
 
   // void _updateCustomAnswer(String questionKey, String answer) {

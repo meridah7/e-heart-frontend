@@ -37,9 +37,9 @@ class DebugButton extends ConsumerWidget {
 
   _onDebugButtonTap(BuildContext context, WidgetRef ref) async {
     // await userPref.deleteAllKeys();
-    ref.read(preferencesProvider.future).then((userPref) {
-      userPref.deleteAllKeys();
-    });
+    // ref.read(preferencesProvider.future).then((userPref) {
+    //   userPref.deleteAllKeys();
+    // });
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text("All keys deleted!"),

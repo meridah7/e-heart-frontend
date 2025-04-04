@@ -22,13 +22,14 @@ UserProgress _$UserProgressFromJson(Map<String, dynamic> json) {
 mixin _$UserProgress {
   @JsonKey(name: "progress")
   int get progress => throw _privateConstructorUsedError;
-  @JsonKey(name: "finished_task_ids")
-  dynamic get finishedTaskIds => throw _privateConstructorUsedError;
-  @JsonKey(name: "finished_optional_task_ids")
-  dynamic get finishedOptionalTaskIds => throw _privateConstructorUsedError;
-  @JsonKey(name: "all_required_task_ids")
+  @JsonKey(name: "finished_task_ids", defaultValue: [])
+  List<String> get finishedTaskIds => throw _privateConstructorUsedError;
+  @JsonKey(name: "finished_optional_task_ids", defaultValue: [])
+  List<String> get finishedOptionalTaskIds =>
+      throw _privateConstructorUsedError;
+  @JsonKey(name: "all_required_task_ids", defaultValue: [])
   List<String> get allRequiredTaskIds => throw _privateConstructorUsedError;
-  @JsonKey(name: "all_optional_task_ids")
+  @JsonKey(name: "all_optional_task_ids", defaultValue: [])
   List<String> get allOptionalTaskIds => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -45,11 +46,14 @@ abstract class $UserProgressCopyWith<$Res> {
   @useResult
   $Res call(
       {@JsonKey(name: "progress") int progress,
-      @JsonKey(name: "finished_task_ids") dynamic finishedTaskIds,
-      @JsonKey(name: "finished_optional_task_ids")
-      dynamic finishedOptionalTaskIds,
-      @JsonKey(name: "all_required_task_ids") List<String> allRequiredTaskIds,
-      @JsonKey(name: "all_optional_task_ids") List<String> allOptionalTaskIds});
+      @JsonKey(name: "finished_task_ids", defaultValue: [])
+      List<String> finishedTaskIds,
+      @JsonKey(name: "finished_optional_task_ids", defaultValue: [])
+      List<String> finishedOptionalTaskIds,
+      @JsonKey(name: "all_required_task_ids", defaultValue: [])
+      List<String> allRequiredTaskIds,
+      @JsonKey(name: "all_optional_task_ids", defaultValue: [])
+      List<String> allOptionalTaskIds});
 }
 
 /// @nodoc
@@ -66,8 +70,8 @@ class _$UserProgressCopyWithImpl<$Res, $Val extends UserProgress>
   @override
   $Res call({
     Object? progress = null,
-    Object? finishedTaskIds = freezed,
-    Object? finishedOptionalTaskIds = freezed,
+    Object? finishedTaskIds = null,
+    Object? finishedOptionalTaskIds = null,
     Object? allRequiredTaskIds = null,
     Object? allOptionalTaskIds = null,
   }) {
@@ -76,14 +80,14 @@ class _$UserProgressCopyWithImpl<$Res, $Val extends UserProgress>
           ? _value.progress
           : progress // ignore: cast_nullable_to_non_nullable
               as int,
-      finishedTaskIds: freezed == finishedTaskIds
+      finishedTaskIds: null == finishedTaskIds
           ? _value.finishedTaskIds
           : finishedTaskIds // ignore: cast_nullable_to_non_nullable
-              as dynamic,
-      finishedOptionalTaskIds: freezed == finishedOptionalTaskIds
+              as List<String>,
+      finishedOptionalTaskIds: null == finishedOptionalTaskIds
           ? _value.finishedOptionalTaskIds
           : finishedOptionalTaskIds // ignore: cast_nullable_to_non_nullable
-              as dynamic,
+              as List<String>,
       allRequiredTaskIds: null == allRequiredTaskIds
           ? _value.allRequiredTaskIds
           : allRequiredTaskIds // ignore: cast_nullable_to_non_nullable
@@ -106,11 +110,14 @@ abstract class _$$UserProgressImplCopyWith<$Res>
   @useResult
   $Res call(
       {@JsonKey(name: "progress") int progress,
-      @JsonKey(name: "finished_task_ids") dynamic finishedTaskIds,
-      @JsonKey(name: "finished_optional_task_ids")
-      dynamic finishedOptionalTaskIds,
-      @JsonKey(name: "all_required_task_ids") List<String> allRequiredTaskIds,
-      @JsonKey(name: "all_optional_task_ids") List<String> allOptionalTaskIds});
+      @JsonKey(name: "finished_task_ids", defaultValue: [])
+      List<String> finishedTaskIds,
+      @JsonKey(name: "finished_optional_task_ids", defaultValue: [])
+      List<String> finishedOptionalTaskIds,
+      @JsonKey(name: "all_required_task_ids", defaultValue: [])
+      List<String> allRequiredTaskIds,
+      @JsonKey(name: "all_optional_task_ids", defaultValue: [])
+      List<String> allOptionalTaskIds});
 }
 
 /// @nodoc
@@ -125,8 +132,8 @@ class __$$UserProgressImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? progress = null,
-    Object? finishedTaskIds = freezed,
-    Object? finishedOptionalTaskIds = freezed,
+    Object? finishedTaskIds = null,
+    Object? finishedOptionalTaskIds = null,
     Object? allRequiredTaskIds = null,
     Object? allOptionalTaskIds = null,
   }) {
@@ -135,14 +142,14 @@ class __$$UserProgressImplCopyWithImpl<$Res>
           ? _value.progress
           : progress // ignore: cast_nullable_to_non_nullable
               as int,
-      finishedTaskIds: freezed == finishedTaskIds
-          ? _value.finishedTaskIds
+      finishedTaskIds: null == finishedTaskIds
+          ? _value._finishedTaskIds
           : finishedTaskIds // ignore: cast_nullable_to_non_nullable
-              as dynamic,
-      finishedOptionalTaskIds: freezed == finishedOptionalTaskIds
-          ? _value.finishedOptionalTaskIds
+              as List<String>,
+      finishedOptionalTaskIds: null == finishedOptionalTaskIds
+          ? _value._finishedOptionalTaskIds
           : finishedOptionalTaskIds // ignore: cast_nullable_to_non_nullable
-              as dynamic,
+              as List<String>,
       allRequiredTaskIds: null == allRequiredTaskIds
           ? _value._allRequiredTaskIds
           : allRequiredTaskIds // ignore: cast_nullable_to_non_nullable
@@ -160,14 +167,17 @@ class __$$UserProgressImplCopyWithImpl<$Res>
 class _$UserProgressImpl implements _UserProgress {
   const _$UserProgressImpl(
       {@JsonKey(name: "progress") required this.progress,
-      @JsonKey(name: "finished_task_ids") this.finishedTaskIds = const [],
-      @JsonKey(name: "finished_optional_task_ids")
-      this.finishedOptionalTaskIds = const [],
-      @JsonKey(name: "all_required_task_ids")
+      @JsonKey(name: "finished_task_ids", defaultValue: [])
+      final List<String> finishedTaskIds = const [],
+      @JsonKey(name: "finished_optional_task_ids", defaultValue: [])
+      final List<String> finishedOptionalTaskIds = const [],
+      @JsonKey(name: "all_required_task_ids", defaultValue: [])
       final List<String> allRequiredTaskIds = const [],
-      @JsonKey(name: "all_optional_task_ids")
+      @JsonKey(name: "all_optional_task_ids", defaultValue: [])
       final List<String> allOptionalTaskIds = const []})
-      : _allRequiredTaskIds = allRequiredTaskIds,
+      : _finishedTaskIds = finishedTaskIds,
+        _finishedOptionalTaskIds = finishedOptionalTaskIds,
+        _allRequiredTaskIds = allRequiredTaskIds,
         _allOptionalTaskIds = allOptionalTaskIds;
 
   factory _$UserProgressImpl.fromJson(Map<String, dynamic> json) =>
@@ -176,15 +186,28 @@ class _$UserProgressImpl implements _UserProgress {
   @override
   @JsonKey(name: "progress")
   final int progress;
+  final List<String> _finishedTaskIds;
   @override
-  @JsonKey(name: "finished_task_ids")
-  final dynamic finishedTaskIds;
+  @JsonKey(name: "finished_task_ids", defaultValue: [])
+  List<String> get finishedTaskIds {
+    if (_finishedTaskIds is EqualUnmodifiableListView) return _finishedTaskIds;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_finishedTaskIds);
+  }
+
+  final List<String> _finishedOptionalTaskIds;
   @override
-  @JsonKey(name: "finished_optional_task_ids")
-  final dynamic finishedOptionalTaskIds;
+  @JsonKey(name: "finished_optional_task_ids", defaultValue: [])
+  List<String> get finishedOptionalTaskIds {
+    if (_finishedOptionalTaskIds is EqualUnmodifiableListView)
+      return _finishedOptionalTaskIds;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_finishedOptionalTaskIds);
+  }
+
   final List<String> _allRequiredTaskIds;
   @override
-  @JsonKey(name: "all_required_task_ids")
+  @JsonKey(name: "all_required_task_ids", defaultValue: [])
   List<String> get allRequiredTaskIds {
     if (_allRequiredTaskIds is EqualUnmodifiableListView)
       return _allRequiredTaskIds;
@@ -194,7 +217,7 @@ class _$UserProgressImpl implements _UserProgress {
 
   final List<String> _allOptionalTaskIds;
   @override
-  @JsonKey(name: "all_optional_task_ids")
+  @JsonKey(name: "all_optional_task_ids", defaultValue: [])
   List<String> get allOptionalTaskIds {
     if (_allOptionalTaskIds is EqualUnmodifiableListView)
       return _allOptionalTaskIds;
@@ -215,9 +238,9 @@ class _$UserProgressImpl implements _UserProgress {
             (identical(other.progress, progress) ||
                 other.progress == progress) &&
             const DeepCollectionEquality()
-                .equals(other.finishedTaskIds, finishedTaskIds) &&
+                .equals(other._finishedTaskIds, _finishedTaskIds) &&
             const DeepCollectionEquality().equals(
-                other.finishedOptionalTaskIds, finishedOptionalTaskIds) &&
+                other._finishedOptionalTaskIds, _finishedOptionalTaskIds) &&
             const DeepCollectionEquality()
                 .equals(other._allRequiredTaskIds, _allRequiredTaskIds) &&
             const DeepCollectionEquality()
@@ -229,8 +252,8 @@ class _$UserProgressImpl implements _UserProgress {
   int get hashCode => Object.hash(
       runtimeType,
       progress,
-      const DeepCollectionEquality().hash(finishedTaskIds),
-      const DeepCollectionEquality().hash(finishedOptionalTaskIds),
+      const DeepCollectionEquality().hash(_finishedTaskIds),
+      const DeepCollectionEquality().hash(_finishedOptionalTaskIds),
       const DeepCollectionEquality().hash(_allRequiredTaskIds),
       const DeepCollectionEquality().hash(_allOptionalTaskIds));
 
@@ -251,12 +274,13 @@ class _$UserProgressImpl implements _UserProgress {
 abstract class _UserProgress implements UserProgress {
   const factory _UserProgress(
       {@JsonKey(name: "progress") required final int progress,
-      @JsonKey(name: "finished_task_ids") final dynamic finishedTaskIds,
-      @JsonKey(name: "finished_optional_task_ids")
-      final dynamic finishedOptionalTaskIds,
-      @JsonKey(name: "all_required_task_ids")
+      @JsonKey(name: "finished_task_ids", defaultValue: [])
+      final List<String> finishedTaskIds,
+      @JsonKey(name: "finished_optional_task_ids", defaultValue: [])
+      final List<String> finishedOptionalTaskIds,
+      @JsonKey(name: "all_required_task_ids", defaultValue: [])
       final List<String> allRequiredTaskIds,
-      @JsonKey(name: "all_optional_task_ids")
+      @JsonKey(name: "all_optional_task_ids", defaultValue: [])
       final List<String> allOptionalTaskIds}) = _$UserProgressImpl;
 
   factory _UserProgress.fromJson(Map<String, dynamic> json) =
@@ -266,16 +290,16 @@ abstract class _UserProgress implements UserProgress {
   @JsonKey(name: "progress")
   int get progress;
   @override
-  @JsonKey(name: "finished_task_ids")
-  dynamic get finishedTaskIds;
+  @JsonKey(name: "finished_task_ids", defaultValue: [])
+  List<String> get finishedTaskIds;
   @override
-  @JsonKey(name: "finished_optional_task_ids")
-  dynamic get finishedOptionalTaskIds;
+  @JsonKey(name: "finished_optional_task_ids", defaultValue: [])
+  List<String> get finishedOptionalTaskIds;
   @override
-  @JsonKey(name: "all_required_task_ids")
+  @JsonKey(name: "all_required_task_ids", defaultValue: [])
   List<String> get allRequiredTaskIds;
   @override
-  @JsonKey(name: "all_optional_task_ids")
+  @JsonKey(name: "all_optional_task_ids", defaultValue: [])
   List<String> get allOptionalTaskIds;
   @override
   @JsonKey(ignore: true)

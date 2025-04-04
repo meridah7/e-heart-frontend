@@ -9,11 +9,49 @@ part 'user_preference.g.dart';
 const String COMPLETED_SURVEY_KEY = 'completedSurveys';
 
 @Riverpod(keepAlive: true)
-Future<Preferences> preferences(PreferencesRef ref) {
+class PreferencesData extends _$PreferencesData {
   // Use the namespace to distinguish between different user data
-  String namespace =
-      ref.watch(userDataProvider).value?.uuid.toString() ?? 'default';
-  return Preferences.getInstance(namespace: namespace);
+
+  @override
+  Future<Preferences> build() async {
+    final userData = await ref.watch(userDataProvider.future);
+    String namespace = userData?.uuid.toString() ?? 'default';
+    return Preferences.getInstance(namespace: namespace);
+  }
+
+  Future<void> setData(String key, dynamic value) async {
+    state.whenData((preferences) async {
+      await preferences.setData(key, value);
+      state = AsyncData(preferences);
+    });
+  }
+
+  Future<dynamic> getData(String key) async {
+    return state.whenData((preferences) {
+      return preferences.getData(key);
+    }).value;
+  }
+
+  Future<void> updateSurveyData(String category, List<String> survey) async {
+    state.whenData((preferences) async {
+      await preferences.updateSurveyData(category, survey);
+      state = AsyncData(preferences);
+    });
+  }
+
+  // Future<List<dynamic>> readSurveyData(String category) async {
+  //   return state.whenData((preferences) {
+  //         return preferences.readSurveyData(category);
+  //       }).value ??
+  //       [];
+  // }
+
+  Future<void> deleteKey(String key) async {
+    state.whenData((preferences) async {
+      await preferences.deleteKey(key);
+      state = AsyncData(preferences);
+    });
+  }
 }
 
 class Preferences {

@@ -24,24 +24,17 @@ class FlippableSurveyPage extends ConsumerStatefulWidget {
 
 class _FlippableSurveyPageState extends ConsumerState<FlippableSurveyPage> {
   final DioClient dioClient = DioClient();
-  late final Preferences _userPref;
+  late final PreferencesData _userPref;
   late final Progress _progress;
   late final Progress _progressController;
 
   int _curStep = 0;
 
-  // Future<void> _initializePreferences() async {
-  //   if (mounted) {
-  //     var userProvider = Provider.of<UserProvider>(context, listen: false);
-  //     _userPref = await Preferences.getInstance(namespace: userProvider.uuid);
-  //   }
-  // }
-
   @override
-  void initState() async {
+  void initState() {
     super.initState();
     _progressController = ref.read(progressProvider.notifier);
-    _userPref = await ref.read(preferencesProvider.future);
+    _userPref = ref.read(preferencesDataProvider.notifier);
   }
 
   Map<String, dynamic> extractAnswer(Survey survey, int step,
@@ -115,7 +108,6 @@ class _FlippableSurveyPageState extends ConsumerState<FlippableSurveyPage> {
   }
 
   Future<void> handleSaveSummary(List<String> summary) async {
-    // 本地保存问卷记录
     await _userPref.updateSurveyData(widget.taskId, summary);
   }
 

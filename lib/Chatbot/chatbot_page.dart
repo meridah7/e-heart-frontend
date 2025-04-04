@@ -33,6 +33,7 @@ class _ChatbotPageState extends ConsumerState<ChatbotPage> {
   final _textFieldController = TextEditingController();
   List userResponses = [];
   List<Content> contents = [];
+  late PreferencesData _userPrefController;
   late Preferences _userPref;
 
   //初始化的状态
@@ -76,7 +77,7 @@ class _ChatbotPageState extends ConsumerState<ChatbotPage> {
     });
 
     await _initializePreferences();
-    Map answers = _userPref.getData('completedTaskAnswers');
+    Map answers = await _userPref.getData('completedTaskAnswers');
     if (answers.containsKey(widget.taskId)) {
       // 如果有记录，直接展示最终结果
       setState(() {
@@ -90,7 +91,8 @@ class _ChatbotPageState extends ConsumerState<ChatbotPage> {
   }
 
   Future<void> _initializePreferences() async {
-    _userPref = await ref.watch(preferencesProvider.future);
+    _userPrefController = await ref.read(preferencesDataProvider.notifier);
+    _userPref = await ref.watch(preferencesDataProvider.future);
   }
 
   // _displayNextContent函数用于显示下一个聊天内容。
@@ -122,8 +124,8 @@ class _ChatbotPageState extends ConsumerState<ChatbotPage> {
   }
 
   // Display the full content when the user finished this before
-  void _displayAllContent() {
-    Map answers = _userPref.getData('completedTaskAnswers');
+  void _displayAllContent() async {
+    Map answers = await _userPref.getData('completedTaskAnswers');
     // It can be asserted directly is because _initWidget make sure the answers contain current taskId
     final List answer = answers[widget.taskId]!;
     List<ChatMessage> msg = [];
@@ -165,12 +167,12 @@ class _ChatbotPageState extends ConsumerState<ChatbotPage> {
 // _onConversationEnd函数用于处理对话结束时的逻辑。当所有预设chatbot的contents被处理完的时候，会触发这个函数
   void _onConversationEnd() async {
     print('Conversation has ended. User responses: $userResponses');
-    Map answers = _userPref.getData('completedTaskAnswers');
+    Map answers = await _userPref.getData('completedTaskAnswers');
     answers[widget.taskId] = userResponses;
     await _userPref.setData('completedTaskAnswers', answers);
 
     if (_userPref.hasKey('finishedTaskIds')) {
-      List taskIds = _userPref.getData('finishedTaskIds');
+      List taskIds = await _userPref.getData('finishedTaskIds');
       taskIds.add(widget.taskId);
 
       await _userPref.setData('finishedTaskIds', taskIds);

@@ -34,16 +34,15 @@ class ProgressService {
     }
   }
 
-  Future<UserProgress?> updateProgress(String taskId,
-      {bool isRequired = true}) async {
+  Future<bool> updateProgress(String taskId, {bool isRequired = true}) async {
     try {
       Response response = await dioClient.postRequest(
           ApiEndpoints.UPDATE_PROGRESS,
           {'task_id': taskId, "is_required_task": isRequired});
-      if (response.statusCode == 200) {
-        return UserProgress.fromJson(response.data);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return true;
       } else {
-        throw Exception('Failed to update user task');
+        return false;
       }
     } catch (e) {
       print('Error updating user task: $e');

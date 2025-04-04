@@ -30,15 +30,18 @@ class Progress extends _$Progress {
   Future<void> updateProgress(String taskId) async {
     state = const AsyncLoading();
     await AsyncValue.guard(() async {
-      if ((state.value?.finishedTaskIds ?? [])?.contains(taskId) ?? false) {
+      if ((state.value?.finishedTaskIds ?? []).contains(taskId) ?? false) {
         ToastUtils.showToast('当前任务已完成');
         return;
       }
       bool isRequired =
           (state.value?.allRequiredTaskIds ?? []).contains(taskId);
 
-      await _progressService.updateProgress(taskId, isRequired: isRequired);
-      await fetchProgress();
+      final bool isUpdated =
+          await _progressService.updateProgress(taskId, isRequired: isRequired);
+      if (isUpdated) {
+        await fetchProgress();
+      }
     });
   }
 

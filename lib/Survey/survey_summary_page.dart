@@ -16,14 +16,14 @@ class SurveySummaryPage extends ConsumerStatefulWidget {
 }
 
 class _SurveySummaryPageState extends ConsumerState<SurveySummaryPage> {
-  late Preferences _userPref;
+  late PreferencesData _userPref;
   bool showRestart = true;
 
   @override
   void initState() async {
     super.initState();
     // _initWidget();
-    _userPref = await ref.read(preferencesProvider.future);
+    _userPref = await ref.read(preferencesDataProvider.notifier);
   }
 
   // Future<void> _initWidget() async {
@@ -69,7 +69,7 @@ class _SurveySummaryPageState extends ConsumerState<SurveySummaryPage> {
               padding: const EdgeInsets.all(8.0),
               child: ElevatedButton(
                 onPressed: () async {
-                  Map answers = _userPref.getData('completedTaskAnswers');
+                  Map answers = await _userPref.getData('completedTaskAnswers');
                   answers.remove(widget.taskId);
                   await _userPref.setData('completedTaskAnswers', answers);
                   navigatorKey.currentState
