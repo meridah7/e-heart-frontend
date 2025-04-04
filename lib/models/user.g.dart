@@ -6,15 +6,13 @@ part of 'user.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-User _$UserFromJson(Map<String, dynamic> json) => User(
+_$UserImpl _$$UserImplFromJson(Map<String, dynamic> json) => _$UserImpl(
       id: (json['id'] as num?)?.toInt(),
       uuid: json['uuid'] as String?,
       name: json['name'] as String?,
       email: json['email'] as String?,
-      height: _$JsonConverterFromJson<Object, double>(
-          json['height'], const StringToDoubleConverter().fromJson),
-      weight: _$JsonConverterFromJson<Object, double>(
-          json['weight'], const StringToDoubleConverter().fromJson),
+      height: const StringToDoubleConverter().fromJson(json['height']),
+      weight: const StringToDoubleConverter().fromJson(json['weight']),
       age: (json['age'] as num?)?.toInt(),
       birthday: json['birthday'] == null
           ? null
@@ -36,36 +34,23 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
       phoneNumber: json['phone_number'] as String?,
     );
 
-Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
+Map<String, dynamic> _$$UserImplToJson(_$UserImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'uuid': instance.uuid,
+      'name': instance.name,
+      'email': instance.email,
+      'height': const StringToDoubleConverter().toJson(instance.height),
+      'weight': const StringToDoubleConverter().toJson(instance.weight),
       'age': instance.age,
       'birthday': instance.birthday?.toIso8601String(),
-      'createdAt': instance.createdAt?.toIso8601String(),
       'currentProgress': instance.currentProgress,
-      'email': instance.email,
       'expectedProgress': instance.expectedProgress,
       'gender': instance.gender,
-      'height': _$JsonConverterToJson<Object, double>(
-          instance.height, const StringToDoubleConverter().toJson),
-      'weight': _$JsonConverterToJson<Object, double>(
-          instance.weight, const StringToDoubleConverter().toJson),
-      'id': instance.id,
-      'lastFinishedTaskId': instance.lastFinishedTaskId,
       'lastTaskFinishedTime': instance.lastTaskFinishedTime?.toIso8601String(),
-      'name': instance.name,
-      'phone_number': instance.phoneNumber,
+      'lastFinishedTaskId': instance.lastFinishedTaskId,
       'progress': instance.progress,
+      'createdAt': instance.createdAt?.toIso8601String(),
       'updatedAt': instance.updatedAt?.toIso8601String(),
-      'uuid': instance.uuid,
+      'phone_number': instance.phoneNumber,
     };
-
-Value? _$JsonConverterFromJson<Json, Value>(
-  Object? json,
-  Value? Function(Json json) fromJson,
-) =>
-    json == null ? null : fromJson(json as Json);
-
-Json? _$JsonConverterToJson<Json, Value>(
-  Value? value,
-  Json? Function(Value value) toJson,
-) =>
-    value == null ? null : toJson(value);

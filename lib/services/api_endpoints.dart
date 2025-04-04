@@ -8,9 +8,15 @@ class ApiEndpoints {
   // 用户认证
   static const String SEND_CODE = '/auth/sendCode';
   static const String VERIFY_CODE = '/auth/verifyCode';
+  static const String LOG_OUT = '/auth/logout';
 
   // 用户信息
   static const String PROFILE = '/users/current';
+
+  // 用户进度
+  static const String PROGRESS = '/users/progress';
+  // 更新进度
+  static const String UPDATE_PROGRESS = '/users/task';
 
   // 冲动应对 GET-获取策略 PUT-更新策略 POST-添加策略
   static const String IMPULSE_STRATEGIES = '/impulse/impulse-strategies';
@@ -26,4 +32,12 @@ class ApiEndpoints {
   // 饮食计划反思 GET
   static const String MEAL_PLAN_REFLECTIONS =
       '/meal_plan_reflections/reflection_data';
+  // 创建饮食计划
+  static const String CREATE_MEAL_PLAN = '/meal_plans/create';
+
+  // 更新饮食计划 PUT id
+  static const String UPDATE_MEAL_PLAN = '/meal_plans/';
+
+  // 行为记录
+  static const String EVENT_LOG = '/diet_logs/todayDiet/';
 }

@@ -1,23 +1,28 @@
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
+import 'package:namer_app/services/api_endpoints.dart';
 import 'package:namer_app/utils/helper.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'dio_client.dart';
 import 'package:namer_app/models/survey_models.dart';
 import 'package:namer_app/models/task_models.dart';
 import 'package:namer_app/models/user_progress.dart';
 
-import 'package:namer_app/services/api_service.dart';
-import 'package:namer_app/user_preference.dart';
+part 'progress_service.g.dart';
 
-class ProgressService implements ProgressApiService {
-  late Preferences _userPref;
+@riverpod
+ProgressService progressService(ProgressServiceRef ref) {
+  return ProgressService();
+}
+
+class ProgressService {
+  // late Preferences _userPref;
   final DioClient dioClient = DioClient();
 
-  @override
   Future<UserProgress?> fetchProgress() async {
     try {
-      Response response = await dioClient.getRequest('/users/progress');
+      Response response = await dioClient.getRequest(ApiEndpoints.PROGRESS);
       if (response.statusCode == 200) {
         return UserProgress.fromJson(response.data['data']);
       } else {
@@ -29,16 +34,15 @@ class ProgressService implements ProgressApiService {
     }
   }
 
-  @override
-  Future<UserProgress?> updateProgress(String taskId,
-      {bool isRequired = true}) async {
+  Future<bool> updateProgress(String taskId, {bool isRequired = true}) async {
     try {
       Response response = await dioClient.postRequest(
-          '/users/task', {'task_id': taskId, "is_required_task": isRequired});
-      if (response.statusCode == 200) {
-        return UserProgress.fromJson(response.data);
+          ApiEndpoints.UPDATE_PROGRESS,
+          {'task_id': taskId, "is_required_task": isRequired});
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return true;
       } else {
-        throw Exception('Failed to update user task');
+        return false;
       }
     } catch (e) {
       print('Error updating user task: $e');
@@ -46,10 +50,9 @@ class ProgressService implements ProgressApiService {
     }
   }
 
-  @override
   Future<UserProgress?> setProgress(int progress) async {
     try {
-      Response response = await dioClient.postRequest('/users/progress', {
+      Response response = await dioClient.postRequest(ApiEndpoints.PROGRESS, {
         'progress': progress,
       });
       if (response.statusCode == 200) {
@@ -64,12 +67,11 @@ class ProgressService implements ProgressApiService {
   }
 
   // 获取冲动记录回顾
-  @override
   Future<List<Task>> fetchImpulseReflectionRecords() async {
     List<Task> impulseRecordTaskList = [];
     try {
       Response response =
-          await dioClient.getRequest('/impulse/impulse-reflection-records/');
+          await dioClient.getRequest(ApiEndpoints.IMPULSE_REFLECTION_RECORDS);
       if (response.statusCode == 200) {
         List<dynamic> data = response.data;
         impulseRecordTaskList = data.map((val) {

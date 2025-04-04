@@ -16,8 +16,8 @@ class Helper {
     return DateTime.tryParse(dateTime);
   }
 
-  static String formatDateTime(DateTime dateTime) {
+  static String formatDateTime(DateTime? dateTime) {
     final DateFormat formatter = DateFormat('yyyy-MM-dd');
-    return formatter.format(dateTime);
+    return formatter.format(dateTime ?? DateTime.now());
   }
 }
