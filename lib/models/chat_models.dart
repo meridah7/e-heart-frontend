@@ -38,3 +38,51 @@ class Content {
 
   void setShowChoices(bool bool) {}
 }
+
+extension ContentExtensions on Content {
+  // Convenience method to check if this content has choices
+  bool get hasChoices => choices != null && choices!.isNotEmpty;
+  
+  // Check if this content has a valid text
+  bool get hasText => text != null && text!.isNotEmpty;
+  
+  // Check if a specific choice is selected
+  bool isChoiceSelected(String choice) => 
+      selectedChoices?.contains(choice) ?? false;
+      
+  // Safely add a choice to selectedChoices
+  void selectChoice(String choice) {
+    selectedChoices ??= [];
+    if (choices?.contains(choice) ?? false) {
+      if (!selectedChoices!.contains(choice)) {
+        selectedChoices!.add(choice);
+      }
+    }
+  }
+  
+  // Clear selections
+  void clearSelections() {
+    selectedChoices = [];
+  }
+}
+
+extension ChatMessageFormatter on ChatMessage {
+  // Format chat message for display
+  String get formattedText {
+    if (text.isEmpty) return '';
+    
+    // You could add custom formatting logic here
+    // For example, handle markdown, emojis, etc.
+    return text;
+  }
+  
+  // Create a copy with updated text
+  ChatMessage copyWithText(String newText) {
+    return ChatMessage(
+      text: newText, 
+      isUser: isUser,
+      imageUrl: imageUrl,
+      onComplete: onComplete
+    );
+  }
+}

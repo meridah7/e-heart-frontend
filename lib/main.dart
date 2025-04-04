@@ -141,6 +141,7 @@ class MyApp extends ConsumerWidget {
           ),
           routes: {
             '/login': (context) => LoginPage(),
+            '/home': (context) => MainScreen(),
             '/register_info': (context) => RegisterInfoPage(),
             '/api_analytics': (context) => ApiAnalyticsPage(),
             '/cache_manager': (context) => CacheManagerPage(),
