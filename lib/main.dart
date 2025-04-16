@@ -6,17 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:namer_app/providers/page_data.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 // pages
-import 'pages/TodayList/today_list_page.dart';
-import 'pages/AnalysisReview/review_analysis_page.dart';
-import 'pages/MyPage/my_page.dart';
-import 'pages/DietaryAnalysis/dietary_analysis_page.dart';
 import 'pages/Login/login_page.dart';
 import 'pages/Login/register_info_page.dart';
 import 'widgets/debugButton.dart';
-import 'pages/DailyDiet/event_log_page.dart';
 
 // riverpod 状态管理
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -58,6 +52,7 @@ class MyApp extends ConsumerWidget {
         Locale('en', ''), // 英文
         Locale('es', ''), // 西班牙语（可根据需要添加更多语言）
       ],
+      navigatorKey: navigatorKey,
 
       // 设置默认语言（可根据用户设备的语言设置）
       locale: Locale('zh', ''), // 默认中文
