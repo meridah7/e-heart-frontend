@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -27,5 +29,15 @@ Widget customLoading() {
       valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
       strokeWidth: 2.0,
     ),
+  );
+}
+
+Color generateColor(String? type) {
+  final hash = type.hashCode;
+  return Color.fromRGBO(
+    (hash & 0xFF0000) >> 16,
+    (hash & 0x00FF00) >> 8,
+    hash & 0x0000FF,
+    1,
   );
 }
