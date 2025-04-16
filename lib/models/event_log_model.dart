@@ -23,7 +23,7 @@ class DietLog with _$DietLog {
     @JsonKey(name: "emotion_intensity") required int emotionIntensity,
     @JsonKey(name: "emotion_type") required String emotionType,
     @JsonKey(name: "eating_location") required String eatingLocation,
-    @JsonKey(name: "specific_location") required String specificLocation,
+    @JsonKey(name: "specific_location") @Default('') String? specificLocation,
     @JsonKey(name: "dieting") required bool dieting,
     @JsonKey(name: "binge_eating") required bool bingeEating,
     @JsonKey(name: "trigger") required String trigger,

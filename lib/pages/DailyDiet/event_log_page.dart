@@ -256,33 +256,36 @@ class _EventLogPageState extends ConsumerState<EventLogPage>
 
 // 暴食指数
   Widget _buildLevelIndicator(DietLog diet) {
-    return Row(
-      children: [
-        Container(
-          width: 24, // 圆圈的宽度
-          height: 24, // 圆圈的高度
-          decoration: BoxDecoration(
-            color: Colors.transparent, // 圆圈背景色
-            shape: BoxShape.circle,
-            border: Border.all(
-                color: getColorFromInt(diet.emotionIntensity),
-                width: 1), // 圆圈边框
-          ),
-          alignment: Alignment.center,
-          child: Text(
-            '暴',
-            style: TextStyle(
-                color: getColorFromInt(diet.emotionIntensity), fontSize: 16),
-          ),
-        ),
-        Text(
-          ':${(diet.emotionIntensity).toString()}',
-          style: GoogleFonts.aBeeZee(
-              fontStyle: FontStyle.italic,
-              color: getColorFromInt(diet.emotionIntensity)),
-        )
-      ],
-    );
+    return diet.bingeEating
+        ? Row(
+            children: [
+              Container(
+                width: 24, // 圆圈的宽度
+                height: 24, // 圆圈的高度
+                decoration: BoxDecoration(
+                  color: Colors.transparent, // 圆圈背景色
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                      color: getColorFromInt(diet.emotionIntensity),
+                      width: 1), // 圆圈边框
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  '暴',
+                  style: TextStyle(
+                      color: getColorFromInt(diet.emotionIntensity),
+                      fontSize: 16),
+                ),
+              ),
+              // Text(
+              //   ':${(diet.emotionIntensity).toString()}',
+              //   style: GoogleFonts.aBeeZee(
+              //       fontStyle: FontStyle.italic,
+              //       color: getColorFromInt(diet.emotionIntensity)),
+              // )
+            ],
+          )
+        : Container();
   }
 
   Widget _buildMealPlanTail(MealPlan plan) {
@@ -423,10 +426,6 @@ class _EventLogPageState extends ConsumerState<EventLogPage>
                       Row(
                         children: [
                           Text(
-                            // diet.food,
-                            // FIXME: 添加序列
-                            // diet.mealType.displayName ?? '早餐',
-                            // diet.mealType,
                             MealType.fromEnglish(diet.mealType).displayName,
                             style: TextStyle(
                               fontSize: 16,

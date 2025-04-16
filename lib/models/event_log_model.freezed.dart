@@ -219,7 +219,7 @@ mixin _$DietLog {
   @JsonKey(name: "eating_location")
   String get eatingLocation => throw _privateConstructorUsedError;
   @JsonKey(name: "specific_location")
-  String get specificLocation => throw _privateConstructorUsedError;
+  String? get specificLocation => throw _privateConstructorUsedError;
   @JsonKey(name: "dieting")
   bool get dieting => throw _privateConstructorUsedError;
   @JsonKey(name: "binge_eating")
@@ -253,7 +253,7 @@ abstract class $DietLogCopyWith<$Res> {
       @JsonKey(name: "emotion_intensity") int emotionIntensity,
       @JsonKey(name: "emotion_type") String emotionType,
       @JsonKey(name: "eating_location") String eatingLocation,
-      @JsonKey(name: "specific_location") String specificLocation,
+      @JsonKey(name: "specific_location") String? specificLocation,
       @JsonKey(name: "dieting") bool dieting,
       @JsonKey(name: "binge_eating") bool bingeEating,
       @JsonKey(name: "trigger") String trigger,
@@ -283,7 +283,7 @@ class _$DietLogCopyWithImpl<$Res, $Val extends DietLog>
     Object? emotionIntensity = null,
     Object? emotionType = null,
     Object? eatingLocation = null,
-    Object? specificLocation = null,
+    Object? specificLocation = freezed,
     Object? dieting = null,
     Object? bingeEating = null,
     Object? trigger = null,
@@ -321,10 +321,10 @@ class _$DietLogCopyWithImpl<$Res, $Val extends DietLog>
           ? _value.eatingLocation
           : eatingLocation // ignore: cast_nullable_to_non_nullable
               as String,
-      specificLocation: null == specificLocation
+      specificLocation: freezed == specificLocation
           ? _value.specificLocation
           : specificLocation // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       dieting: null == dieting
           ? _value.dieting
           : dieting // ignore: cast_nullable_to_non_nullable
@@ -372,7 +372,7 @@ abstract class _$$DietLogImplCopyWith<$Res> implements $DietLogCopyWith<$Res> {
       @JsonKey(name: "emotion_intensity") int emotionIntensity,
       @JsonKey(name: "emotion_type") String emotionType,
       @JsonKey(name: "eating_location") String eatingLocation,
-      @JsonKey(name: "specific_location") String specificLocation,
+      @JsonKey(name: "specific_location") String? specificLocation,
       @JsonKey(name: "dieting") bool dieting,
       @JsonKey(name: "binge_eating") bool bingeEating,
       @JsonKey(name: "trigger") String trigger,
@@ -400,7 +400,7 @@ class __$$DietLogImplCopyWithImpl<$Res>
     Object? emotionIntensity = null,
     Object? emotionType = null,
     Object? eatingLocation = null,
-    Object? specificLocation = null,
+    Object? specificLocation = freezed,
     Object? dieting = null,
     Object? bingeEating = null,
     Object? trigger = null,
@@ -438,10 +438,10 @@ class __$$DietLogImplCopyWithImpl<$Res>
           ? _value.eatingLocation
           : eatingLocation // ignore: cast_nullable_to_non_nullable
               as String,
-      specificLocation: null == specificLocation
+      specificLocation: freezed == specificLocation
           ? _value.specificLocation
           : specificLocation // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       dieting: null == dieting
           ? _value.dieting
           : dieting // ignore: cast_nullable_to_non_nullable
@@ -485,7 +485,7 @@ class _$DietLogImpl implements _DietLog {
       @JsonKey(name: "emotion_intensity") required this.emotionIntensity,
       @JsonKey(name: "emotion_type") required this.emotionType,
       @JsonKey(name: "eating_location") required this.eatingLocation,
-      @JsonKey(name: "specific_location") required this.specificLocation,
+      @JsonKey(name: "specific_location") this.specificLocation = '',
       @JsonKey(name: "dieting") required this.dieting,
       @JsonKey(name: "binge_eating") required this.bingeEating,
       @JsonKey(name: "trigger") required this.trigger,
@@ -520,7 +520,7 @@ class _$DietLogImpl implements _DietLog {
   final String eatingLocation;
   @override
   @JsonKey(name: "specific_location")
-  final String specificLocation;
+  final String? specificLocation;
   @override
   @JsonKey(name: "dieting")
   final bool dieting;
@@ -624,8 +624,7 @@ abstract class _DietLog implements DietLog {
       @JsonKey(name: "emotion_intensity") required final int emotionIntensity,
       @JsonKey(name: "emotion_type") required final String emotionType,
       @JsonKey(name: "eating_location") required final String eatingLocation,
-      @JsonKey(name: "specific_location")
-      required final String specificLocation,
+      @JsonKey(name: "specific_location") final String? specificLocation,
       @JsonKey(name: "dieting") required final bool dieting,
       @JsonKey(name: "binge_eating") required final bool bingeEating,
       @JsonKey(name: "trigger") required final String trigger,
@@ -660,7 +659,7 @@ abstract class _DietLog implements DietLog {
   String get eatingLocation;
   @override
   @JsonKey(name: "specific_location")
-  String get specificLocation;
+  String? get specificLocation;
   @override
   @JsonKey(name: "dieting")
   bool get dieting;

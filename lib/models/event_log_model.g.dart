@@ -31,7 +31,7 @@ _$DietLogImpl _$$DietLogImplFromJson(Map<String, dynamic> json) =>
       emotionIntensity: (json['emotion_intensity'] as num).toInt(),
       emotionType: json['emotion_type'] as String,
       eatingLocation: json['eating_location'] as String,
-      specificLocation: json['specific_location'] as String,
+      specificLocation: json['specific_location'] as String? ?? '',
       dieting: json['dieting'] as bool,
       bingeEating: json['binge_eating'] as bool,
       trigger: json['trigger'] as String,
