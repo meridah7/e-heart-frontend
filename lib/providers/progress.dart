@@ -49,11 +49,12 @@ class Progress extends _$Progress {
 
   Future<void> setProgress(int progress) async {
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
+    try {
       final updatedProgress = await _progressService.setProgress(progress);
-      // await _fetchDisplayTaskList(updatedProgress!);
-      return updatedProgress;
-    });
+      state = AsyncData(updatedProgress);
+    } catch (err) {
+      print('Error in setting progress');
+    }
   }
 }
 

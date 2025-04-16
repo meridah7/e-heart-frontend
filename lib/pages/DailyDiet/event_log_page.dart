@@ -21,8 +21,6 @@ class _EventLogPageState extends ConsumerState<EventLogPage>
   bool isExpanded = false;
 
   late AnimationController _animationController;
-  // List<Diet> dietLogs = [];
-  // List<MealPlan> mealPlans = [];
   late final EventLog _eventLogController;
 
   @override
