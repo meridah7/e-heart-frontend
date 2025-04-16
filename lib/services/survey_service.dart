@@ -238,9 +238,9 @@ class SurveyService {
           ChartQuestion(
               "我的饮食计划中的每餐间隔时间",
               [
-                ChartData("间隔在3-4小时的饮食计划次数",
-                    unreasonableCount), // 假设这里的数字0会根据用户实际情况动态改变
-                ChartData("间隔在3-4小时以外的饮食计划次数", reasonableCount),
+                ChartData(
+                    "在3-4小时内的计划次数", unreasonableCount), // 假设这里的数字0会根据用户实际情况动态改变
+                ChartData("在3-4小时以外的计划次数", reasonableCount),
               ],
               QuestionType.None,
               [],

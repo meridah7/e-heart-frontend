@@ -1,8 +1,71 @@
 import 'package:flutter/material.dart';
-import 'dart:math';
 import 'package:fl_chart/fl_chart.dart' as charts;
 
 enum ChartOrientation { horizontal, vertical, pie }
+
+class LegendWidget extends StatelessWidget {
+  const LegendWidget({
+    super.key,
+    required this.name,
+    required this.color,
+  });
+  final String name;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 10,
+          height: 10,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: color,
+          ),
+        ),
+        const SizedBox(width: 6),
+        Text(
+          name,
+          style: const TextStyle(
+            color: Color(0xff757391),
+            fontSize: 12,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class LegendsListWidget extends StatelessWidget {
+  const LegendsListWidget({
+    super.key,
+    required this.legends,
+  });
+  final List<Legend> legends;
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      spacing: 16,
+      children: legends
+          .map(
+            (e) => LegendWidget(
+              name: e.name,
+              color: e.color,
+            ),
+          )
+          .toList(),
+    );
+  }
+}
+
+class Legend {
+  Legend(this.name, this.color);
+  final String name;
+  final Color color;
+}
 
 class PieData {
   final String category;
@@ -23,13 +86,16 @@ class PieChartWidget extends StatelessWidget {
     double total = data.fold(0, (sum, item) => sum + item.value);
 
     return SizedBox(
-      height: 300,
-      child: charts.PieChart(
-        charts.PieChartData(
-          sections: _getSections(total),
-          sectionsSpace: 2,
-          centerSpaceRadius: 40,
-          startDegreeOffset: -90,
+      height: 260,
+      child: AspectRatio(
+        aspectRatio: 1,
+        child: charts.PieChart(
+          charts.PieChartData(
+            sections: _getSections(total),
+            sectionsSpace: 2,
+            centerSpaceRadius: 40,
+            startDegreeOffset: -90,
+          ),
         ),
       ),
     );
@@ -73,28 +139,27 @@ class BarChartWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 300,
-      width: 400,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: charts.BarChart(
-          charts.BarChartData(
-            alignment: charts.BarChartAlignment.spaceAround,
-            groupsSpace: 30, // 组间间隔
-            maxY: _getMaxValue() * 1.2 ?? 10, // 给最大值留出20%的空间
-            titlesData: _getTitlesData(),
-            borderData: charts.FlBorderData(show: false),
-            barGroups: _getBarGroups(),
-            gridData: charts.FlGridData(show: false),
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AspectRatio(
+            aspectRatio: 1.8,
+            child: charts.BarChart(
+              charts.BarChartData(
+                alignment: charts.BarChartAlignment.spaceAround,
+                titlesData: _getTitlesData(),
+                borderData: charts.FlBorderData(show: true),
+                barGroups: _getBarGroups(),
+                gridData: charts.FlGridData(show: true),
+              ),
+            ),
           ),
-        ),
+        ],
       ),
     );
-  }
-
-  double _getMaxValue() {
-    return data.map((e) => e.value.toDouble()).reduce(max);
   }
 
   charts.FlTitlesData _getTitlesData() {
@@ -107,7 +172,8 @@ class BarChartWidget extends StatelessWidget {
             return Padding(
               padding: const EdgeInsets.only(top: 8.0),
               child: Transform.rotate(
-                angle: pi / 4, // 45度角旋转
+                // angle: pi / 4, // 45度角旋转
+                angle: 0,
                 child: Text(
                   data[value.toInt()].label,
                   style: TextStyle(fontSize: 12),
@@ -119,17 +185,17 @@ class BarChartWidget extends StatelessWidget {
         ),
       ),
       leftTitles: charts.AxisTitles(
-        sideTitles: charts.SideTitles(
-          showTitles: true,
-          reservedSize: 40,
-          getTitlesWidget: (value, meta) {
-            return Text(
-              value.toInt().toString(),
-              style: TextStyle(fontSize: 12),
-            );
-          },
-        ),
-      ),
+          sideTitles: charts.SideTitles(
+            showTitles: true,
+            reservedSize: 40,
+            getTitlesWidget: (value, meta) {
+              return Text(
+                value.toInt().toString(),
+                style: TextStyle(fontSize: 12),
+              );
+            },
+          ),
+          axisNameSize: 22),
       rightTitles: charts.AxisTitles(
         sideTitles: charts.SideTitles(showTitles: false),
       ),
@@ -149,7 +215,7 @@ class BarChartWidget extends StatelessWidget {
           charts.BarChartRodData(
             toY: item.value.toDouble(),
             color: item.color,
-            width: 20,
+            width: 24,
             borderRadius: BorderRadius.circular(4),
           ),
         ],
@@ -177,10 +243,21 @@ class ImpulseTypePieChart extends StatelessWidget {
 
     final List<PieData> pieData = typeCounts.entries.map((entry) {
       return PieData(entry.key, entry.value,
-          entry.key == '暴食冲动' ? Colors.blue : Colors.red);
+          entry.key.contains('暴食冲动') ? Colors.blue : Colors.red);
     }).toList();
 
-    return PieChartWidget(data: pieData);
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          LegendsListWidget(
+              legends: [Legend('暴食冲动', Colors.blue), Legend('其他', Colors.red)]),
+          PieChartWidget(data: pieData)
+        ],
+      ),
+    );
   }
 }
 
@@ -203,7 +280,15 @@ class DayOfWeekBarChart extends StatelessWidget {
       return BarData(entry.key, entry.value, Colors.blue);
     }).toList();
 
-    return BarChartWidget(data: barData);
+    return Padding(
+        padding: EdgeInsets.all(8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            LegendsListWidget(legends: [Legend('冲动时间——星期分布', Colors.blue)]),
+            BarChartWidget(data: barData),
+          ],
+        ));
   }
 }
 
@@ -226,7 +311,16 @@ class TimeOfDayBarChart extends StatelessWidget {
       return BarData(entry.key, entry.value, Colors.green);
     }).toList();
 
-    return BarChartWidget(data: barData);
+    return Padding(
+        padding: EdgeInsets.all(8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            LegendsListWidget(
+                legends: [Legend('冲动时间——一天内时间段分布', Colors.green)]),
+            BarChartWidget(data: barData),
+          ],
+        ));
   }
 }
 

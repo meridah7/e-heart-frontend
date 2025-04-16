@@ -158,7 +158,7 @@ class _ImpulsiveRecordAndReflectionSummary
           child: CarouselSlider(
             items: charts,
             options: CarouselOptions(
-              height: 300.0,
+              height: 320.0,
               enlargeCenterPage: true,
               viewportFraction: 1.0,
               // onPageChanged: (index, reason) {
