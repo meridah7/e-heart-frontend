@@ -212,13 +212,35 @@ class SurveyService {
               {},
               description: '小E看到您已经做了$plannedDays天的计划',
               required: false),
+          // TODO 接口数据
+          ChartQuestion(
+            "饮食计划完成与未完成次数表",
+            [
+              ChartData('按计划完成的次数', 4),
+              ChartData('未按计划完成的次数', 1),
+            ],
+            QuestionType.None,
+            [],
+            ChartType.Bar,
+            description: "",
+          ),
+          // TODO 接口alias
+          SingleChoiceQuestion('我有按照计划完成每一餐吗？', [
+            '有',
+            '没有'
+          ], {
+            '没有': [
+              TextQuestion('你觉得是什么导致了有时没按照计划饮食？', false),
+              TextQuestion('你对此有什么应对策略？', false)
+            ],
+          }),
           ...missingDayQuestion(),
           ChartQuestion(
               "我的饮食计划中的每餐间隔时间",
               [
-                ChartData("间隔在3-4小时的饮食计划次数",
-                    unreasonableCount), // 假设这里的数字0会根据用户实际情况动态改变
-                ChartData("间隔在3-4小时以外的饮食计划次数", reasonableCount),
+                ChartData(
+                    "在3-4小时内的计划次数", unreasonableCount), // 假设这里的数字0会根据用户实际情况动态改变
+                ChartData("在3-4小时以外的计划次数", reasonableCount),
               ],
               QuestionType.None,
               [],

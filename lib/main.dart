@@ -5,20 +5,18 @@ import 'package:flutter/material.dart';
 // utils
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:namer_app/providers/user_data.dart';
+import 'package:namer_app/providers/page_data.dart';
 
 // pages
-import 'pages/TodayList/today_list_page.dart';
-import 'pages/AnalysisReview/review_analysis_page.dart';
-import 'pages/MyPage/my_page.dart';
-import 'pages/DietaryAnalysis/dietary_analysis_page.dart';
 import 'pages/Login/login_page.dart';
 import 'pages/Login/register_info_page.dart';
 import 'widgets/debugButton.dart';
-import 'pages/DailyDiet/event_log_page.dart';
 
 // riverpod 状态管理
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+// providers
+import 'package:namer_app/providers/progress.dart';
+import 'package:namer_app/providers/user_data.dart';
 
 // 用于控制全局路由
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -54,6 +52,7 @@ class MyApp extends ConsumerWidget {
         Locale('en', ''), // 英文
         Locale('es', ''), // 西班牙语（可根据需要添加更多语言）
       ],
+      navigatorKey: navigatorKey,
 
       // 设置默认语言（可根据用户设备的语言设置）
       locale: Locale('zh', ''), // 默认中文
@@ -106,56 +105,17 @@ class MainScreen extends ConsumerStatefulWidget {
 }
 
 class _MainScreenState extends ConsumerState<MainScreen> {
-  static List<Widget> _widgetOptions = <Widget>[
-    TodayListPage(),
-    EventLogPage(),
-    ReviewAnalysisPage(),
-    MyPage(),
-  ];
+  late final Progress progress;
 
   // ==== debugButton config
   // Variables for managing debug button display logic
-  int _clickCount = 0;
 
   Offset _debugButtonOffset = Offset(0, 500);
-  DateTime? _firstClickTime;
-  int _selectedIndex = 0;
   bool _showDebugButton = false;
 
   @override
   void initState() {
     super.initState();
-    _selectedIndex = widget.initialTabIndex;
-    // _checkLoggedIn();
-  }
-
-  void _onItemTapped(int index) {
-    // handle debug button
-    if (index == 0) {
-      DateTime now = DateTime.now();
-
-      if (_firstClickTime == null ||
-          now.difference(_firstClickTime!).inSeconds > 10) {
-        _firstClickTime = now;
-        _clickCount = 1;
-      } else {
-        _clickCount++;
-      }
-
-      if (_clickCount == 10) {
-        setState(() {
-          _showDebugButton = true;
-        });
-      }
-    } else {
-      // Reset the click count and time if another button is clicked
-      _clickCount = 0;
-      _firstClickTime = null;
-    }
-
-    setState(() {
-      _selectedIndex = index;
-    });
   }
 
   void _updateDebugButtonPosition(Offset newOffset) {
@@ -164,20 +124,11 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     });
   }
 
-  // 新增的函数，处理按钮点击事件
-  void _navigateToDietaryAnalysisPage() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => DietaryAnalysisPage(),
-      ),
-    );
-  }
-
   // ==== debugButton config
 
   @override
   Widget build(BuildContext context) {
+    // 监听登录态，登录态失效返回登录页
     ref.listen(userDataProvider, (previous, next) {
       next.whenData((user) {
         if (user == null) {
@@ -185,11 +136,17 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         }
       });
     });
+
+    final navBarItems = ref.watch(bottomNavBarProvider);
+    final pageWidgets = ref.watch(pageWidgetProvider);
+    final pageIndex = ref.watch(pageIndexProvider);
+    final pageIndexController = ref.read(pageIndexProvider.notifier);
+
     return Scaffold(
       body: Stack(
         children: [
           Center(
-            child: _widgetOptions.elementAt(_selectedIndex),
+            child: pageWidgets.elementAt(pageIndex),
           ),
           DebugButton(
             offset: _debugButtonOffset,
@@ -199,26 +156,11 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: ('每日任务'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.event_note),
-            label: ('行为记录'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.rocket_launch_outlined),
-            label: ('巩固提升'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            label: ('我的'),
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
+        items: navBarItems,
+        currentIndex: pageIndex,
+        onTap: (index) {
+          pageIndexController.setIndex(index);
+        },
         type: BottomNavigationBarType.fixed, // 重要
       ),
     );

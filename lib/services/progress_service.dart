@@ -56,7 +56,7 @@ class ProgressService {
         'progress': progress,
       });
       if (response.statusCode == 200) {
-        return UserProgress.fromJson(response.data);
+        return UserProgress.fromJson(response.data['data']);
       } else {
         throw Exception('Failed to update user task');
       }

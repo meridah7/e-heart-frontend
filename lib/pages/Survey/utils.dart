@@ -302,7 +302,7 @@ Map<String, dynamic>? getUserUploadData(
               .trim()))
           : null;
       bool bingeEating =
-          bingeEatingLevel != null ? false : bingeEatingLevel! > 0;
+          bingeEatingLevel == null ? false : bingeEatingLevel > 0;
 
       int additionalInfoIdx = summary.indexOf('更多注释（想法，感受等等）');
       String? additionalInfo = additionalInfoIdx >= 0
