@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart' as charts;
+import 'package:namer_app/utils/index.dart';
 
 enum ChartOrientation { horizontal, vertical, pie }
 
@@ -146,7 +147,7 @@ class BarChartWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           AspectRatio(
-            aspectRatio: 1.8,
+            aspectRatio: 1.9,
             child: charts.BarChart(
               charts.BarChartData(
                 alignment: charts.BarChartAlignment.spaceAround,
@@ -230,6 +231,15 @@ class ImpulseTypePieChart extends StatelessWidget {
 
   ImpulseTypePieChart({required this.data});
 
+  Map<String, Color> generateLegends(Map<String, double> typeCounts) {
+    return Map.fromEntries(
+      typeCounts.entries.map((entry) => MapEntry(
+            entry.key.trim(),
+            generateColor(entry.key), // 基于类型名称生成颜色
+          )),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final Map<String, double> typeCounts = {};
@@ -239,11 +249,11 @@ class ImpulseTypePieChart extends StatelessWidget {
       typeCounts[type] = (typeCounts[type] ?? 0) + 1;
     }
 
-    print('typeCounts $typeCounts');
+    final Map<String, Color> colorMatch = generateLegends(typeCounts);
 
     final List<PieData> pieData = typeCounts.entries.map((entry) {
-      return PieData(entry.key, entry.value,
-          entry.key.contains('暴食冲动') ? Colors.blue : Colors.red);
+      return PieData(
+          entry.key.trim(), entry.value, colorMatch[entry.key.trim()]!);
     }).toList();
 
     return Padding(
@@ -253,7 +263,9 @@ class ImpulseTypePieChart extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           LegendsListWidget(
-              legends: [Legend('暴食冲动', Colors.blue), Legend('其他', Colors.red)]),
+              legends: colorMatch.entries
+                  .map((e) => Legend(e.key, e.value))
+                  .toList()),
           PieChartWidget(data: pieData)
         ],
       ),
