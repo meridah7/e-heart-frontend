@@ -344,7 +344,9 @@ class _SurveyPageState extends ConsumerState<SurveyPage> {
           if (res?.statusCode == 200 || res?.statusCode == 201) {
             if (mounted) {
               ref.read(progressProvider.notifier).updateProgress(widget.taskId);
-              if (['task11', 'dietaryIntake'].contains(widget.taskId)) {
+              // 饮食记录、冲动记录、饮食日志反思、饮食计划反思、冲动记录反思、饮食计划反思提交后清除缓存
+              if (['task11', 'dietaryIntake', 'S2', 'S4', 'S5']
+                  .contains(widget.taskId)) {
                 answers[widget.taskId] = [];
                 await _userPref.setData('completedTaskAnswers', answers);
               }
