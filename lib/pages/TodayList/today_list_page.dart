@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:namer_app/providers/progress.dart';
 import 'package:namer_app/utils/index.dart';
 import '../Chatbot/chatbot_page.dart';
 import '../Survey/survey_page.dart';
 import '../Survey/flippable_survey_page.dart';
 import '../Survey/meal_planning_page.dart';
-import '../DietMonitoring/binge_eating_record_page.dart';
-import '../DietMonitoring/diet_monitoring_page.dart';
-
 import 'package:namer_app/models/task_models.dart';
-
 import 'package:namer_app/pages/ResponseCard/index.dart';
 
 class TodayListPage extends ConsumerStatefulWidget {
@@ -22,13 +19,6 @@ class _TodayListPageState extends ConsumerState<TodayListPage> {
   // 用于HTTP 请求的Dio 实例
 
   bool showTasks = true;
-
-  // Fetch rules:
-  // 1. check local storage, if has data, use the data
-  // 2. check db's data, if has, use it
-  // 3. start from day 0
-
-  // List<String>? _finishedTaskIds = [];
 
   late Progress _progressProvider;
 
@@ -53,6 +43,8 @@ class _TodayListPageState extends ConsumerState<TodayListPage> {
     Color taskColor = Color(0xFF9D9BE9);
     Color dietColor = Color(0xFF6FCF97);
 
+    final progress = ref.watch(progressProvider);
+
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8),
       child: Row(
@@ -65,18 +57,21 @@ class _TodayListPageState extends ConsumerState<TodayListPage> {
             color: showTasks ? taskColor : themeData.scaffoldBackgroundColor,
             textColor: showTasks ? Colors.white : Colors.black,
           ),
-          SizedBox(width: 10),
-          _buildRoundButton(
-            '冲动应对卡',
-            icon: Icons.card_travel,
-            onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                    // builder: (context) => BingeEatingResponsePage())),
-                    // builder: (context) => BingeEatingResponseCard())),
-                    builder: (context) => ResponseCardPage())),
-            color: dietColor,
-          ),
+          if (progress.value?.progress != null &&
+              progress.value!.progress > 1) ...[
+            SizedBox(width: 10),
+            _buildRoundButton(
+              '冲动应对卡',
+              icon: Icons.card_travel,
+              onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      // builder: (context) => BingeEatingResponsePage())),
+                      // builder: (context) => BingeEatingResponseCard())),
+                      builder: (context) => ResponseCardPage())),
+              color: dietColor,
+            ),
+          ]
         ],
       ),
     );
@@ -101,40 +96,40 @@ class _TodayListPageState extends ConsumerState<TodayListPage> {
     );
   }
 
-  Widget _buildFloatingActionButtons() {
-    Color taskColor = Color(0xFF9D9BE9);
-    Color dietColor = Color(0xFF6FCF97);
+  // Widget _buildFloatingActionButtons() {
+  //   Color taskColor = Color(0xFF9D9BE9);
+  //   Color dietColor = Color(0xFF6FCF97);
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        _buildCircleButton(
-          '饮食日志',
-          icon: Icons.health_and_safety,
-          onPressed: () => Navigator.push(context,
-              MaterialPageRoute(builder: (context) => DietMonitoringPage())),
-          color: taskColor,
-        ),
-        _buildCircleButton(
-          '冲动记录',
-          icon: Icons.record_voice_over,
-          onPressed: () => Navigator.push(context,
-              MaterialPageRoute(builder: (context) => BingeEatingRecordPage())),
-          color: dietColor,
-        ),
-      ],
-    );
-  }
+  //   return Row(
+  //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //     children: [
+  //       _buildCircleButton(
+  //         '饮食日志',
+  //         icon: Icons.health_and_safety,
+  //         onPressed: () => Navigator.push(context,
+  //             MaterialPageRoute(builder: (context) => DietMonitoringPage())),
+  //         color: taskColor,
+  //       ),
+  //       _buildCircleButton(
+  //         '冲动记录',
+  //         icon: Icons.record_voice_over,
+  //         onPressed: () => Navigator.push(context,
+  //             MaterialPageRoute(builder: (context) => BingeEatingRecordPage())),
+  //         color: dietColor,
+  //       ),
+  //     ],
+  //   );
+  // }
 
-  Widget _buildCircleButton(String text,
-      {VoidCallback? onPressed, IconData? icon, Color? color}) {
-    return FloatingActionButton.extended(
-      onPressed: onPressed,
-      label: Text(text),
-      icon: Icon(icon),
-      backgroundColor: color,
-    );
-  }
+  // Widget _buildCircleButton(String text,
+  //     {VoidCallback? onPressed, IconData? icon, Color? color}) {
+  //   return FloatingActionButton.extended(
+  //     onPressed: onPressed,
+  //     label: Text(text),
+  //     icon: Icon(icon),
+  //     backgroundColor: color,
+  //   );
+  // }
 
   Widget _buildRoundButton(
     String text, {
@@ -265,7 +260,29 @@ class _TodayListPageState extends ConsumerState<TodayListPage> {
         child: Column(
           children: [
             _buildSegmentedControl(),
-            Expanded(child: _buildTaskListView(dailyTask.value ?? [])),
+            Expanded(
+              child: (dailyTask.value != null && dailyTask.value!.isNotEmpty)
+                  ? _buildTaskListView(dailyTask.value ?? [])
+                  : Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text('今天没有必做任务呢！',
+                              style: GoogleFonts.aBeeZee(
+                                fontSize: 18,
+                              )),
+                          SizedBox(height: 10),
+                          Text('去下面的巩固提升看看新的内容吧',
+                              style: GoogleFonts.aBeeZee(
+                                fontSize: 18,
+                              )),
+                          SizedBox(
+                            height: 80,
+                          )
+                        ],
+                      ),
+                    ),
+            ),
           ],
         ),
       ),

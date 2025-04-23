@@ -142,7 +142,7 @@ class _EventLogPageState extends ConsumerState<EventLogPage>
           content: SizedBox(
             width: 340,
             child: Text(
-              '''   食物清除记录/冲动记录 的结果不会直接呈现在当前“今日饮食”的界面。\n\n    它将会被作为宝贵的数据用于之后的分析反思中！''',
+              '''   冲动记录的结果不会直接呈现在当前“今日饮食”的界面。\n\n    它将会被作为宝贵的数据用于之后的分析反思中！''',
               style: GoogleFonts.aBeeZee(fontSize: 20),
             ),
           ),
@@ -579,7 +579,7 @@ class _EventLogPageState extends ConsumerState<EventLogPage>
             }),
             SizedBox(height: 6),
             _buildMenuOption('食物清除记录', () {
-              _showTipsDialog(context, () => _handleGoSurvey(vomitRecord));
+              _handleGoSurvey(vomitRecord);
             }),
             SizedBox(height: 6),
             _buildMenuOption('冲动记录', () {
