@@ -43,7 +43,6 @@ class _SurveyPageState extends ConsumerState<SurveyPage> {
   @override
   void initState() {
     super.initState();
-    _initializePreferences();
     _initWidget();
     isLoading = true;
     _initializeQuestions();

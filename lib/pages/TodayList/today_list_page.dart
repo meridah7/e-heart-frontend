@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:namer_app/providers/progress.dart';
 import 'package:namer_app/utils/index.dart';
 import '../Chatbot/chatbot_page.dart';
 import '../Survey/survey_page.dart';
 import '../Survey/flippable_survey_page.dart';
 import '../Survey/meal_planning_page.dart';
-import '../DietMonitoring/binge_eating_record_page.dart';
-import '../DietMonitoring/diet_monitoring_page.dart';
-
 import 'package:namer_app/models/task_models.dart';
-
 import 'package:namer_app/pages/ResponseCard/index.dart';
 
 class TodayListPage extends ConsumerStatefulWidget {
@@ -263,7 +260,29 @@ class _TodayListPageState extends ConsumerState<TodayListPage> {
         child: Column(
           children: [
             _buildSegmentedControl(),
-            Expanded(child: _buildTaskListView(dailyTask.value ?? [])),
+            Expanded(
+              child: (dailyTask.value != null && dailyTask.value!.isNotEmpty)
+                  ? _buildTaskListView(dailyTask.value ?? [])
+                  : Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text('今天没有必做任务呢！',
+                              style: GoogleFonts.aBeeZee(
+                                fontSize: 18,
+                              )),
+                          SizedBox(height: 10),
+                          Text('去下面的巩固提升看看新的内容吧',
+                              style: GoogleFonts.aBeeZee(
+                                fontSize: 18,
+                              )),
+                          SizedBox(
+                            height: 80,
+                          )
+                        ],
+                      ),
+                    ),
+            ),
           ],
         ),
       ),
