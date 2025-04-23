@@ -23,13 +23,6 @@ class _TodayListPageState extends ConsumerState<TodayListPage> {
 
   bool showTasks = true;
 
-  // Fetch rules:
-  // 1. check local storage, if has data, use the data
-  // 2. check db's data, if has, use it
-  // 3. start from day 0
-
-  // List<String>? _finishedTaskIds = [];
-
   late Progress _progressProvider;
 
   //初始化的状态
@@ -53,6 +46,8 @@ class _TodayListPageState extends ConsumerState<TodayListPage> {
     Color taskColor = Color(0xFF9D9BE9);
     Color dietColor = Color(0xFF6FCF97);
 
+    final progress = ref.watch(progressProvider);
+
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8),
       child: Row(
@@ -65,18 +60,21 @@ class _TodayListPageState extends ConsumerState<TodayListPage> {
             color: showTasks ? taskColor : themeData.scaffoldBackgroundColor,
             textColor: showTasks ? Colors.white : Colors.black,
           ),
-          SizedBox(width: 10),
-          _buildRoundButton(
-            '冲动应对卡',
-            icon: Icons.card_travel,
-            onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                    // builder: (context) => BingeEatingResponsePage())),
-                    // builder: (context) => BingeEatingResponseCard())),
-                    builder: (context) => ResponseCardPage())),
-            color: dietColor,
-          ),
+          if (progress.value?.progress != null &&
+              progress.value!.progress > 1) ...[
+            SizedBox(width: 10),
+            _buildRoundButton(
+              '冲动应对卡',
+              icon: Icons.card_travel,
+              onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      // builder: (context) => BingeEatingResponsePage())),
+                      // builder: (context) => BingeEatingResponseCard())),
+                      builder: (context) => ResponseCardPage())),
+              color: dietColor,
+            ),
+          ]
         ],
       ),
     );
@@ -101,40 +99,40 @@ class _TodayListPageState extends ConsumerState<TodayListPage> {
     );
   }
 
-  Widget _buildFloatingActionButtons() {
-    Color taskColor = Color(0xFF9D9BE9);
-    Color dietColor = Color(0xFF6FCF97);
+  // Widget _buildFloatingActionButtons() {
+  //   Color taskColor = Color(0xFF9D9BE9);
+  //   Color dietColor = Color(0xFF6FCF97);
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        _buildCircleButton(
-          '饮食日志',
-          icon: Icons.health_and_safety,
-          onPressed: () => Navigator.push(context,
-              MaterialPageRoute(builder: (context) => DietMonitoringPage())),
-          color: taskColor,
-        ),
-        _buildCircleButton(
-          '冲动记录',
-          icon: Icons.record_voice_over,
-          onPressed: () => Navigator.push(context,
-              MaterialPageRoute(builder: (context) => BingeEatingRecordPage())),
-          color: dietColor,
-        ),
-      ],
-    );
-  }
+  //   return Row(
+  //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //     children: [
+  //       _buildCircleButton(
+  //         '饮食日志',
+  //         icon: Icons.health_and_safety,
+  //         onPressed: () => Navigator.push(context,
+  //             MaterialPageRoute(builder: (context) => DietMonitoringPage())),
+  //         color: taskColor,
+  //       ),
+  //       _buildCircleButton(
+  //         '冲动记录',
+  //         icon: Icons.record_voice_over,
+  //         onPressed: () => Navigator.push(context,
+  //             MaterialPageRoute(builder: (context) => BingeEatingRecordPage())),
+  //         color: dietColor,
+  //       ),
+  //     ],
+  //   );
+  // }
 
-  Widget _buildCircleButton(String text,
-      {VoidCallback? onPressed, IconData? icon, Color? color}) {
-    return FloatingActionButton.extended(
-      onPressed: onPressed,
-      label: Text(text),
-      icon: Icon(icon),
-      backgroundColor: color,
-    );
-  }
+  // Widget _buildCircleButton(String text,
+  //     {VoidCallback? onPressed, IconData? icon, Color? color}) {
+  //   return FloatingActionButton.extended(
+  //     onPressed: onPressed,
+  //     label: Text(text),
+  //     icon: Icon(icon),
+  //     backgroundColor: color,
+  //   );
+  // }
 
   Widget _buildRoundButton(
     String text, {
