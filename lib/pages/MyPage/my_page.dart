@@ -195,6 +195,22 @@ class MyPage extends ConsumerWidget {
 
               // 当我不在暴食后选项
               _buildOption('当我不在暴食后', Icons.healing, context, ref),
+
+              // 新增选项
+              ListTile(
+                leading: Icon(Icons.analytics_outlined),
+                title: Text('API 性能分析'),
+                onTap: () {
+                  Navigator.pushNamed(context, '/api_analytics');
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.storage_outlined),
+                title: Text('缓存管理'),
+                onTap: () {
+                  Navigator.pushNamed(context, '/cache_manager');
+                },
+              ),
             ],
           ),
         ));
