@@ -5,26 +5,59 @@ import 'package:flutter/material.dart';
 // utils
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:namer_app/pages/Login/login_page.dart';
+import 'package:namer_app/pages/Login/register_info_page.dart';
 import 'package:namer_app/providers/page_data.dart';
 
 // pages
-import 'pages/Login/login_page.dart';
-import 'pages/Login/register_info_page.dart';
-import 'widgets/debugButton.dart';
+// import 'TodayList/today_list_page.dart';
+// import 'AnalysisReview/review_analysis_page.dart';
+// import 'MyPage/my_page.dart';
+// import 'DietaryAnalysis/dietary_analysis_page.dart';
+
+// import 'Login/register_info_page.dart';
+// import 'package:provider/provider.dart' as provider;
+// import 'debugButton.dart';
+// import 'DailyDiet/event_log_page.dart';
+// import 'package:namer_app/pages/response_card/index.dart';
+// services
+// import 'package:namer_app/services/user_service.dart';
+// import 'package:namer_app/services/progress_service.dart';
+import 'package:namer_app/services/dio_client.dart';
 
 // riverpod 状态管理
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // providers
 import 'package:namer_app/providers/progress.dart';
 import 'package:namer_app/providers/user_data.dart';
+// import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+// part 'main.g.dart';
+
+// 添加必要的导入
+import 'package:namer_app/pages/api_analytics_page.dart';
+import 'package:namer_app/pages/cache_manager_page.dart';
+import 'package:namer_app/analytics/analytics_hub.dart';
+import 'package:namer_app/widgets/debugButton.dart';
 
 // 用于控制全局路由
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // 初始化网络监听
+  try {
+    final dioClient = DioClient();
+    dioClient.setupNetworkListener();
+    print('网络监听器已初始化');
+  } catch (e) {
+    print('初始化网络监听器时出错: $e');
+  }
+
   // 初始化中文 Locale 数据
   initializeDateFormatting('zh_CN', null);
-  WidgetsFlutterBinding.ensureInitialized();
+
   runApp(
     // For widgets to be able to read providers, we need to wrap the entire
     // application in a "ProviderScope" widget.
@@ -85,11 +118,13 @@ class MyApp extends ConsumerWidget {
         ),
         scaffoldBackgroundColor: Color(0xFFF0E5E7), // 设置整体背景色
       ),
-      initialRoute: '/',
       routes: {
-        '/login': (context) => LoginPage(), // 登录页面
-        '/home': (context) => MainScreen(), // 主屏幕，登录成功后跳转的页面
-        '/register': (context) => RegisterInfoPage(), // 添加注册页面的路由
+        '/login': (context) => LoginPage(),
+        '/home': (context) => MainScreen(),
+        '/register_info': (context) => RegisterInfoPage(),
+        '/api_analytics': (context) => ApiAnalyticsPage(),
+        '/cache_manager': (context) => CacheManagerPage(),
+        '/analytics_hub': (context) => AnalyticsHub(),
       },
     );
   }
