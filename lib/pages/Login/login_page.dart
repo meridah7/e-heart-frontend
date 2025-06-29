@@ -158,12 +158,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       return;
     }
     try {
-      var response = await dioClient.postRequest(ApiEndpoints.SEND_CODE,
-          {'phone_number': _phoneNumberController.text});
-      if (response.statusCode == 200) {
-        ToastUtils.showToast('验证码已发送');
-        _startCountdown();
-      }
+      // FIXME: 暂时跳过验证码发送
+      // var response = await dioClient.postRequest(ApiEndpoints.SEND_CODE,
+      //     {'phone_number': _phoneNumberController.text});
+      // if (response.statusCode == 200) {
+      //   ToastUtils.showToast('验证码已发送');
+      //   _startCountdown();
+      // }
       setState(() {
         _loginStep = 2;
       });

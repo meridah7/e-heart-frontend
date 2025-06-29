@@ -1,7 +1,7 @@
-// ignore_for_file: constant_identifier_names
+// ignore_for_file: constant_identifier_names, prefer_function_declarations_over_variables
 
 class ApiEndpoints {
-  static const String BASE_URL = 'http://47.96.108.106/api';
+  static const String BASE_URL = 'http://39.107.57.217:3000/api';
   // static const String BASE_URL = 'http://192.168.86.215:3000/api';
   static const String AGENT_BASE_URL = 'http://223.4.25.37:3000/api/agent';
 
@@ -40,4 +40,44 @@ class ApiEndpoints {
 
   // 行为记录
   static const String EVENT_LOG = '/diet_logs/todayDiet/';
+
+  // 饮食日志反思 Doc：https://qv13irour75.feishu.cn/docx/ZlAsdd1wQo8r2RxmAEbc0w3cn2d
+  //GET 获取所有饮食日志反思 / 或根据ID获取反思
+  static const String DIET_LOG_REFLECTIONS = '/diet_log_reflections';
+
+  //GET 获取当前饮食日志反思
+  static const String CURRENT_DIET_LOG_REFLECTIONS =
+      '/diet_log_reflections/latest';
+
+  // PUT 提交当前饮食记录反思
+  static const String SUBMIT_LATEST_DIET_LOG_REFLECTIONS =
+      'diet_log_reflections/latest/submit';
+
+  // PUT 根据ID更新饮食记录反思
+  final SUBMIT_DIET_LOG_REFLECTIONS_BY_ID =
+      (String id) => '/diet_log_reflections/$id/submit';
+
+  // DELETE 删除饮食记录反思
+  static const String DELETE_DIET_LOG_REFLECTION_BY_ID =
+      '/diet_log_reflections/';
+
+  // GET 获取暴食发生的星期分布
+  final BINGE_DAY_OF_WEEK =
+      (String id) => 'diet_log_reflections/$id/binge/day-of-week';
+
+  // GET 获取暴食发生的时间段分布
+  final BINGE_TIME_OF_DAY =
+      (String id) => 'diet_log_reflections/$id/binge/time-of-day';
+
+  // GET 获取暴食发生的地点
+  final BINGE_LOCATION =
+      (String id) => 'diet_log_reflections/$id/binge/location';
+
+  // GET 获取暴食发生的情绪强度
+  final BINGE_EMOTION_INTENSITY =
+      (String id) => 'diet_log_reflections/$id/binge/emotion-intensity';
+
+  // GET 获取暴食发生的情绪类型
+  final BINGE_EMOTION_TYPE =
+      (String id) => 'diet_log_reflections/$id/binge/emotion-type';
 }
