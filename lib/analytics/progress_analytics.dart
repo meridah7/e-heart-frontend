@@ -14,27 +14,27 @@ class _ProgressAnalyticsState extends State<ProgressAnalytics> {
   bool _isLoading = true;
   dynamic _error;
   final DioClient dioClient = DioClient();
-  
+
   // 分析数据
   List<ProgressPoint> _progressHistory = [];
   Map<String, dynamic> _taskCompletion = {};
   Map<String, dynamic> _progressPrediction = {};
-  
+
   @override
   void initState() {
     super.initState();
     _loadProgressAnalytics();
   }
-  
+
   Future<void> _loadProgressAnalytics() async {
     setState(() {
       _isLoading = true;
       _error = null;
     });
-    
+
     try {
       final response = await dioClient.getRequest('/users/progress/analytics');
-      
+
       if (response.statusCode == 200) {
         setState(() {
           _progressHistory = (response.data['progressHistory'] as List)
@@ -53,30 +53,30 @@ class _ProgressAnalyticsState extends State<ProgressAnalytics> {
       });
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return _isLoading
-      ? Center(child: CircularProgressIndicator())
-      : _error != null
-        ? ErrorHandler.buildErrorWidget(_error, _loadProgressAnalytics)
-        : SingleChildScrollView(
-            padding: EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildProgressTracker(),
-                SizedBox(height: 24),
-                _buildTaskCompletionRates(),
-                SizedBox(height: 24),
-                _buildProgressPrediction(),
-                SizedBox(height: 24),
-                _buildAchievementInsights(),
-              ],
-            ),
-          );
+        ? Center(child: CircularProgressIndicator())
+        : _error != null
+            ? ErrorHandler.buildErrorWidget(_error, _loadProgressAnalytics)
+            : SingleChildScrollView(
+                padding: EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildProgressTracker(),
+                    SizedBox(height: 24),
+                    _buildTaskCompletionRates(),
+                    SizedBox(height: 24),
+                    _buildProgressPrediction(),
+                    SizedBox(height: 24),
+                    _buildAchievementInsights(),
+                  ],
+                ),
+              );
   }
-  
+
   Widget _buildProgressTracker() {
     return Card(
       elevation: 4,
@@ -85,9 +85,10 @@ class _ProgressAnalyticsState extends State<ProgressAnalytics> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('进度追踪', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text('进度追踪',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             SizedBox(height: 16),
-            Container(
+            SizedBox(
               height: 250,
               child: LineChart(
                 LineChartData(
@@ -103,10 +104,10 @@ class _ProgressAnalyticsState extends State<ProgressAnalytics> {
                       sideTitles: SideTitles(
                         showTitles: true,
                         getTitlesWidget: (value, meta) {
-                          if (value.toInt() >= 0 && value.toInt() < _progressHistory.length) {
+                          if (value.toInt() >= 0 &&
+                              value.toInt() < _progressHistory.length) {
                             final date = DateTime.fromMillisecondsSinceEpoch(
-                              _progressHistory[value.toInt()].timestamp
-                            );
+                                _progressHistory[value.toInt()].timestamp);
                             return Text(
                               DateFormat('MM/dd').format(date),
                               style: TextStyle(fontSize: 10),
@@ -122,14 +123,18 @@ class _ProgressAnalyticsState extends State<ProgressAnalytics> {
                   lineBarsData: [
                     LineChartBarData(
                       spots: _progressHistory.asMap().entries.map((entry) {
-                        return FlSpot(entry.key.toDouble(), entry.value.progressValue.toDouble());
+                        return FlSpot(entry.key.toDouble(),
+                            entry.value.progressValue.toDouble());
                       }).toList(),
                       isCurved: true,
                       color: Theme.of(context).primaryColor,
                       barWidth: 3,
                       isStrokeCapRound: true,
                       dotData: FlDotData(show: false),
-                      belowBarData: BarAreaData(show: true, color: Theme.of(context).primaryColor.withOpacity(0.2)),
+                      belowBarData: BarAreaData(
+                          show: true,
+                          color:
+                              Theme.of(context).primaryColor.withOpacity(0.2)),
                     )
                   ],
                 ),
@@ -140,7 +145,7 @@ class _ProgressAnalyticsState extends State<ProgressAnalytics> {
       ),
     );
   }
-  
+
   Widget _buildTaskCompletionRates() {
     return Card(
       elevation: 4,
@@ -149,9 +154,10 @@ class _ProgressAnalyticsState extends State<ProgressAnalytics> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('任务完成率', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text('任务完成率',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             SizedBox(height: 16),
-            Container(
+            SizedBox(
               height: 250,
               child: BarChart(
                 BarChartData(
@@ -165,7 +171,8 @@ class _ProgressAnalyticsState extends State<ProgressAnalytics> {
                           toY: (_taskCompletion['dailyTasks'] * 100).toDouble(),
                           color: Colors.blue,
                           width: 20,
-                          borderRadius: BorderRadius.vertical(top: Radius.circular(4)),
+                          borderRadius:
+                              BorderRadius.vertical(top: Radius.circular(4)),
                         )
                       ],
                     ),
@@ -173,10 +180,12 @@ class _ProgressAnalyticsState extends State<ProgressAnalytics> {
                       x: 1,
                       barRods: [
                         BarChartRodData(
-                          toY: (_taskCompletion['weeklyTasks'] * 100).toDouble(),
+                          toY:
+                              (_taskCompletion['weeklyTasks'] * 100).toDouble(),
                           color: Colors.green,
                           width: 20,
-                          borderRadius: BorderRadius.vertical(top: Radius.circular(4)),
+                          borderRadius:
+                              BorderRadius.vertical(top: Radius.circular(4)),
                         )
                       ],
                     ),
@@ -187,7 +196,8 @@ class _ProgressAnalyticsState extends State<ProgressAnalytics> {
                           toY: (_taskCompletion['dietLogs'] * 100).toDouble(),
                           color: Colors.orange,
                           width: 20,
-                          borderRadius: BorderRadius.vertical(top: Radius.circular(4)),
+                          borderRadius:
+                              BorderRadius.vertical(top: Radius.circular(4)),
                         )
                       ],
                     ),
@@ -195,10 +205,12 @@ class _ProgressAnalyticsState extends State<ProgressAnalytics> {
                       x: 3,
                       barRods: [
                         BarChartRodData(
-                          toY: (_taskCompletion['impulseRecords'] * 100).toDouble(),
+                          toY: (_taskCompletion['impulseRecords'] * 100)
+                              .toDouble(),
                           color: Colors.purple,
                           width: 20,
-                          borderRadius: BorderRadius.vertical(top: Radius.circular(4)),
+                          borderRadius:
+                              BorderRadius.vertical(top: Radius.circular(4)),
                         )
                       ],
                     ),
@@ -208,8 +220,14 @@ class _ProgressAnalyticsState extends State<ProgressAnalytics> {
                       sideTitles: SideTitles(
                         showTitles: true,
                         getTitlesWidget: (value, meta) {
-                          List<String> titles = ['日常任务', '每周任务', '饮食记录', '冲动记录'];
-                          return Text(titles[value.toInt()], style: TextStyle(fontSize: 10));
+                          List<String> titles = [
+                            '日常任务',
+                            '每周任务',
+                            '饮食记录',
+                            '冲动记录'
+                          ];
+                          return Text(titles[value.toInt()],
+                              style: TextStyle(fontSize: 10));
                         },
                       ),
                     ),
@@ -222,7 +240,7 @@ class _ProgressAnalyticsState extends State<ProgressAnalytics> {
       ),
     );
   }
-  
+
   Widget _buildProgressPrediction() {
     return Card(
       elevation: 4,
@@ -231,12 +249,15 @@ class _ProgressAnalyticsState extends State<ProgressAnalytics> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('进度预测', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text('进度预测',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             SizedBox(height: 16),
             ListTile(
-              leading: Icon(Icons.timeline, color: Theme.of(context).primaryColor, size: 36),
+              leading: Icon(Icons.timeline,
+                  color: Theme.of(context).primaryColor, size: 36),
               title: Text('预计完成时间'),
-              subtitle: Text('${_progressPrediction['estimatedCompletionDate']}'),
+              subtitle:
+                  Text('${_progressPrediction['estimatedCompletionDate']}'),
             ),
             Divider(),
             ListTile(
@@ -255,7 +276,7 @@ class _ProgressAnalyticsState extends State<ProgressAnalytics> {
       ),
     );
   }
-  
+
   Widget _buildAchievementInsights() {
     return Card(
       elevation: 4,
@@ -264,7 +285,8 @@ class _ProgressAnalyticsState extends State<ProgressAnalytics> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('成就与洞察', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text('成就与洞察',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             SizedBox(height: 16),
             _buildInsightItem(
               '连续记录',
@@ -282,9 +304,9 @@ class _ProgressAnalyticsState extends State<ProgressAnalytics> {
             SizedBox(height: 12),
             _buildInsightItem(
               '持续进步',
-              _progressPrediction['isOnTrack'] 
-                ? '您的进度符合预期，继续保持！' 
-                : '您的进度略微落后，尝试更规律地完成任务。',
+              _progressPrediction['isOnTrack']
+                  ? '您的进度符合预期，继续保持！'
+                  : '您的进度略微落后，尝试更规律地完成任务。',
               Icons.trending_up,
               _progressPrediction['isOnTrack'] ? Colors.green : Colors.orange,
             ),
@@ -293,8 +315,9 @@ class _ProgressAnalyticsState extends State<ProgressAnalytics> {
       ),
     );
   }
-  
-  Widget _buildInsightItem(String title, String description, IconData icon, Color color) {
+
+  Widget _buildInsightItem(
+      String title, String description, IconData icon, Color color) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -304,9 +327,11 @@ class _ProgressAnalyticsState extends State<ProgressAnalytics> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              Text(title,
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               SizedBox(height: 4),
-              Text(description, style: TextStyle(fontSize: 14, color: Colors.grey[700])),
+              Text(description,
+                  style: TextStyle(fontSize: 14, color: Colors.grey[700])),
             ],
           ),
         ),
@@ -318,13 +343,13 @@ class _ProgressAnalyticsState extends State<ProgressAnalytics> {
 class ProgressPoint {
   final int timestamp;
   final int progressValue;
-  
+
   ProgressPoint({required this.timestamp, required this.progressValue});
-  
+
   factory ProgressPoint.fromJson(Map<String, dynamic> json) {
     return ProgressPoint(
       timestamp: json['timestamp'],
       progressValue: json['progressValue'],
     );
   }
-} 
+}
