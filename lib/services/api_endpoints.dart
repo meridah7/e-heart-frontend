@@ -1,8 +1,8 @@
 // ignore_for_file: constant_identifier_names, prefer_function_declarations_over_variables
 
 class ApiEndpoints {
-  static const String BASE_URL = 'http://39.107.57.217:3000/api';
-  // static const String BASE_URL = 'http://192.168.86.215:3000/api';
+  // static const String BASE_URL = 'http://39.107.57.217:3000/api';
+  static const String BASE_URL = 'http://192.168.86.235:3000/api';
   static const String AGENT_BASE_URL = 'http://223.4.25.37:3000/api/agent';
 
   // 用户认证
@@ -80,4 +80,35 @@ class ApiEndpoints {
   // GET 获取暴食发生的情绪类型
   final BINGE_EMOTION_TYPE =
       (String id) => 'diet_log_reflections/$id/binge/emotion-type';
+  // GET 获取暴食发生的食物详细信息
+  final BINGE_FOOD_DETAILS =
+      (String id) => '/diet_log_reflections/$id/binge/food-details';
+
+  // GET 获取诱因识别成功率
+  final BINGE_TRIGGER_IDENTIFY_RATE = (String id) =>
+      '/diet_log_reflections/:id/binge/trigger-identification-success';
+
+  // GET 获取暴食发生的具体诱因
+  final BINGE_TRIGGER_SPECIFIC =
+      (String id) => '/diet_log_reflections/$id/binge/specific-trigger';
+
+  // GET 节食与周几的关系
+  final DIET_DAY_OF_WEEK =
+      (String id) => '/diet_log_reflections/$id/dieting/day-of-week';
+  // GET 节食与地点
+  final DIET_EATING_LOCATION =
+      (String id) => '/diet_log_reflections/$id/dieting/location';
+  // GET 节食与情绪强度
+  final DIET_EMOTION_INTENSITY =
+      (String id) => '/diet_log_reflections/$id/dieting/emotion-intensity';
+  // GET 节食与情绪种类
+  final DIET_EMOTION_TYPE =
+      (String id) => '/diet_log_reflections/$id/dieting/emotion-type';
+  // GET 节食与进食的食物
+  final DIET_FOOD_DETAIL =
+      (String id) => '/diet_log_reflections/$id/dieting/food-details';
+
+  // GET 获取反思总结接口
+  final DIET_LOG_REFLECTION_SUMMARY =
+      (int? id) => '/diet_log_reflections/$id/summary';
 }

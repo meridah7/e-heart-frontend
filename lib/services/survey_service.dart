@@ -4,6 +4,7 @@ import 'package:namer_app/models/task_models.dart';
 import 'package:namer_app/services/dio_client.dart';
 import 'package:namer_app/models/survey_models.dart';
 import 'package:namer_app/constants/index.dart';
+import 'package:namer_app/utils/index.dart';
 import 'api_endpoints.dart';
 
 class SurveyService {
@@ -35,6 +36,9 @@ class SurveyService {
             return questionList;
           case 'S5':
             questionList = await generateImpulseReview();
+            return questionList;
+          case 'S2':
+            questionList = await generateDietLogReflectionReview();
             return questionList;
           default:
             break;
@@ -356,5 +360,530 @@ class SurveyService {
     return [
       SingleChoiceQuestion("问卷数据获取有误，请尝试重新进入", ["好的！"], {}, required: false),
     ];
+  }
+
+  // S2 饮食日志反思
+  static Future<List<Question>> generateDietLogReflectionReview() async {
+    final DioClient dioClient = DioClient();
+    try {
+      Response reflectionIdRes =
+          await dioClient.getRequest(ApiEndpoints.CURRENT_DIET_LOG_REFLECTIONS);
+      if (reflectionIdRes.statusCode == 200) {
+        int? id = reflectionIdRes.data?.id;
+        Response reflectionSummary = await dioClient
+            .getRequest(ApiEndpoints().DIET_LOG_REFLECTION_SUMMARY(id));
+        if (reflectionSummary.statusCode == 200) {
+          Map<String, dynamic> binge = reflectionSummary.data['binge'] ?? {};
+          Map<String, dynamic> dieting =
+              reflectionSummary.data['dieting'] ?? {};
+          final bingeDayOfWeek = mapToEntryList(binge['dayOfWeek']);
+          final bingeTimeOfDay = mapToEntryList(binge['timeOfDay']);
+          final bingeLocation = mapToEntryList(binge['location']);
+          final bingeEmotionIntensity =
+              mapToEntryList(binge['emotionIntensity']);
+          final bingeEmotionType = mapToEntryList(binge['emotionType']);
+          final bingeFoodDetails = convertListToMapEntries(binge['foodDetails'],
+              keyName: 'food', valueName: 'count');
+          final bingeTriggerIdentificationSuccess =
+              binge['triggerIdentificationSuccess'];
+          final bingeSpecificTriggers = convertListToMapEntries(
+              binge['specificTriggers'],
+              keyName: 'trigger',
+              valueName: 'count');
+
+          // 解构 dieting
+          final dietingDayOfWeek = mapToEntryList(dieting['dayOfWeek']);
+          final dietingLocation = mapToEntryList(dieting['location']);
+          final dietingEmotionIntensity =
+              mapToEntryList(dieting['emotionIntensity']);
+          final dietingEmotionType = mapToEntryList(dieting['emotionType']);
+          final dietingFoodDetails = convertListToMapEntries(
+              dieting['foodDetails'],
+              keyName: 'food',
+              valueName: 'count');
+
+          int bingeTimes =
+              bingeDayOfWeek.fold(0, (sum, v) => sum + v.value as int);
+
+          return [
+            SingleChoiceQuestion('检查完成情况', [
+              '好的'
+            ], {
+              '好的': [
+                SingleChoiceQuestion(
+                  '刚刚，小E对您之前记录的饮食日志内容进行了初步整理。接下来，小E将会问你一些问题，帮助你以更高维度的视角分析、反思自己的饮食模式。',
+                  ['下一步'],
+                  {},
+                ),
+                SingleChoiceQuestion(
+                  '对自己饮食模式的觉察和反思是非常非常重要的！经过研究表明，它能够帮助你增强对自己进食的掌控感，进而显著减少暴食和清除食物行为的发生频率。请千万不要忽视它！',
+                  ['好的！'],
+                  {},
+                ),
+                SingleChoiceQuestion(
+                  '如果真的没有发现什么，完全可以放空不填～我们希望你分析对自己有意义的部分。并且，您的回答也是绝对保密的，只有自己才能看到。所以，放心真诚地回答就好啦～',
+                  ['知道了！'],
+                  {},
+                ),
+                // TODO 只有周初的饮食监控需要这一项，周中不用
+                SingleChoiceQuestion(
+                    '我完成的饮食日志有多少天？',
+                    ['5-7天', '0-4天'],
+                    {
+                      '5-7天': [
+                        SingleChoiceQuestion(
+                            '你太棒啦！有这种坚持的能力，小E相信，不管是暴食还是生命中其他的挑战你都一定能战胜他们。我们希望你之后的每周都至少能完成五天的饮食日志，当然越多越有效啦！',
+                            ['好的！'],
+                            {})
+                      ],
+                      '0-4天': [
+                        SingleChoiceQuestion(
+                            '没关系的，万事开头难，很多人都很难在前几周就完成5天及以上的的饮食日志。您只需要想想干扰自己进行饮食日志记录的原因，并提出一些可能的改善策略就好啦。',
+                            ['好的！'],
+                            {}),
+                        TextQuestion('请先思考一下没有完整记录的原因', false),
+                        TextQuestion('然后在这里写下你的应对策略', false),
+                      ]
+                    },
+                    description: '*完成指的是————您完整记录下了一天内所有的进食情况'),
+                SingleChoiceQuestion('我是否准确地完成了我的饮食日志？记录方面还有改进的空间嘛？', [
+                  '检查一下'
+                ], {
+                  '检查一下': [
+                    SingleChoiceQuestion('您是否记录了所有吃&喝的食物', [
+                      '是',
+                      '否'
+                    ], {
+                      '否': [
+                        TextQuestion('请先思考一下没有完整记录的原因', false),
+                        TextQuestion('然后在这里写下你的应对策略', false),
+                      ]
+                    }),
+                    // ... 其他问题
+
+                    // 问题4
+                    SingleChoiceQuestion('您是否在吃完之后尽快地把它们记录下来', [
+                      '是',
+                      '否'
+                    ], {
+                      '否': [
+                        TextQuestion('请先思考一下没有尽快记录的原因', false),
+                        TextQuestion('然后在这里写下你的应对策略', false),
+                      ]
+                    }),
+
+                    // 问题5
+                    SingleChoiceQuestion(
+                      '您是否诚实地记录了自己的暴食情况',
+                      ['是', '否'],
+                      {
+                        '否': [
+                          TextQuestion('请先思考一下没有诚实记录的原因', false),
+                          TextQuestion('然后在这里写下你的应对策略', false),
+                        ]
+                      }, // 暂无子问题
+                    ),
+
+                    // 问题6
+                    SingleChoiceQuestion('在饮食日志最后的“更多注释”一栏，您是否有尝试记录一些自己的所思所想', [
+                      '是',
+                      '否'
+                    ], {
+                      '否': [
+                        TextQuestion('请先思考一下没有完整记录的原因', false),
+                        TextQuestion('然后在这里写下你的应对策略', false),
+                      ]
+                    }),
+                  ]
+                }),
+              ]
+            }),
+            SingleChoiceQuestion('暴食分析', [
+              '开始吧'
+            ], {
+              '开始吧': [
+                SingleChoiceQuestion('你的本周总暴食次数为$bingeTimes，让我们开始对暴食部分的分析吧',
+                    ['好的！'], {} // 可能需要添加子问题或描述
+                    ),
+                bingeTriggerIdentificationSuccess ??
+                    ChartQuestion(
+                      "能识别诱因和不能识别诱因的暴食比例",
+                      [
+                        ChartData("能识别诱因",
+                            bingeTriggerIdentificationSuccess['success'] ?? 0),
+                        ChartData("不能识别诱因",
+                            bingeTriggerIdentificationSuccess['fail'] ?? 0),
+                      ],
+                      QuestionType.None,
+                      [],
+                      ChartType.Bar,
+                    ),
+                ChartQuestion(
+                  "暴食诱因频率表",
+                  [
+                    ...bingeSpecificTriggers
+                        .map((entry) => ChartData(entry.key, entry.value)),
+                    // ChartData("工作压力", 30),
+                    // ChartData("情绪波动", 25),
+                    // ChartData("睡眠不足", 15),
+                    // ChartData("社交活动", 20),
+                    // ChartData("无特定原因", 10),
+                  ],
+                  QuestionType.None,
+                  [],
+                  ChartType.Bar,
+                  orientation: ChartOrientation.horizontal,
+                ),
+                TextQuestion('我的暴食诱因通常是什么呢？', false),
+                TextQuestion('怎样对我的暴食诱因进行更好的控制和管理呢？', false),
+                ChartQuestion(
+                  "每天暴食次数在一周内变化",
+                  [
+                    ...bingeDayOfWeek
+                        .map((entry) => ChartData(entry.key, entry.value)),
+                    // ChartData("星期一", 3),
+                    // ChartData("星期二", 2),
+                    // ChartData("星期三", 5),
+                    // ChartData("星期四", 4),
+                    // ChartData("星期五", 1),
+                    // ChartData("星期六", 3),
+                    // ChartData("星期日", 2),
+                  ],
+                  QuestionType.None,
+                  [],
+                  ChartType.Bar,
+                ),
+                ChartQuestion(
+                    '暴食次数与一天中的时间段',
+                    [
+                      ...bingeTimeOfDay
+                          .map((entry) => ChartData(entry.key, entry.value)),
+                      // ChartData('0', 0),
+                      // ChartData('3', 0),
+                      // ChartData('6', 0),
+                      // ChartData('9', 5),
+                      // ChartData('12', 10),
+                      // ChartData('15', 0),
+                      // ChartData('18', 15),
+                      // ChartData('21', 7),
+                    ],
+                    QuestionType.None,
+                    [],
+                    ChartType.Bar,
+                    description: '分析一天中暴食发生的时间段。'),
+                TextQuestion('我的暴食和时间有什么关联？', false),
+                TextQuestion('我能依此做什么调整来减少暴食？', false),
+                ChartQuestion(
+                    '暴食次数与对应的地点',
+                    [
+                      ...bingeLocation
+                          .map((entry) => ChartData(entry.key, entry.value)),
+                      // ChartData('家里', 12),
+                      // ChartData('公司', 8),
+                      // ChartData('学校', 3),
+                      // ChartData('饭店', 5),
+                    ],
+                    QuestionType.None,
+                    [],
+                    ChartType.Bar,
+                    orientation: ChartOrientation.horizontal,
+                    description: '分析暴食发生的地点。'),
+                TextQuestion('在哪吃会影响我的暴食吗？', false),
+                TextQuestion('我能依此做什么调整来减少暴食？', false),
+                ChartQuestion(
+                  '暴食次数与情绪强度',
+                  [
+                    ...bingeEmotionIntensity
+                        .map((entry) => ChartData(entry.key, entry.value)),
+                    // ChartData('非常不开心', 6),
+                    // ChartData('很不开心', 3),
+                    // ChartData('不开心', 11),
+                    // ChartData('一般', 9),
+                    // ChartData('开心', 4),
+                    // ChartData('很开心', 4),
+                    // ChartData('非常开心', 2),
+                  ],
+                  QuestionType.None,
+                  [],
+                  ChartType.Bar,
+                ),
+                ChartQuestion(
+                  '暴食次数与情绪类型',
+                  [
+                    ...bingeEmotionType
+                        .map((entry) => ChartData(entry.key, entry.value)),
+                    // ChartData('伤心', 10),
+                    // ChartData('疲惫', 8),
+                    // ChartData('紧张', 12),
+                    // ChartData('无聊', 7),
+                    // ChartData('兴奋', 5),
+                    // ChartData('羞愧', 6),
+                    // ChartData('愤怒', 11),
+                    // ChartData('恐惧', 4),
+                    // ChartData('平静', 3),
+                    // ChartData('开心', 2)
+                  ],
+                  QuestionType.None,
+                  [],
+                  ChartType.Bar,
+                  // orientation: ChartOrientation.horizontal,
+                ),
+                TextQuestion('情绪如何影响我的暴食？', false),
+                TextQuestion('我能依此做什么调整来减少暴食？', false),
+                ChartQuestion(
+                  '暴食次数与食物类型',
+                  [
+                    ...bingeFoodDetails
+                        .map((entry) => ChartData(entry.key, entry.value)),
+                    // ChartData('快餐', 14),
+                    // ChartData('甜食', 10),
+                    // ChartData('小吃', 18),
+                    // ChartData('营养餐', 3),
+                  ],
+                  QuestionType.None,
+                  [],
+                  // TODO 这个图表的类型还没实现
+                  // ChartType.Bulleted
+                  ChartType.Bar,
+                  orientation: ChartOrientation.horizontal,
+                ),
+                TextQuestion('我暴食的时候都吃什么种类的食物？为什么吃这些食物？', false),
+                TextQuestion('我能依此做什么调整来减少暴食？', false),
+              ],
+            }),
+            SingleChoiceQuestion('节食分析', [
+              '开始吧'
+            ], {
+              '开始吧': [
+                ChartQuestion(
+                  "每天节食次数在一周内变化",
+                  [
+                    ...dietingDayOfWeek
+                        .map((entry) => ChartData(entry.key, entry.value)),
+                    // ChartData("星期一", 1),
+                    // ChartData("星期二", 2),
+                    // ChartData("星期三", 1),
+                    // ChartData("星期四", 4),
+                    // ChartData("星期五", 1),
+                    // ChartData("星期六", 1),
+                    // ChartData("星期日", 2),
+                  ],
+                  QuestionType.None,
+                  [],
+                  ChartType.Bar,
+                ),
+                ChartQuestion(
+                  "每天暴食次数在一周内变化",
+                  [
+                    ...bingeDayOfWeek
+                        .map((entry) => ChartData(entry.key, entry.value)),
+                    // ChartData("星期一", 3),
+                    // ChartData("星期二", 2),
+                    // ChartData("星期三", 5),
+                    // ChartData("星期四", 4),
+                    // ChartData("星期五", 1),
+                    // ChartData("星期六", 3),
+                    // ChartData("星期日", 2),
+                  ],
+                  QuestionType.None,
+                  [],
+                  ChartType.Bar,
+                ),
+                TextQuestion('我这几天的节食情况怎么样？它和我的暴食之间有什么关系？', false),
+                ChartQuestion(
+                  "每天节食次数在一周内变化",
+                  [
+                    ...dietingDayOfWeek
+                        .map((entry) => ChartData(entry.key, entry.value)),
+                    // ChartData("星期一", 1),
+                    // ChartData("星期二", 2),
+                    // ChartData("星期三", 1),
+                    // ChartData("星期四", 4),
+                    // ChartData("星期五", 1),
+                    // ChartData("星期六", 1),
+                    // ChartData("星期日", 2),
+                  ],
+                  QuestionType.None,
+                  [],
+                  ChartType.Bar,
+                ),
+                TextQuestion('我的节食和时间有什么关联？', false),
+                TextQuestion('我能对我的节食行为做出什么调整，以减少暴食的发生？', false),
+                ChartQuestion(
+                  '节食行为与一周内吃饭的地点的关系',
+                  [
+                    ...dietingLocation
+                        .map((entry) => ChartData(entry.key, entry.value)),
+                    // ChartData("家", 4),
+                    // ChartData("工作地点", 2),
+                    // ChartData("餐馆", 9),
+                    // ChartData("户外", 7),
+                  ], // 假数据
+                  QuestionType.None,
+                  [],
+                  ChartType.Bar,
+                  orientation: ChartOrientation.horizontal,
+                  description: '分析节食发生的地点和同伴。',
+                ),
+                TextQuestion('在哪吃会影响我的节食吗？', false),
+                TextQuestion('我能对我的节食行为做出什么调整，以减少暴食的发生？', false),
+                ChartQuestion(
+                  '节食次数与情绪强度的关系',
+                  [
+                    ...dietingEmotionIntensity
+                        .map((entry) => ChartData(entry.key, entry.value)),
+                    // ChartData('非常不开心', 4),
+                    // ChartData('很不开心', 1),
+                    // ChartData('不开心', 3),
+                    // ChartData('一般', 4),
+                    // ChartData('开心', 1),
+                    // ChartData('很开心', 4),
+                    // ChartData('非常开心', 2),
+                  ],
+                  QuestionType.None,
+                  [],
+                  ChartType.Bar,
+                ),
+                ChartQuestion(
+                  '节食次数和情绪种类的关系',
+                  [
+                    ...dietingEmotionType
+                        .map((entry) => ChartData(entry.key, entry.value)),
+                    // ChartData("快乐", 3),
+                    // ChartData("悲伤", 4),
+                    // ChartData("愤怒", 8),
+                    // ChartData("压力", 1)
+                  ],
+                  QuestionType.None,
+                  [],
+                  ChartType.Bar,
+                  description: '分析情绪强度和种类与节食的关系。',
+                ),
+                TextQuestion('情绪如何影响我的节食？', false),
+                TextQuestion('我能对我的节食行为做出什么调整，以减少暴食的发生？', false),
+                ChartQuestion(
+                  '节食时选择的食物种类',
+                  [
+                    ...dietingFoodDetails
+                        .map((entry) => ChartData(entry.key, entry.value)),
+                    // ChartData("快餐", 10),
+                    // ChartData("水果", 8),
+                    // ChartData("甜食", 4)
+                  ],
+                  QuestionType.None,
+                  [],
+                  ChartType.Bulleted,
+                  orientation: ChartOrientation.horizontal,
+                  description: '分析节食时选择的食物种类。',
+                ),
+                TextQuestion('我节食的时候都吃什么种类的食物？为什么吃这些食物？', false),
+                TextQuestion('我能对我的节食行为做出什么调整，以减少暴食的发生？', false),
+              ]
+            }),
+            SingleChoiceQuestion('清除食物行为分析TODO', [
+              '开始吧'
+            ], {
+              '开始吧': [
+                ChartQuestion(
+                  "每天食物清除次数在一周内变化",
+                  [
+                    ChartData("星期一", 1),
+                    ChartData("星期二", 0),
+                    ChartData("星期三", 1),
+                    ChartData("星期四", 0),
+                    ChartData("星期五", 1),
+                    ChartData("星期六", 2),
+                    ChartData("星期日", 1),
+                  ],
+                  QuestionType.None,
+                  [],
+                  ChartType.Bar,
+                ),
+                ChartQuestion(
+                  '食物清除行为与一周内一天中的时间段的关系',
+                  [
+                    ChartData('0', 0),
+                    ChartData('3', 1),
+                    ChartData('6', 0),
+                    ChartData('9', 8),
+                    ChartData('12', 3),
+                    ChartData('15', 0),
+                    ChartData('18', 5),
+                    ChartData('21', 7),
+                  ], // 假数据
+                  QuestionType.None,
+                  [],
+                  ChartType.Bar,
+                  description: '分析一天中食物清除发生的时间段。',
+                ),
+                TextQuestion('我的食物清除和时间有什么关联？', false),
+                ChartQuestion(
+                  '食物清除次数与情绪强度的关系',
+                  [
+                    ChartData('非常不开心', 1),
+                    ChartData('很不开心', 2),
+                    ChartData('不开心', 3),
+                    ChartData('一般', 4),
+                    ChartData('开心', 3),
+                    ChartData('很开心', 4),
+                    ChartData('非常开心', 1),
+                  ],
+                  QuestionType.None,
+                  [],
+                  ChartType.Bar,
+                ),
+                ChartQuestion(
+                  '食物清除次数和情绪种类的关系',
+                  [
+                    ChartData("快乐", 3),
+                    ChartData("悲伤", 4),
+                    ChartData("愤怒", 8),
+                    ChartData("压力", 1)
+                  ], // 假数据
+                  QuestionType.None,
+                  [],
+                  ChartType.Bar,
+                  description: '分析情绪强度和种类与食物清除的关系。',
+                ),
+                TextQuestion('情绪如何影响我的食物清除行为？', false),
+                ChartQuestion(
+                  "食物清除诱因频率表",
+                  [
+                    ChartData("情绪波动", 25),
+                    ChartData("睡眠不足", 15),
+                    ChartData("社交活动", 20),
+                    ChartData("无特定原因", 10),
+                  ],
+                  QuestionType.None,
+                  [],
+                  ChartType.Bar,
+                  orientation: ChartOrientation.horizontal,
+                ),
+                TextQuestion('吃/喝的食物如何影响我的清除食物行为？', false),
+                TextQuestion('我能如何改善我的清除食物行为?', false),
+              ]
+            }),
+            SingleChoiceQuestion(
+              '今天你成功完成了一次对自己的饮食日志的反思分析！您可以带着这些宝贵的想法进行之后的饮食日志记录，尤其是关于暴食诱因的模块，相信你一定对它有了更多觉察～',
+              ['OK!'],
+              {
+                'OK!': [
+                  SingleChoiceQuestion(
+                    '这样的饮食日志反思在前两周会以每周两次的频率进行，之后则是一周一次。您在这里写下的每一句话在之后可能都具有无与伦比的治疗效果~',
+                    ['好的！'],
+                    {},
+                  ),
+                ]
+              },
+            )
+          ];
+        }
+      }
+    } catch (e) {
+      return [
+        SingleChoiceQuestion("问卷数据获取有误，请尝试重新进入", ["好的！"], {}, required: false),
+      ];
+    }
+    return [];
   }
 }
