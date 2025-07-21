@@ -35,7 +35,7 @@ enum MealType {
 
 // 需要接口生成的问卷TaskId
 class SurveyTask {
-  static const List<String> NEED_GENERATED_TASK_IDS = ['S4', 'S5'];
+  static const List<String> NEED_GENERATED_TASK_IDS = ['S4', 'S5', 'S2'];
   // 需要展示总结页面的任务id
   static const List<String> SUMMARY_TASK_IDS = ['S3', 'S4', 'S5', 'D1'];
 }

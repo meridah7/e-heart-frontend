@@ -2,7 +2,7 @@
 
 class ApiEndpoints {
   static const String BASE_URL = 'http://39.107.57.217:3000/api';
-  // static const String BASE_URL = 'http://192.168.86.235:3000/api';
+  // static const String BASE_URL = 'http://192.168.86.234:3000/api';
   static const String AGENT_BASE_URL = 'http://223.4.25.37:3000/api/agent';
 
   // 用户认证

@@ -10,21 +10,6 @@ import 'api_endpoints.dart';
 class SurveyService {
   static final DioClient dioClient = DioClient();
 
-  // static Future<Survey> generateSurvey(String taskId) async {
-  //   try {
-  //     Response response = await dioClient.getRequest(
-  //       '${ApiEndpoints.SURVEY_GENERATOR}/$taskId/',
-  //     );
-  //     if (response.statusCode == 200) {
-  //       return Survey.fromJson(response.data);
-  //     } else {
-  //       throw Exception('Failed to generate survey');
-  //     }
-  //   } catch (err) {
-  //     print('Error generating survey: $err');
-  //     throw Exception(err);
-  //   }
-  // }
   static Future<List<Question>?> generateSurveyQuestions(String taskId) async {
     try {
       Task task = taskMap[taskId]!;
@@ -369,41 +354,143 @@ class SurveyService {
       Response reflectionIdRes =
           await dioClient.getRequest(ApiEndpoints.CURRENT_DIET_LOG_REFLECTIONS);
       if (reflectionIdRes.statusCode == 200) {
-        int? id = reflectionIdRes.data?.id;
+        print('res =======> ${reflectionIdRes.data}');
+        int? id = reflectionIdRes.data?['id'];
         Response reflectionSummary = await dioClient
             .getRequest(ApiEndpoints().DIET_LOG_REFLECTION_SUMMARY(id));
         if (reflectionSummary.statusCode == 200) {
-          Map<String, dynamic> binge = reflectionSummary.data['binge'] ?? {};
-          Map<String, dynamic> dieting =
-              reflectionSummary.data['dieting'] ?? {};
-          final bingeDayOfWeek = mapToEntryList(binge['dayOfWeek']);
-          final bingeTimeOfDay = mapToEntryList(binge['timeOfDay']);
-          final bingeLocation = mapToEntryList(binge['location']);
-          final bingeEmotionIntensity =
-              mapToEntryList(binge['emotionIntensity']);
-          final bingeEmotionType = mapToEntryList(binge['emotionType']);
-          final bingeFoodDetails = convertListToMapEntries(binge['foodDetails'],
-              keyName: 'food', valueName: 'count');
+          print('reflectionSummary.data: ${reflectionSummary.data}');
+          print(
+              'reflectionSummary.data type: ${reflectionSummary.data.runtimeType}');
+
+          // 更精准的类型检查
+          if (reflectionSummary.data is! Map<String, dynamic>) {
+            throw Exception(
+                'Expected Map<String, dynamic> but got ${reflectionSummary.data.runtimeType}');
+          }
+
+          final data = reflectionSummary.data as Map<String, dynamic>;
+
+          // 检查 binge 字段
+          final bingeData = data['binge'];
+          print('binge data: $bingeData, type: ${bingeData.runtimeType}');
+
+          if (bingeData != null && bingeData is! Map<String, dynamic>) {
+            throw Exception(
+                'Expected binge to be Map<String, dynamic> but got ${bingeData.runtimeType}');
+          }
+
+          // 检查 dieting 字段
+          final dietingData = data['dieting'];
+          print('dieting data: $dietingData, type: ${dietingData.runtimeType}');
+
+          if (dietingData != null && dietingData is! Map<String, dynamic>) {
+            throw Exception(
+                'Expected dieting to be Map<String, dynamic> but got ${dietingData.runtimeType}');
+          }
+
+          Map<String, dynamic> binge = bingeData ?? {};
+          Map<String, dynamic> dieting = dietingData ?? {};
+
+          // 更精准地检查每个字段
+          print(
+              'binge[dayOfWeek]: ${binge['dayOfWeek']}, type: ${binge['dayOfWeek'].runtimeType}');
+          print(
+              'binge[foodDetails]: ${binge['foodDetails']}, type: ${binge['foodDetails'].runtimeType}');
+          print(
+              'binge[specificTriggers]: ${binge['specificTriggers']}, type: ${binge['specificTriggers'].runtimeType}');
+
+          // 安全地解构数据，处理空数组和 null 值
+          final bingeDayOfWeek = (binge['dayOfWeek'] is Map &&
+                  (binge['dayOfWeek'] as Map).isNotEmpty)
+              ? mapToEntryList(binge['dayOfWeek'])
+              : <MapEntry<String, dynamic>>[];
+
+          final bingeTimeOfDay = (binge['timeOfDay'] is Map &&
+                  (binge['timeOfDay'] as Map).isNotEmpty)
+              ? mapToEntryList(binge['timeOfDay'])
+              : <MapEntry<String, dynamic>>[];
+
+          final bingeLocation = (binge['location'] is List &&
+                  (binge['location'] as List).isNotEmpty)
+              ? convertListToMapEntries(
+                  List<Map<String, dynamic>>.from(binge['location']),
+                  keyName: 'location',
+                  valueName: 'count')
+              : <MapEntry<String, int>>[];
+
+          final bingeEmotionIntensity = (binge['emotionIntensity'] is Map &&
+                  (binge['emotionIntensity'] as Map).isNotEmpty)
+              ? mapToEntryList(binge['emotionIntensity'])
+              : <MapEntry<String, dynamic>>[];
+
+          final bingeEmotionType = (binge['emotionType'] is Map &&
+                  (binge['emotionType'] as Map).isNotEmpty)
+              ? mapToEntryList(binge['emotionType'])
+              : <MapEntry<String, dynamic>>[];
+
+// 对于 List 类型的字段，需要特别处理
+          final bingeFoodDetails = (binge['foodDetails'] is List &&
+                  (binge['foodDetails'] as List).isNotEmpty)
+              ? convertListToMapEntries(
+                  List<Map<String, dynamic>>.from(binge['foodDetails']),
+                  keyName: 'food',
+                  valueName: 'count')
+              : <MapEntry<String, int>>[];
+
+// 安全处理 triggerIdentificationSuccess - 这里是导致错误的原因
           final bingeTriggerIdentificationSuccess =
-              binge['triggerIdentificationSuccess'];
-          final bingeSpecificTriggers = convertListToMapEntries(
-              binge['specificTriggers'],
-              keyName: 'trigger',
-              valueName: 'count');
+              (binge['triggerIdentificationSuccess'] is Map &&
+                      (binge['triggerIdentificationSuccess'] as Map).isNotEmpty)
+                  ? binge['triggerIdentificationSuccess']
+                      as Map<String, dynamic>
+                  : <String, dynamic>{};
 
-          // 解构 dieting
-          final dietingDayOfWeek = mapToEntryList(dieting['dayOfWeek']);
-          final dietingLocation = mapToEntryList(dieting['location']);
-          final dietingEmotionIntensity =
-              mapToEntryList(dieting['emotionIntensity']);
-          final dietingEmotionType = mapToEntryList(dieting['emotionType']);
-          final dietingFoodDetails = convertListToMapEntries(
-              dieting['foodDetails'],
-              keyName: 'food',
-              valueName: 'count');
+          final bingeSpecificTriggers = (binge['specificTriggers'] is List &&
+                  (binge['specificTriggers'] as List).isNotEmpty)
+              ? convertListToMapEntries(
+                  List<Map<String, dynamic>>.from(binge['specificTriggers']),
+                  keyName: 'trigger',
+                  valueName: 'count')
+              : <MapEntry<String, int>>[];
 
-          int bingeTimes =
-              bingeDayOfWeek.fold(0, (sum, v) => sum + v.value as int);
+// 解构 dieting 数据 - 同样进行安全处理
+          final dietingDayOfWeek = (dieting['dayOfWeek'] is Map &&
+                  (dieting['dayOfWeek'] as Map).isNotEmpty)
+              ? mapToEntryList(dieting['dayOfWeek'])
+              : <MapEntry<String, dynamic>>[];
+
+          final dietingLocation = (dieting['location'] is List &&
+                  (dieting['location'] as List).isNotEmpty)
+              ? convertListToMapEntries(
+                  List<Map<String, dynamic>>.from(dieting['location']),
+                  keyName: 'location',
+                  valueName: 'count')
+              : <MapEntry<String, int>>[];
+
+          final dietingEmotionIntensity = (dieting['emotionIntensity'] is Map &&
+                  (dieting['emotionIntensity'] as Map).isNotEmpty)
+              ? mapToEntryList(dieting['emotionIntensity'])
+              : <MapEntry<String, dynamic>>[];
+
+          final dietingEmotionType = (dieting['emotionType'] is Map &&
+                  (dieting['emotionType'] as Map).isNotEmpty)
+              ? mapToEntryList(dieting['emotionType'])
+              : <MapEntry<String, dynamic>>[];
+
+          final dietingFoodDetails = (dieting['foodDetails'] is List &&
+                  (dieting['foodDetails'] as List).isNotEmpty)
+              ? convertListToMapEntries(
+                  List<Map<String, dynamic>>.from(dieting['foodDetails']),
+                  keyName: 'food',
+                  valueName: 'count')
+              : <MapEntry<String, int>>[];
+
+// 安全计算 bingeTimes
+          int bingeTimes = bingeDayOfWeek.isNotEmpty
+              ? bingeDayOfWeek.fold(
+                  0, (sum, v) => sum + (v.value is int ? v.value as int : 0))
+              : 0;
 
           return [
             SingleChoiceQuestion('检查完成情况', [
@@ -505,19 +592,18 @@ class SurveyService {
                 SingleChoiceQuestion('你的本周总暴食次数为$bingeTimes，让我们开始对暴食部分的分析吧',
                     ['好的！'], {} // 可能需要添加子问题或描述
                     ),
-                bingeTriggerIdentificationSuccess ??
-                    ChartQuestion(
-                      "能识别诱因和不能识别诱因的暴食比例",
-                      [
-                        ChartData("能识别诱因",
-                            bingeTriggerIdentificationSuccess['success'] ?? 0),
-                        ChartData("不能识别诱因",
-                            bingeTriggerIdentificationSuccess['fail'] ?? 0),
-                      ],
-                      QuestionType.None,
-                      [],
-                      ChartType.Bar,
-                    ),
+                ChartQuestion(
+                  "能识别诱因和不能识别诱因的暴食比例",
+                  [
+                    ChartData("能识别诱因",
+                        bingeTriggerIdentificationSuccess['success'] ?? 0),
+                    ChartData("不能识别诱因",
+                        bingeTriggerIdentificationSuccess['fail'] ?? 0),
+                  ],
+                  QuestionType.None,
+                  [],
+                  ChartType.Bar,
+                ),
                 ChartQuestion(
                   "暴食诱因频率表",
                   [
@@ -880,6 +966,8 @@ class SurveyService {
         }
       }
     } catch (e) {
+      print('error in fetching data $e');
+      throw Exception(e);
       return [
         SingleChoiceQuestion("问卷数据获取有误，请尝试重新进入", ["好的！"], {}, required: false),
       ];

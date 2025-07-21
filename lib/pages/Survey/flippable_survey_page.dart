@@ -7,16 +7,25 @@ import 'package:namer_app/models/survey_models.dart';
 import 'survey_question_factory.dart';
 import 'survey_summary_page.dart';
 import 'package:namer_app/services/dio_client.dart';
+import 'package:namer_app/services/survey_service.dart';
 
 /// @desc 可翻页的问券
 ///
 /// @note 当前需求只要求给问题全部分页 / 全部不分页，所以这个组件粗暴的把全部问题分页了，后续如果有混合诉求的话，则考虑把这个跟 SurveyPage 一起重构了
 class FlippableSurveyPage extends ConsumerStatefulWidget {
-  FlippableSurveyPage({required this.survey, required this.taskId});
+  FlippableSurveyPage({
+    required this.survey,
+    required this.taskId,
+    this.handleSubmit,
+    this.presetAnswers,
+  });
 
   // final bool isLastTask;
   final Survey survey;
   final String taskId;
+  final Function? handleSubmit;
+
+  Map<String, dynamic>? presetAnswers = {};
 
   @override
   _FlippableSurveyPageState createState() => _FlippableSurveyPageState();
@@ -30,11 +39,167 @@ class _FlippableSurveyPageState extends ConsumerState<FlippableSurveyPage> {
 
   int _curStep = 0;
 
+  bool isLoading = true;
+
   @override
   void initState() {
     super.initState();
     _progressController = ref.read(progressProvider.notifier);
     _userPref = ref.read(preferencesDataProvider.notifier);
+    isLoading = true;
+    _initializeQuestions();
+  }
+
+  // 递归获取问题和回答
+  void extractAnswerRecursive(
+      List<Question>? questions, Map<String, dynamic> answers) {
+    if (questions == null || questions.isEmpty) {
+      return;
+    }
+    for (var question in questions) {
+      try {
+        if (question.alias != null) {
+          answers[question.alias!] = question.getAnswer();
+        }
+        if (question is SingleChoiceQuestion) {
+          if (question.selectedOption != null &&
+              question.subQuestions.isNotEmpty &&
+              question.selectedOption!.isNotEmpty &&
+              question.subQuestions[question.selectedOption] != null) {
+            extractAnswerRecursive(
+                question.subQuestions[question.selectedOption]!, answers);
+          }
+        } else if (question is MultipleChoiceQuestion) {
+          // 如果问题有子问题，递归调用
+          for (var subQuestion in question.selectedOptions) {
+            if (question.subQuestions.isNotEmpty &&
+                question.subQuestions[subQuestion] is List<Question>) {
+              extractAnswerRecursive(
+                  question.subQuestions[subQuestion]!, answers);
+            }
+          }
+        } else if (question is TextQuestion) {
+          // 数组形式
+          // if (question.canAddMore) {
+          //   summary.add('Answer: ${question.answers}');
+          // } else {
+          //   summary.add('Answer: ${question.answers[0]}');
+          // }
+        } else if (question is TimeQuestion) {
+        } else if (question is SliderQuestion) {
+          var subQuestions = question.subQuestions;
+          var value = question.sliderValue.toString();
+          if (subQuestions != null && question.sliderValue > 0) {
+            if (subQuestions[value] != null) {
+              extractAnswerRecursive(question.subQuestions?[value], answers);
+            } else if (subQuestions['default'] != null) {
+              extractAnswerRecursive(subQuestions['default'], answers);
+            }
+          }
+        } else if (question is MealQuestion) {
+          // summary.add('Answer: ${question.meals}');
+          for (var subQuestion in question.meals) {
+            if (question.subQuestions.isNotEmpty &&
+                question.subQuestions[subQuestion] is List<Question>) {
+              extractAnswerRecursive(
+                  question.subQuestions[subQuestion]!, answers);
+            }
+          }
+        } else if (question is PriorityQuestion) {
+          // summary.add('Answer: ${question.selectedOptions}');
+        }
+      } catch (e) {
+        print('Error in summarize question ${question.questionText} $e');
+        throw Exception(e);
+      }
+    }
+  }
+
+  // 递归填入预设回答
+  List<Question> fillSurveyWithPresetAnswer(
+      List<Question> questions, Map<String, dynamic>? presetAnswers) {
+    if (questions.isEmpty || presetAnswers == null || presetAnswers.isEmpty) {
+      return questions;
+    }
+    for (var question in questions) {
+      try {
+        if (question.alias != null &&
+            presetAnswers.keys.contains(question.alias)) {
+          question.setAnswer(presetAnswers[question.alias]);
+          presetAnswers.remove(question.alias);
+        }
+        if (question is SingleChoiceQuestion) {
+          if (question.selectedOption != null &&
+              question.subQuestions.isNotEmpty &&
+              question.selectedOption!.isNotEmpty &&
+              question.subQuestions[question.selectedOption] != null) {
+            extractAnswerRecursive(
+                question.subQuestions[question.selectedOption]!, presetAnswers);
+          }
+        } else if (question is MultipleChoiceQuestion) {
+          // 如果问题有子问题，递归调用
+          for (var subQuestion in question.selectedOptions) {
+            if (question.subQuestions.isNotEmpty &&
+                question.subQuestions[subQuestion] is List<Question>) {
+              extractAnswerRecursive(
+                  question.subQuestions[subQuestion]!, presetAnswers);
+            }
+          }
+        } else if (question is TextQuestion) {
+          // 数组形式
+          // if (question.canAddMore) {
+          //   summary.add('Answer: ${question.answers}');
+          // } else {
+          //   summary.add('Answer: ${question.answers[0]}');
+          // }
+        } else if (question is TimeQuestion) {
+        } else if (question is SliderQuestion) {
+          var subQuestions = question.subQuestions;
+          var value = question.sliderValue.toString();
+          if (subQuestions != null && question.sliderValue > 0) {
+            if (subQuestions[value] != null) {
+              extractAnswerRecursive(
+                  question.subQuestions?[value], presetAnswers);
+            } else if (subQuestions['default'] != null) {
+              extractAnswerRecursive(subQuestions['default'], presetAnswers);
+            }
+          }
+        } else if (question is MealQuestion) {
+          // summary.add('Answer: ${question.meals}');
+          for (var subQuestion in question.meals) {
+            if (question.subQuestions.isNotEmpty &&
+                question.subQuestions[subQuestion] is List<Question>) {
+              extractAnswerRecursive(
+                  question.subQuestions[subQuestion]!, presetAnswers);
+            }
+          }
+        } else if (question is PriorityQuestion) {
+          // summary.add('Answer: ${question.selectedOptions}');
+        }
+      } catch (e) {
+        print('Error in summarize question ${question.questionText} $e');
+        throw Exception(e);
+      }
+    }
+
+    return questions;
+  }
+
+  Future<void> _initializeQuestions() async {
+    // 如果有预设回答
+    List<Question>? questions =
+        await SurveyService.generateSurveyQuestions(widget.taskId);
+    print('widgetTaskId =======> ${widget.taskId} $questions');
+    setState(() {
+      if (questions != null) {
+        widget.survey.questions = questions;
+      }
+      if (widget.presetAnswers != null && widget.presetAnswers!.isNotEmpty) {
+        widget.survey.questions = fillSurveyWithPresetAnswer(
+            widget.survey.questions, widget.presetAnswers);
+      }
+      isLoading = false;
+    });
   }
 
   Map<String, dynamic> extractAnswer(Survey survey, int step,

@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:namer_app/main.dart';
 import 'package:namer_app/models/survey_models.dart';
 import 'package:namer_app/providers/progress.dart';
-// import 'package:namer_app/providers/survey_data.dart';
 import 'package:namer_app/services/survey_service.dart';
 import 'package:namer_app/utils/index.dart';
 import 'survey_summary_page.dart';
@@ -232,20 +231,6 @@ class _SurveyPageState extends ConsumerState<SurveyPage> {
       }
       isLoading = false;
     });
-
-    // setState(() async {
-    //   widget.survey.questions = await SurveyService.generateSurveyQuestions(widget.taskId) ?? [];
-    // });
-
-    // if (widget.taskId == 'S4') {
-    //   setState(() async {
-    //     widget.survey.questions = await generateDietPlanReview();
-    //   });
-    // } else if (widget.taskId == 'S5') {
-    //   setState(() async {
-    //     widget.survey.questions = await generateImpulseReview();
-    //   });
-    // }
   }
 
   // void _updateCustomAnswer(String questionKey, String answer) {
