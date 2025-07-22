@@ -10,10 +10,23 @@ import 'api_endpoints.dart';
 class SurveyService {
   static final DioClient dioClient = DioClient();
 
+  // 辅助方法：统计数组中每个元素出现的次数
+  static List<MapEntry<String, int>> _countListElements(List list) {
+    Map<String, int> countMap = {};
+
+    for (var item in list) {
+      String key = item.toString();
+      countMap[key] = (countMap[key] ?? 0) + 1;
+    }
+
+    return countMap.entries.toList();
+  }
+
   static Future<List<Question>?> generateSurveyQuestions(String taskId) async {
+    List<Question> questionList = [];
+
     try {
       Task task = taskMap[taskId]!;
-      List<Question> questionList = [];
       if (SurveyTask.NEED_GENERATED_TASK_IDS.contains(taskId)) {
         switch (taskId) {
           case 'S4':
@@ -33,7 +46,8 @@ class SurveyService {
       }
     } catch (err) {
       print('Error generating survey: $err');
-      return null;
+      throw Exception(err);
+      // return questionList;
     }
     return null;
   }
@@ -413,10 +427,7 @@ class SurveyService {
 
           final bingeLocation = (binge['location'] is List &&
                   (binge['location'] as List).isNotEmpty)
-              ? convertListToMapEntries(
-                  List<Map<String, dynamic>>.from(binge['location']),
-                  keyName: 'location',
-                  valueName: 'count')
+              ? _countListElements(binge['location'] as List)
               : <MapEntry<String, int>>[];
 
           final bingeEmotionIntensity = (binge['emotionIntensity'] is Map &&
@@ -432,10 +443,7 @@ class SurveyService {
 // 对于 List 类型的字段，需要特别处理
           final bingeFoodDetails = (binge['foodDetails'] is List &&
                   (binge['foodDetails'] as List).isNotEmpty)
-              ? convertListToMapEntries(
-                  List<Map<String, dynamic>>.from(binge['foodDetails']),
-                  keyName: 'food',
-                  valueName: 'count')
+              ? _countListElements(binge['foodDetails'] as List)
               : <MapEntry<String, int>>[];
 
 // 安全处理 triggerIdentificationSuccess - 这里是导致错误的原因
@@ -448,10 +456,7 @@ class SurveyService {
 
           final bingeSpecificTriggers = (binge['specificTriggers'] is List &&
                   (binge['specificTriggers'] as List).isNotEmpty)
-              ? convertListToMapEntries(
-                  List<Map<String, dynamic>>.from(binge['specificTriggers']),
-                  keyName: 'trigger',
-                  valueName: 'count')
+              ? _countListElements(binge['specificTriggers'] as List)
               : <MapEntry<String, int>>[];
 
 // 解构 dieting 数据 - 同样进行安全处理
@@ -462,10 +467,7 @@ class SurveyService {
 
           final dietingLocation = (dieting['location'] is List &&
                   (dieting['location'] as List).isNotEmpty)
-              ? convertListToMapEntries(
-                  List<Map<String, dynamic>>.from(dieting['location']),
-                  keyName: 'location',
-                  valueName: 'count')
+              ? _countListElements(dieting['location'] as List)
               : <MapEntry<String, int>>[];
 
           final dietingEmotionIntensity = (dieting['emotionIntensity'] is Map &&
@@ -480,10 +482,7 @@ class SurveyService {
 
           final dietingFoodDetails = (dieting['foodDetails'] is List &&
                   (dieting['foodDetails'] as List).isNotEmpty)
-              ? convertListToMapEntries(
-                  List<Map<String, dynamic>>.from(dieting['foodDetails']),
-                  keyName: 'food',
-                  valueName: 'count')
+              ? _countListElements(dieting['foodDetails'] as List)
               : <MapEntry<String, int>>[];
 
 // 安全计算 bingeTimes
@@ -644,14 +643,6 @@ class SurveyService {
                     [
                       ...bingeTimeOfDay
                           .map((entry) => ChartData(entry.key, entry.value)),
-                      // ChartData('0', 0),
-                      // ChartData('3', 0),
-                      // ChartData('6', 0),
-                      // ChartData('9', 5),
-                      // ChartData('12', 10),
-                      // ChartData('15', 0),
-                      // ChartData('18', 15),
-                      // ChartData('21', 7),
                     ],
                     QuestionType.None,
                     [],
@@ -664,10 +655,6 @@ class SurveyService {
                     [
                       ...bingeLocation
                           .map((entry) => ChartData(entry.key, entry.value)),
-                      // ChartData('家里', 12),
-                      // ChartData('公司', 8),
-                      // ChartData('学校', 3),
-                      // ChartData('饭店', 5),
                     ],
                     QuestionType.None,
                     [],
@@ -681,13 +668,6 @@ class SurveyService {
                   [
                     ...bingeEmotionIntensity
                         .map((entry) => ChartData(entry.key, entry.value)),
-                    // ChartData('非常不开心', 6),
-                    // ChartData('很不开心', 3),
-                    // ChartData('不开心', 11),
-                    // ChartData('一般', 9),
-                    // ChartData('开心', 4),
-                    // ChartData('很开心', 4),
-                    // ChartData('非常开心', 2),
                   ],
                   QuestionType.None,
                   [],
@@ -698,16 +678,6 @@ class SurveyService {
                   [
                     ...bingeEmotionType
                         .map((entry) => ChartData(entry.key, entry.value)),
-                    // ChartData('伤心', 10),
-                    // ChartData('疲惫', 8),
-                    // ChartData('紧张', 12),
-                    // ChartData('无聊', 7),
-                    // ChartData('兴奋', 5),
-                    // ChartData('羞愧', 6),
-                    // ChartData('愤怒', 11),
-                    // ChartData('恐惧', 4),
-                    // ChartData('平静', 3),
-                    // ChartData('开心', 2)
                   ],
                   QuestionType.None,
                   [],
@@ -721,10 +691,6 @@ class SurveyService {
                   [
                     ...bingeFoodDetails
                         .map((entry) => ChartData(entry.key, entry.value)),
-                    // ChartData('快餐', 14),
-                    // ChartData('甜食', 10),
-                    // ChartData('小吃', 18),
-                    // ChartData('营养餐', 3),
                   ],
                   QuestionType.None,
                   [],
@@ -852,9 +818,6 @@ class SurveyService {
                   [
                     ...dietingFoodDetails
                         .map((entry) => ChartData(entry.key, entry.value)),
-                    // ChartData("快餐", 10),
-                    // ChartData("水果", 8),
-                    // ChartData("甜食", 4)
                   ],
                   QuestionType.None,
                   [],
@@ -967,7 +930,6 @@ class SurveyService {
       }
     } catch (e) {
       print('error in fetching data $e');
-      throw Exception(e);
       return [
         SingleChoiceQuestion("问卷数据获取有误，请尝试重新进入", ["好的！"], {}, required: false),
       ];
