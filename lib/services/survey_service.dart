@@ -23,9 +23,15 @@ class SurveyService {
   }
 
   static Future<List<Question>?> generateSurveyQuestions(String taskId) async {
-    List<Question> questionList = [];
-
     try {
+      List<Question> questionList = [];
+
+      // 检查 taskId 是否在 taskMap 中
+      if (!taskMap.containsKey(taskId)) {
+        print('Error: taskId $taskId not found in taskMap');
+        return null;
+      }
+
       Task task = taskMap[taskId]!;
       if (SurveyTask.NEED_GENERATED_TASK_IDS.contains(taskId)) {
         switch (taskId) {
@@ -47,7 +53,6 @@ class SurveyService {
     } catch (err) {
       print('Error generating survey: $err');
       throw Exception(err);
-      // return questionList;
     }
     return null;
   }
